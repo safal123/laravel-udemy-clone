@@ -1,5 +1,5 @@
 import {Head} from '@inertiajs/react';
-import MainMenu from "@/Components/shared/menu/ManinMenu";
+import MainMenu from "@/Components/shared/menu/MainMenu";
 import React from "react";
 import TopHeader from "@/Components/shared/header/TopHeader";
 import BottomHeader from "@/Components/shared/header/BottomHeader";
@@ -20,7 +20,7 @@ export default function DashboardLayout({title, children}: MainLayoutProps) {
             <BottomHeader />
           </div>
           <div className="flex flex-grow overflow-hidden">
-            <MainMenu className="flex-shrink-0 hidden w-56 p-12 overflow-y-auto bg-gray-700 md:block"/>
+            <MainMenu className="flex-shrink-0 hidden w-56 overflow-y-auto bg-gray-700 md:block"/>
             {/**
              * We need to scroll the content of the page, not the whole page.
              * So we need to add `scroll-region="true"` to the div below.

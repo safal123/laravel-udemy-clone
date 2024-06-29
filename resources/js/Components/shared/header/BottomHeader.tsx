@@ -17,7 +17,7 @@ export default () => {
         >
           <div className="mr-1 text-gray-800 whitespace-nowrap group-hover:text-indigo-600 focus:text-indigo-600">
             <span>{auth.user.name}</span>
-            <span className="hidden ml-1 md:inline">{auth.user.name}</span>
+            {/*<span className="hidden ml-1 md:inline">{auth.user.name}</span>*/}
           </div>
           <ChevronDown
             size={20}

@@ -8,7 +8,7 @@ export default function Dashboard({auth}: PageProps) {
     <DashboardLayout>
       <Head title="Student Dashboard"/>
 
-      <div className="p-2 bg-red-900">
+      <div className="p-2">
         <div className="p-6 text-gray-900 dark:text-gray-100">You're logged in!</div>
       </div>
     </DashboardLayout>

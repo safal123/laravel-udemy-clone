@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Chapter;
+use App\Models\Course;
+use Illuminate\Http\Request;
+
+class ChapterController extends Controller
+{
+    public function store(Course $course, Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $course
+            ->chapters()
+            ->create($request->all());
+
+        return redirect()
+            ->route('teachers.courses.edit', $course)
+            ->with('success', 'Chapter created successfully.');
+    }
+
+    public function update(Course $course, Chapter $chapter, Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $chapter->update($request->all());
+
+        return redirect()
+            ->route('teachers.courses.edit', $course)
+            ->with('success', 'Chapter updated successfully.');
+    }
+
+    public function addChapterVideo(Course $course, Chapter $chapter)
+    {
+        $chapter->update(['video_storage_id' => $chapter->id]);
+
+        return response()->json([
+            'message' => 'Chapter video added successfully.',
+        ]);
+    }
+
+    public function destroy(Course $course, Chapter $chapter)
+    {
+        $chapter->delete();
+
+        return redirect()
+            ->route('teachers.courses.edit', $course)
+            ->with('success', 'Chapter deleted successfully.');
+    }
+}

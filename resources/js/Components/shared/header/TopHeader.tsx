@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import MainMenu from "@/Components/shared/menu/ManinMenu";
+import MainMenu from "@/Components/shared/menu/MainMenu";
 
 export default () => {
   const [menuOpened, setMenuOpened] = useState(false);

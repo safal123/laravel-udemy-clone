@@ -14,7 +14,7 @@
         "@types/react-dom": "^18.0.10",
         "@vitejs/plugin-react": "^4.2.0",
         "autoprefixer": "^10.4.12",
-        "axios": "^1.6.4",
+        "axios": "^1.7.2",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.31",
         "react": "^18.2.0",
@@ -32,7 +32,10 @@
         "embla-carousel": "^8.1.5",
         "embla-carousel-autoplay": "^8.1.5",
         "embla-carousel-react": "^8.1.5",
+        "lodash": "^4.17.21",
         "lucide-react": "^0.396.0",
+        "react-player": "^2.16.0",
+        "slugify": "^1.6.6",
         "tailwind-merge": "^2.3.0",
         "tailwindcss-animate": "^1.0.7"
     }

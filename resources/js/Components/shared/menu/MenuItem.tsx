@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import classNames from 'classnames';
+import {cn} from "@/lib/utils";
 
 interface MainMenuItemProps {
   icon?: React.ReactNode;
@@ -21,10 +22,10 @@ export default function MainMenuItem({ icon, link, text }: MainMenuItemProps) {
   });
 
   return (
-    <div className="mb-4">
+    <div className={cn('mb-2', isActive && 'bg-black')}>
       <Link
         href={route(link)}
-        className="flex items-center group py-3 space-x-3"
+        className="flex items-center group py-3 space-x-3 px-2"
       >
         <div className={iconClasses}>{icon}</div>
         <div className={textClasses}>{text}</div>
