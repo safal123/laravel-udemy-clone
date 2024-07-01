@@ -1,15 +1,12 @@
 import {EmblaOptionsType} from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import {Course} from "@/types";
 
 const OPTIONS: EmblaOptionsType = {align: 'end', loop: true}
 
 type HomePageCarouselProps = {
-  courses: {
-    id: number,
-    title: string,
-    imageUri: string
-  }[]
+  courses: Course[]
 }
 
 const HomePageCarousel = ({ courses }: HomePageCarouselProps) => {
@@ -20,7 +17,7 @@ const HomePageCarousel = ({ courses }: HomePageCarouselProps) => {
         { courses.map ((course) => (
           <figure key={course.id} className={"relative flex h-[400px] md:h-[500px] aspect-square w-full flex-none cursor-pointer flex-col justify-end rounded-xl border-none"}>
             <img
-              src={ course.imageUri }
+              src={ course.image_url }
               alt={ course.title }
               className={"absolute size-full rounded-xl border-none object-cover"}
             />

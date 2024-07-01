@@ -53,7 +53,7 @@ function PaginationItem({ active, label, url }: PaginationItem) {
    * It will be either `&laquo; Previous` or `Next &raquo;`
    */
   return (
-    <Link className={className} href={url as string}>
+    <Link className={className} href={url as string} preserveScroll>
       <span dangerouslySetInnerHTML={{ __html: label }}></span>
     </Link>
   );

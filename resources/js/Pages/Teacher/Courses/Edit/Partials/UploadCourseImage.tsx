@@ -2,6 +2,7 @@ import FileInput from "@/Components/shared/form/FileInput";
 import FieldGroup from "@/Components/shared/form/FieldGroup";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import { toast } from "sonner"
 
 type UploadCourseImageProps = {
   errors: any;
@@ -84,6 +85,7 @@ const UploadCourseImage =
         }
         setObjectUrl(objectUrl.data.url)
         setCourseFile(null)
+        toast('Image uploaded successfully')
       } catch (e) {
         console.log(e)
       } finally {

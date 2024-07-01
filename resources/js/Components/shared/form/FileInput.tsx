@@ -28,7 +28,7 @@ export default function FileInput
   const fileRef = React.useRef<HTMLInputElement>(null);
   return (
     <div>
-      <div className={cn('relative min-h-[400px] bg-gray-100 rounded-md border border-dashed border-gray-300',
+      <div className={cn('relative min-h-[400px] bg-gray-100 rounded-md',
         error && 'border-red-400 focus:border-red-400 focus:ring-red-400',
         loading && 'opacity-50'
       )}>
@@ -38,36 +38,55 @@ export default function FileInput
         />
         <div className={'relative'}>
           {accept === 'video/*' ?
-            <div className={'w-full min-h-[400px] h-full bg-gray-100'}>
-              <ReactPlayer
-                // @ts-ignore
-                url={previewUrl || objectUrl}
-                pip={true}
-                controls
-                width={'100%'}
-                height={'100%'}
-              />
+            <div className={'w-full min-h-[300px] h-full bg-gray-200'}>
+              {(previewUrl || objectUrl) ?
+                <ReactPlayer
+                  url={previewUrl || objectUrl}
+                  controls
+                  width={'100%'}
+                  height={'100%'}
+                  className={'rounded-md aspect-video w-full'}
+                /> :
+                <div className={'flex items-center justify-center h-[400px] border-2 border-dashed'}>
+                  <span className={'text-gray-400 text-lg'}>
+                    No video selected
+                  </span>
+                </div>
+              }
+              <div className={'p-4'}>
+                <Button
+                  type={'button'}
+                  disabled={loading || !previewUrl}
+                  onClick={uploadToS3}
+                  className={cn(!previewUrl && 'hidden')}
+                >
+                  {loading && <Loader className={'animate-spin w-6 h-6 mr-2'}/>}
+                  Upload
+                </Button>
+              </div>
             </div>
             :
-            <img
-              alt={'course-image'}
-              src={previewUrl || objectUrl}
-              className={'rounded-md object-cover h-full w-full'}
-            />
+            <div className={'w-full h-[400px] bg-gray-100'}>
+              {(previewUrl || objectUrl) &&
+                <>
+                  <img
+                    alt={'course-image'}
+                    src={previewUrl || objectUrl}
+                    className={'rounded-md object-cover h-full w-full'}
+                  />
+                  <Button
+                    type={'button'}
+                    disabled={loading || !previewUrl}
+                    onClick={uploadToS3}
+                    className={cn('absolute bottom-2 right-2 z-10', !previewUrl && 'hidden')}
+                  >
+                    {loading && <Loader className={'animate-spin w-6 h-6 mr-2'}/>}
+                    Upload
+                  </Button>
+                </>
+              }
+            </div>
           }
-          <div className={'absolute bottom-20 right-2 z-10'}>
-            {(previewUrl || objectUrl) &&
-              <Button
-                type={'button'}
-                disabled={loading || !previewUrl}
-                onClick={uploadToS3}
-                className={cn( !previewUrl && 'hidden')}
-              >
-                {loading && <Loader className={'animate-spin w-6 h-6 mr-2'}/>}
-                Upload
-              </Button>
-            }
-          </div>
         </div>
 
       </div>

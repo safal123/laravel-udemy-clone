@@ -6,6 +6,7 @@ import UpdateChapter from "@/Pages/Teacher/Courses/Edit/Partials/UpdateChapter";
 import {Chapter} from "@/types";
 import DeleteChapter from "@/Pages/Teacher/Courses/Edit/Partials/DeleteChapter";
 import ChapterVideo from "@/Pages/Teacher/Courses/Edit/Partials/ChapterVideo";
+import ChapterTogglePublish from "@/Pages/Teacher/Courses/Edit/Partials/ChapterTogglePublish";
 
 type ChaptersTableProps = {
   chapters: Chapter[]
@@ -34,13 +35,24 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
           )
         },
         {
+          label: 'Duration',
+          name: 'duration',
+          renderCell: (row: any) => (
+            <div className={'text-gray-800'}>
+              {row.duration || 'N/A'}
+            </div>
+          )
+        },
+        {
           label: 'Actions',
           name: 'actions',
+          colSpan: 2,
           renderCell: (row: any) => (
             <div className={'flex items-center space-x-4'}>
               <UpdateChapter chapter={row}/>
               <DeleteChapter chapter={row}/>
               <ChapterVideo chapter={row}/>
+              <ChapterTogglePublish chapter={row} />
             </div>
           )
         }

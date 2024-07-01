@@ -7,7 +7,6 @@ import LoadingButton from "@/Components/shared/button/LoadingButton";
 import TextInput from "@/Components/shared/form/TextInput";
 import {Button} from "@/Components/ui/button";
 import TextareaInput from "@/Components/shared/form/TextareaInput";
-import FileInput from "@/Components/shared/form/FileInput";
 import axios from "axios";
 import SelectInput from "@/Components/shared/form/SelectInput";
 import slugify from "slugify";
@@ -17,6 +16,7 @@ import AddChapter from "@/Pages/Teacher/Courses/Edit/Partials/AddChapter";
 import ChaptersTable from "@/Pages/Teacher/Courses/Edit/Partials/ChaptersTable";
 import {Loader} from "lucide-react";
 import UploadCourseImage from "@/Pages/Teacher/Courses/Edit/Partials/UploadCourseImage";
+import {toast} from "sonner";
 
 const Edit = () => {
   const {course} = usePage<{ course: Course }>().props
@@ -41,77 +41,10 @@ const Edit = () => {
     put(route('teachers.courses.update', course.id))
   }
 
-  function handleImageChange(e: any) {
-    setObjectUrl('')
-    const file = e.target.files?.[0]
-    if (!file) {
-      return
-    }
-    setPreviewImageUrl(URL.createObjectURL(file))
-    setCourseFile(file)
-  }
-
   useEffect(() => {
     setData('slug', slugify(data.title, {lower: true}))
   }, [data.title])
 
-  const getObjectFromS3 = async () => {
-    try {
-      if (!course.image_storage_id) {
-        return
-      }
-      const objectUrl = await axios.post('/s3/get-object-url', {
-        fileName: course.id,
-        path: 'courses/images'
-      })
-      if (!objectUrl) {
-        return
-      }
-      setObjectUrl(objectUrl.data.url)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  useEffect(() => {
-    if (course.image_storage_id) {
-      getObjectFromS3()
-    }
-  }, [])
-
-  const uploadToS3 = async () => {
-    try {
-      setUploading(true)
-      const presignedUrl = await axios.post('/s3/get-signed-url', {
-        // @ts-ignore
-        fileName: course.id,
-        path: 'courses/images'
-      })
-      if (!presignedUrl) {
-        return
-      }
-      const response = await fetch(presignedUrl.data.url, {
-        method: 'PUT',
-        body: courseFile
-      })
-      if (!response.ok) {
-        throw new Error('Failed to upload image to S3')
-      }
-      const objectUrl = await axios.post('/s3/get-object-url', {
-        // @ts-ignore
-        fileName: course.id,
-        path: 'courses/images'
-      })
-      if (!objectUrl) {
-        return
-      }
-      setObjectUrl(objectUrl.data.url)
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setUploading(false)
-    }
-  }
   const handleChapterPublish = async () => {
     try {
       setIsPublishing(true)
@@ -119,8 +52,10 @@ const Edit = () => {
       router.reload({
         only: ['course']
       })
+      toast.success(`Course ${course.is_published ? 'unpublished' : 'published'} successfully.`)
     } catch (e) {
       console.log(e)
+      toast.error('An error occurred. Please try again.')
     } finally {
       setIsPublishing(false)
     }
@@ -225,21 +160,6 @@ const Edit = () => {
                 courseId={course.id}
                 imageStorageId={course?.image_storage_id}
               />
-              {/*<FieldGroup*/}
-              {/*  label="Course Image"*/}
-              {/*  name="image"*/}
-              {/*  error={errors.image_storage_id}*/}
-              {/*>*/}
-              {/*  <FileInput*/}
-              {/*    name="image"*/}
-              {/*    objectImageUrl={objectUrl}*/}
-              {/*    previewImageUrl={previewImageUrl}*/}
-              {/*    error={errors.image_storage_id}*/}
-              {/*    onChange={handleImageChange}*/}
-              {/*    uploadToS3={uploadToS3}*/}
-              {/*    loading={uploading}*/}
-              {/*  />*/}
-              {/*</FieldGroup>*/}
             </div>
           </div>
         </form>

@@ -24,6 +24,7 @@ export interface Course {
   created_at: string;
   updated_at: string;
   category_id: string;
+  image_url: string;
 }
 
 export interface Chapter {
@@ -35,6 +36,7 @@ export interface Chapter {
   course_id: string;
   created_at: string;
   updated_at: string;
+  is_published: boolean;
 }
 
 export type PaginatedData<T> = {

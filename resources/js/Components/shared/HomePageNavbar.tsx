@@ -11,7 +11,7 @@ type HomePageNavbarProps = {
 
 const HomePageNavbar = ({auth}: HomePageNavbarProps) => {
   return (
-    <nav className="px-4 md:px-8 py-4">
+    <nav className="px-4 md:px-8 py-4 bg-gray-900">
       <div className="flex items-center justify-between">
         <div>
           <Link href={'/'}>
@@ -24,7 +24,10 @@ const HomePageNavbar = ({auth}: HomePageNavbarProps) => {
               ?
               <div className={'flex items-center space-x-2'}>
                 <Link href={'/dashboard'}>
-                  <Button variant={'outline'}>
+                  <Button
+                    className={'border border-yellow-600 bg-yellow-300 hover:bg-yellow-400 text-black'}
+                    variant={'outline'}
+                  >
                     Dashboard
                   </Button>
                 </Link>

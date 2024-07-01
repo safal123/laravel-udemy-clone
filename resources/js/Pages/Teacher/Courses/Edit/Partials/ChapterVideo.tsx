@@ -4,6 +4,7 @@ import React, {useEffect} from "react";
 import Modal from "@/Components/Modal";
 import axios from "axios";
 import FileInput from "@/Components/shared/form/FileInput";
+import {toast} from "sonner";
 
 type ChapterVideoProps = {
   chapter: Chapter
@@ -62,8 +63,10 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
         course: chapter.course_id,
         chapter: chapter.id
       }))
+      toast('Video uploaded successfully')
     } catch (e) {
       console.log(e);
+      toast.error('Failed to upload video')
     } finally {
       setIsUploading(false)
     }

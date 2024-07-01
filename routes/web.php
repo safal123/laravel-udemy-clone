@@ -22,6 +22,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/{course}', [\App\Http\Controllers\CourseController::class, 'show'])
+    ->name('courses.show');
+
 Route::middleware('auth')->group(function () {
     Route::get('/teachers/dashboard', [DashboardController::class, 'index'])
         ->name('teachers.dashboard');
@@ -31,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'teachers/courses'], function () {
         Route::get('/', [CourseController::class, 'index'])
             ->name('teachers.courses');
+        Route::delete('/{course}', [CourseController::class, 'destroy'])
+            ->name('teachers.courses.destroy');
         Route::get('/create', [CourseController::class, 'create'])
             ->name('teachers.courses.create');
         Route::post('/', [CourseController::class, 'store'])
@@ -55,6 +60,8 @@ Route::middleware('auth')->group(function () {
             ->name('teachers.courses.chapters.destroy');
         Route::post('/{chapter}/video', [ChapterController::class, 'addChapterVideo'])
             ->name('teachers.courses.chapters.video');
+        Route::put('/{chapter}/toggle-publish', [ChapterController::class, 'togglePublish'])
+            ->name('teachers.courses.chapters.toggle-publish');
     });
 
     /*

@@ -47,6 +47,15 @@ class ChapterController extends Controller
         ]);
     }
 
+    public function togglePublish(Course $course, Chapter $chapter)
+    {
+        $chapter->update(['is_published' => !$chapter->is_published]);
+
+        return response()->json([
+            'message' => 'Chapter publish status updated successfully.',
+        ]);
+    }
+
     public function destroy(Course $course, Chapter $chapter)
     {
         $chapter->delete();

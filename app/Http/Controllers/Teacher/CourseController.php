@@ -75,4 +75,13 @@ class CourseController extends Controller
             'message' => 'Course published status updated successfully',
         ]);
     }
+
+    public function destroy(Course $course): RedirectResponse
+    {
+        $course->delete();
+
+        return redirect()
+            ->route('teachers.courses')
+            ->with('success', 'Course deleted successfully');
+    }
 }

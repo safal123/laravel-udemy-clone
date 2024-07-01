@@ -4,6 +4,7 @@ import React from "react";
 import TopHeader from "@/Components/shared/header/TopHeader";
 import BottomHeader from "@/Components/shared/header/BottomHeader";
 import FlashedMessages from "@/Components/shared/messages/FlashMessage";
+import {Toaster} from "@/Components/ui/sonner";
 
 interface MainLayoutProps {
   title?: string;
@@ -27,6 +28,7 @@ export default function TeacherDashboardLayout({title, children}: MainLayoutProp
               scroll-region="true"
             >
               <FlashedMessages />
+              <Toaster />
               {children}
             </div>
           </div>

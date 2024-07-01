@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,13 +17,14 @@ class HomePageController extends Controller
             ->where('is_published', true)
             ->orderBy('created_at', 'desc')
             ->with('user')
-            ->paginate(10);
+            ->paginate(3);
+
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
-            'courses' => $courses,
+            'courses' => CourseResource::collection($courses)
         ]);
     }
 }
