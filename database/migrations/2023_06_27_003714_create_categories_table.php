@@ -18,7 +18,7 @@ return new class extends Migration
                 ->unique();
             $table->text('description')
                 ->nullable();
-            $table->foreignId('category_id')
+            $table->foreignUuid('category_id')
                 ->nullable()
                 ->constrained('categories')
                 ->nullOnDelete();

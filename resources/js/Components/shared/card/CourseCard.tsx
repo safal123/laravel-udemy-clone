@@ -18,9 +18,14 @@ const CourseCard = ({ course }: { course: Course }) => {
       <CardContent>
         <p className={'text-gray-900 text-3xl font-semibold'}>{course.title}</p>
         <div className={'flex justify-between items-center mt-4'}>
-          <Button className={'mt-4'}>
-            Enroll Now for ${course.price}
-          </Button>
+          <Link href={route('payment.show', {
+            course: course.id,
+            price: course.price
+          })}>
+            <Button className={'mt-4'}>
+              Enroll Now for ${course.price}
+            </Button>
+          </Link>
           <Button className={'mt-4'} variant={'secondary'}>
             Add to Wishlist
           </Button>

@@ -20,11 +20,11 @@ return new class extends Migration
             $table->string('image_storage_id')->nullable();
             $table->decimal('price');
             $table->boolean('is_published')->default(false);
-            $table->foreignId('user_id')
+            $table->foreignUuid('user_id')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
-            $table->foreignId('category_id')
+            $table->foreignUuid('category_id')
                 ->nullable()
                 ->constrained('categories')
                 ->nullOnDelete();

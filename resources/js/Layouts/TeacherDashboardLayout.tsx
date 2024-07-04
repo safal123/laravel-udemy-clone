@@ -28,7 +28,9 @@ export default function TeacherDashboardLayout({title, children}: MainLayoutProp
               scroll-region="true"
             >
               <FlashedMessages />
-              <Toaster />
+              <Toaster
+                position={'top-right'}
+              />
               {children}
             </div>
           </div>

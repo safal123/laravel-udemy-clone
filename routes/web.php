@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\S3Controller;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\Teacher\CourseController;
 use App\Http\Controllers\Teacher\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+require __DIR__.'/auth.php';
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
 
@@ -20,6 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/payment', [PaymentController::class, 'show'])
+        ->name('payment.show');
 });
 
 Route::get('/{course}', [\App\Http\Controllers\CourseController::class, 'show'])
@@ -74,6 +80,11 @@ Route::middleware('auth')->group(function () {
             ->name('s3.get-object-url');
     });
 
+    /*
+     * Stripe Routes
+     */
+    Route::group(['prefix' => 'stripe'], function () {
+        Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent'])
+            ->name('stripe.create-payment-intent');
+    });
 });
-
-require __DIR__.'/auth.php';

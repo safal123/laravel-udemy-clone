@@ -25,6 +25,7 @@ export interface Course {
   updated_at: string;
   category_id: string;
   image_url: string;
+  chapters: Chapter[];
 }
 
 export interface Chapter {
