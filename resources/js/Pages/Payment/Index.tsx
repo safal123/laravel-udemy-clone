@@ -26,7 +26,7 @@ const PaymentIndex = ({ auth }: PageProps) => {
       <Toaster
         position={'top-right'}
       />
-      <div className={'max-w-2xl mx-auto p-6 bg-gray-100 my-4 rounded-md'}>
+      <div className={'max-w-2xl mx-auto p-6 bg-gray-100 m-4 rounded-md'}>
         <Elements stripe={stripePromise} options={options}>
           <CheckoutForm
             course={course}

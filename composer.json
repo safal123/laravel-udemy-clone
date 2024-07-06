@@ -12,6 +12,8 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "spatie/laravel-stripe-webhooks": "^3.8",
+        "spatie/laravel-webhook-client": "^3.4",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

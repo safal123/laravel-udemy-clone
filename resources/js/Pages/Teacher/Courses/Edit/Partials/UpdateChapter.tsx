@@ -12,7 +12,7 @@ const UpdateChapter = ({chapter}: UpdateChapterProps) => {
   const [show, setShow] = React.useState(false);
   return (
     <div>
-      <Edit className={'w-4 h-4 cursor-pointer text-blue-500'} onClick={() => setShow(true)}/>
+      <Edit className={'w-6 h-6 cursor-pointer text-blue-500'} onClick={() => setShow(true)}/>
       <Modal show={show} onClose={() => setShow(false)}>
         <ChapterForm
           setShow={setShow}

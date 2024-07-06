@@ -38,6 +38,7 @@ export interface Chapter {
   created_at: string;
   updated_at: string;
   is_published: boolean;
+  is_free: boolean;
 }
 
 export type PaginatedData<T> = {
@@ -71,6 +72,7 @@ export type PageProps<
 > = T & {
   auth: {
     user: User;
+    courses: Course[];
   };
   flash: {
     success: string | null;

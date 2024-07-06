@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Illuminate\Foundation\Application;
 
 class HomePageController extends Controller
 {
@@ -16,7 +15,11 @@ class HomePageController extends Controller
         $courses = Course::query()
             ->where('is_published', true)
             ->orderBy('created_at', 'desc')
-            ->with('user')
+            ->with('author')
+            // check if the chapters is present
+            ->whereHas('chapters', function ($query) {
+                $query->where('is_published', true);
+            })
             ->paginate(3);
 
         return Inertia::render('Welcome', [

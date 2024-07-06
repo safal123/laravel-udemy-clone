@@ -56,6 +56,15 @@ class ChapterController extends Controller
         ]);
     }
 
+    public function toggleFree(Course $course, Chapter $chapter)
+    {
+        $chapter->update(['is_free' => !$chapter->is_free]);
+
+        return response()->json([
+            'message' => 'Chapter free status updated successfully.',
+        ]);
+    }
+
     public function destroy(Course $course, Chapter $chapter)
     {
         $chapter->delete();

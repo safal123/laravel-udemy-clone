@@ -13,7 +13,7 @@ const AddChapter = ({course}: AddNewChapterProps) => {
   return (
     <div>
       <Button
-        className="btn-indigo"
+        className="bg-gradient border border-green-500"
         onClick={() => setShow(true)}
       >
         {'Add New Chapter'}

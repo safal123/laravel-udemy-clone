@@ -29,7 +29,7 @@ const DeleteChapter = ({ chapter }: DeleteChapterProps) => {
     <div>
       <Trash2
         onClick={() => setShow(true)}
-        className={'w-4 h-4 cursor-pointer text-red-600'}
+        className={'w-6 h-6 cursor-pointer text-red-600'}
       />
       <Modal show={show} onClose={() => setShow(false)}>
         <form onSubmit={handleSubmit}>

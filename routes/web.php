@@ -6,6 +6,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\S3Controller;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Teacher\CourseController;
 use App\Http\Controllers\Teacher\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,8 @@ Route::get('/', [HomePageController::class, 'index'])
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::stripeWebhooks('stripe/webhook');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -68,6 +71,8 @@ Route::middleware('auth')->group(function () {
             ->name('teachers.courses.chapters.video');
         Route::put('/{chapter}/toggle-publish', [ChapterController::class, 'togglePublish'])
             ->name('teachers.courses.chapters.toggle-publish');
+        Route::put('/{chapter}/toggle-is-free', [ChapterController::class, 'toggleFree'])
+            ->name('teachers.courses.chapters.toggle-is-free');
     });
 
     /*

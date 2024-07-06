@@ -19,6 +19,7 @@ class CourseResource extends JsonResource
         if ($this->image_storage_id) {
             $image_url = $s3->temporaryUrl('courses/images/' . $this->image_storage_id, now()->addMinutes(360));
         }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -31,6 +32,7 @@ class CourseResource extends JsonResource
             'image_url' => $image_url ?? null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'author' => $this->whenLoaded('author'),
             'chapters' => $this->whenLoaded('chapters'),
         ];
     }

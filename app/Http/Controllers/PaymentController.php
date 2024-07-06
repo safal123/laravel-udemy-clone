@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,7 +19,13 @@ class PaymentController extends Controller
                 ->firstOrFail()
                 ->load('chapters');
             $paymentIntent = request()->user()->pay(
-                $course->price * 100
+                $course->price * 100,
+                [
+                    'metadata' => [
+                        'course_id' => $course->id,
+                        'user_id' => request()->user()->id,
+                    ],
+                ]
             );
             $options = [
                 'course' => new CourseResource($course),

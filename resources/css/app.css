@@ -78,3 +78,11 @@
 .btn-indigo {
     @apply px-6 py-3 rounded bg-indigo-700 text-white text-sm font-bold whitespace-nowrap hover:bg-orange-500 focus:bg-orange-500;
 }
+
+.bg-gradient {
+    @apply bg-gradient-to-r from-emerald-900 via-slate-900 to-rose-900 hover:from-rose-900 hover:via-slate-900 hover:to-emerald-900;
+}
+
+.text-gradient {
+    @apply bg-gradient-to-r from-emerald-900 via-slate-900 bg-clip-text
+}

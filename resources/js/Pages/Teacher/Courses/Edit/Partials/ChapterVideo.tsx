@@ -84,7 +84,7 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
     <div>
       <Video
         onClick={() => setShow(true)}
-        className={'w-4 h-4 cursor-pointer text-green-600'}
+        className={'w-6 h-6 cursor-pointer text-green-600'}
       />
       <Modal show={show} onClose={() => setShow(false)}>
         <div className={'w-full h-full'}>
