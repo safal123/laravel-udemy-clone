@@ -3,6 +3,7 @@ import Modal from "@/Components/Modal";
 import React from "react";
 import {Course} from "@/types";
 import ChapterForm from "@/Pages/Teacher/Courses/Edit/Partials/ChapterForm";
+import {PlusIcon} from "lucide-react";
 
 type AddNewChapterProps = {
   course: Course,
@@ -16,6 +17,7 @@ const AddChapter = ({course}: AddNewChapterProps) => {
         className="bg-gradient border border-green-500"
         onClick={() => setShow(true)}
       >
+        <PlusIcon size={20} className={'mr-2'}/>
         {'Add New Chapter'}
       </Button>
       <Modal show={show} onClose={() => setShow(false)}>
