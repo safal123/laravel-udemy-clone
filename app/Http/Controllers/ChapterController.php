@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Chapter;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ChapterController extends Controller
 {
@@ -72,5 +73,13 @@ class ChapterController extends Controller
         return redirect()
             ->route('teachers.courses.edit', $course)
             ->with('success', 'Chapter deleted successfully.');
+    }
+
+    public function show(Course $course, Chapter $chapter)
+    {
+        return Inertia::render('Course/Show/Index', [
+            'course' => $course,
+            'chapter' => $chapter,
+        ]);
     }
 }
