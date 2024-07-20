@@ -76,6 +76,14 @@ Route::middleware('auth')->group(function () {
     });
 
     /*
+     * Student Course Chapters Routes
+     */
+
+    Route::get('/{course}/{chapter}', [ChapterController::class, 'show'])
+        ->name('courses.chapters.show');
+
+
+    /*
      * S3 Routes
      */
     Route::group(['prefix' => 's3'], function () {
