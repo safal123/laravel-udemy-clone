@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Config } from 'ziggy-js';
 
 export interface User {
@@ -9,6 +10,7 @@ export interface User {
   owner: string;
   photo: string;
   deleted_at: string;
+  email_verified_at: string;
   courses: Course[];
   purchased_courses: Course[];
 }
