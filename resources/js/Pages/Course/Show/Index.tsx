@@ -5,7 +5,6 @@ import {Course, PageProps} from "@/types";
 import ReactPlayer from "react-player";
 import {toast, Toaster} from "sonner";
 import { router } from '@inertiajs/react'
-import { Inertia } from "@inertiajs/inertia";
 import {Loader} from "lucide-react";
 
 const Index = ({auth}: PageProps) => {
@@ -24,8 +23,8 @@ const Index = ({auth}: PageProps) => {
       if (!hasPurchased) {
         setTimeout(() => {
             const link = route('payment.show', {
-              course: course.id,
-              price: course.price
+              course: course.id.toString(),
+              price: course.price.toString()
             })
           return router.replace(link)
         }, 1000); // Delay navigation to allow spinner visibility
