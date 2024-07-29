@@ -5,7 +5,7 @@ import TextInput from "@/Components/shared/form/TextInput";
 import TextareaInput from "@/Components/shared/form/TextareaInput";
 import {Button} from "@/Components/ui/button";
 import {cn} from "@/lib/utils";
-import {Loader2} from "lucide-react";
+import {Loader, Loader2} from "lucide-react";
 import {Chapter, Course} from "@/types";
 
 type ChapterFormProps = {
@@ -44,12 +44,19 @@ const ChapterForm = ({course, setShow, chapter, action = 'create'}: ChapterFormP
     }
   }
   return (
-    <form onSubmit={handleSubmit} className="p-6 max-h-[calc(100vh-4rem)] w-full overflow-y-auto sticky">
-      <h2 className="text-2xl mb-2 font-medium text-gray-900 dark:text-gray-100">
+    <form onSubmit={handleSubmit} className="px-8 py-12 max-h-[calc(100vh-4rem)] overflow-y-auto sticky">
+      <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100">
         {action === 'update' ? 'Update Chapter' : 'Add New Chapter'}
       </h2>
+      <p className="mt-6 text-gray-600 dark:text-gray-400 bg-yellow-100 px-6 py-4 text-sm rounded-md">
+        {action === 'update' ? 'Update the chapter details.' : 'Add a new chapter to the course.'}
+        You can add videos to the chapter after creating it. You can also update the chapter details later.
+      </p>
 
-      <div className={'w-full flex flex-col gap-4'}>
+      {Object.keys(errors).length > 0 && <p className={cn('text-red-500 text-sm mt-6 bg-red-100 px-6 py-4 rounded-md', errors && 'block')}>
+        Ooops! There are errors in the form. Please fix them and try again.
+      </p>}
+      <div className={'w-full flex flex-col gap-6 mt-6'}>
         <FieldGroup label="Chapter Title" name="title" error={errors.title}>
           <TextInput
             name="name"
@@ -67,16 +74,19 @@ const ChapterForm = ({course, setShow, chapter, action = 'create'}: ChapterFormP
           />
         </FieldGroup>
       </div>
-      <div className={'mt-4 flex gap-4'}>
+      <div className={'mt-10 flex gap-4'}>
         <Button
-          className={cn('btn-indigo', processing && 'cursor-not-allowed opacity-50')}
+          className={cn('bg-gradient', processing && 'cursor-not-allowed opacity-50')}
           type="submit"
           disabled={processing}
         >
-          {processing && <Loader2 className="animate-spin inline-block mr-2"/>}
+          {processing && <Loader className="w-4 h-4 animate-spin inline-block mr-2"/>}
           {action === 'update' ? 'Update Chapter' : 'Add Chapter'}
         </Button>
-        <Button type={"button"} onClick={() => setShow(false)}>
+        <Button type={"button"} onClick={() => {
+          // reset()
+          setShow(false)
+        }}>
           Cancel
         </Button>
       </div>

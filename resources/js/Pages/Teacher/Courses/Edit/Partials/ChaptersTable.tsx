@@ -8,6 +8,7 @@ import DeleteChapter from "@/Pages/Teacher/Courses/Edit/Partials/DeleteChapter";
 import ChapterVideo from "@/Pages/Teacher/Courses/Edit/Partials/ChapterVideo";
 import ChapterTogglePublish from "@/Pages/Teacher/Courses/Edit/Partials/ChapterTogglePublish";
 import ToggleChapterFree from "@/Pages/Teacher/Courses/Edit/Partials/ToggleChapterFree";
+import {CustomTooltip} from "@/Components/shared/tooltip/Index";
 
 type ChaptersTableProps = {
   chapters: Chapter[]

@@ -10,6 +10,7 @@ use App\Http\Resources\CourseResource;
 use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use function Termwind\render;
@@ -50,10 +51,10 @@ class CourseController extends Controller
 
     public function edit(Course $course): Response
     {
+        $course = Course::findOrfail($course->id);
         return Inertia::render('Teacher/Courses/Edit/Index', [
-            'course' => new CourseResource($course),
+            'course' => new CourseResource($course->load('chapters')),
             'categories' => Category::orderBy('name')->get(),
-            'chapters' => $course->chapters()->orderBy('order')->get(),
         ]);
     }
 

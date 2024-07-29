@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class Course extends Model
 {
     use HasFactory, HasUuids, HasS3Upload;
+
 
     protected $fillable = [
         'title',
@@ -48,8 +48,7 @@ class Course extends Model
         return $this->hasMany(Chapter::class);
     }
 
-    // set image_storage_id as the id to the course after course is created
-    public static function boot(): void
+    public static function boot()
     {
         parent::boot();
         static::created(function ($course) {
@@ -57,7 +56,16 @@ class Course extends Model
                 'image_storage_id' => $course->id,
             ]);
             // Once the course is created, upload the default image
-            $course->uploadDefaultImage('courses/images', $course->id, 'course');
+            $file = public_path("images/default-course-image.jpg");
+            $course->uploadToS3('courses/images', $file, $course->id);
         });
+    }
+
+    public function getImageUrlAttribute(): string
+    {
+        if (empty($this->image_storage_id)) {
+            return '';
+        }
+        return $this->getObjectUrl('courses/images/');
     }
 }

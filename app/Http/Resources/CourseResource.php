@@ -15,11 +15,6 @@ class CourseResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $s3 = Storage::disk('s3');
-        if ($this->image_storage_id) {
-            $image_url = $s3->temporaryUrl('courses/images/' . $this->image_storage_id, now()->addMinutes(360));
-        }
-
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -29,11 +24,16 @@ class CourseResource extends JsonResource
             'image_storage_id' => $this->image_storage_id,
             'is_published' => $this->is_published,
             'price' => $this->price,
-            'image_url' => $image_url ?? null,
+            'image_url' => $this->image_url ?? '',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'author' => $this->whenLoaded('author'),
-            'chapters' => $this->whenLoaded('chapters'),
+            'chapters' => ChapterResource::collection($this->whenLoaded('chapters')),
+            'chapters_count' => $this->chapters_count,
+            'duration' => $this->duration ?? 10,
+            $this->mergeWhen($this->relationLoaded('users'), [
+                'users' => UserResource::collection($this->users),
+            ]),
         ];
     }
 }

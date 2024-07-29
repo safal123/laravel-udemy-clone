@@ -49,10 +49,21 @@ class User extends Authenticatable
         ];
     }
 
-    public function courses(): BelongsToMany
+    public function courses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'user_id', 'id');
+    }
+
+    public function purchasedCourses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class)
             ->using(CourseUser::class)
             ->withPivot('id', 'created_at', 'user_id', 'course_id');
     }
+
+    public static function boot()
+    {
+        parent::boot();
+    }
+
 }

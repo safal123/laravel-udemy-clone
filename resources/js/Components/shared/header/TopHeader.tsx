@@ -7,7 +7,7 @@ import MainMenu from "@/Components/shared/menu/MainMenu";
 export default () => {
   const [menuOpened, setMenuOpened] = useState(false);
   return (
-    <div className="flex items-center justify-between px-6 py-4 bg-gray-800 md:flex-shrink-0 md:w-56 md:justify-center">
+    <div className="flex items-center justify-between px-6 py-4 md:flex-shrink-0 md:w-56 md:justify-center">
       <Link className="mt-1" href="/">
         <ApplicationLogo className="text-white fill-current" width="120" height="28" />
       </Link>

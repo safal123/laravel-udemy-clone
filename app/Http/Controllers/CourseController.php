@@ -12,9 +12,13 @@ class CourseController extends Controller
 {
     public function show(Course $course): Response
     {
+        $course = Course::query()
+            ->where('id', $course->id)
+            ->with('author', 'chapters')
+            ->withCount('chapters')
+            ->firstOrFail();
         return Inertia::render('Course/Show/Index', [
             'course' => new CourseResource($course),
-            'chapters' => $course->chapters()->orderBy('order')->get(),
         ]);
     }
 }

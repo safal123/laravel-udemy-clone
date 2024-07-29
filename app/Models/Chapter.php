@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasS3Upload;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Chapter extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, HasS3Upload;
 
     protected $fillable = [
         'course_id',
@@ -38,5 +39,12 @@ class Chapter extends Model
         static::creating(function ($chapter) {
             $chapter->order = $chapter->course->chapters()->count() + 1;
         });
+    }
+
+    public function getVideoUrlAttribute(): string
+    {
+        return $this->video_storage_id
+            ? $this->getObjectUrl('courses/chapters/videos/')
+            : '';
     }
 }

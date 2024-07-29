@@ -3,6 +3,7 @@ import {Loader, UploadIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {Button} from "@/Components/ui/button";
 import ReactPlayer from "react-player";
+import {CustomTooltip} from "@/Components/shared/tooltip/Index";
 
 interface TextInputProps extends ComponentProps<'input'> {
   error?: string;
@@ -28,7 +29,7 @@ export default function FileInput
   const fileRef = React.useRef<HTMLInputElement>(null);
   return (
     <div>
-      <div className={cn('relative min-h-[400px] bg-gray-100 rounded-md',
+      <div className={cn('relative bg-gray-100 rounded-md',
         error && 'border-red-400 focus:border-red-400 focus:ring-red-400',
         loading && 'opacity-50'
       )}>
@@ -47,23 +48,22 @@ export default function FileInput
                   height={'100%'}
                   className={'rounded-md aspect-video w-full'}
                 /> :
-                <div className={'flex items-center justify-center h-[400px] border-2 border-dashed'}>
-                  <span className={'text-gray-400 text-lg'}>
-                    No video selected
-                  </span>
+                <div
+                  className={'flex bg-gray-200 items-center justify-center h-[400px] border-red-900 border-2 border-dashed p-2 rounded-md'}/>
+              }
+              {previewUrl &&
+                <div className={'p-4'}>
+                  <Button
+                    type={'button'}
+                    disabled={loading || !previewUrl}
+                    onClick={uploadToS3}
+                    className={cn(!previewUrl && 'hidden')}
+                  >
+                    {loading && <Loader className={'animate-spin w-6 h-6 mr-2'}/>}
+                    Upload
+                  </Button>
                 </div>
               }
-              <div className={'p-4'}>
-                <Button
-                  type={'button'}
-                  disabled={loading || !previewUrl}
-                  onClick={uploadToS3}
-                  className={cn(!previewUrl && 'hidden')}
-                >
-                  {loading && <Loader className={'animate-spin w-6 h-6 mr-2'}/>}
-                  Upload
-                </Button>
-              </div>
             </div>
             :
             <div className={'w-full h-[400px] bg-gray-100'}>
@@ -76,11 +76,12 @@ export default function FileInput
                   />
                   <Button
                     type={'button'}
+                    size={'sm'}
                     disabled={loading || !previewUrl}
                     onClick={uploadToS3}
                     className={cn('absolute bottom-2 right-2 z-10', !previewUrl && 'hidden')}
                   >
-                    {loading && <Loader className={'animate-spin w-6 h-6 mr-2'}/>}
+                    {loading && <Loader className={'animate-spin w-4 h-4 mr-2'}/>}
                     Upload
                   </Button>
                 </>

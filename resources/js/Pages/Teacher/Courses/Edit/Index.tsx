@@ -64,18 +64,18 @@ const Edit = () => {
     <div>
       <Head title={course.title}/>
       <div className="flex items-center px-8 py-4 bg-white border-b border-gray-200 mb-2 rounded-md">
-        <h1 className="text-xl lg:text-3xl font-bold">
+        <h1 className="text-xl lg:text-xl font-bold">
           <Link
             href={route('teachers.courses')}
-            className="text-indigo-600 hover:text-indigo-700"
+            className="text-gray-600 hover:text-gray-700 underline"
           >
             Courses
           </Link>
-          <span className="font-medium text-indigo-600"> /</span> {data.title}
+          <span className="font-medium text-gray-600"> /</span> {data.title}
         </h1>
         <div className="ml-auto flex items-center">
           <Button
-            variant={course.is_published ? 'destructive' : 'default'}
+            variant={course.is_published ? 'default' : 'outline'}
             onClick={handleChapterPublish}
           >
             {isPublishing && <Loader className={'animate-spin mr-2'} size={20}/>}
@@ -157,8 +157,7 @@ const Edit = () => {
             <div className={'px-6 py-4 min-h-[400px]'}>
               <UploadCourseImage
                 errors={errors}
-                courseId={course.id}
-                imageStorageId={course?.image_storage_id}
+                course={course}
               />
             </div>
           </div>
@@ -169,7 +168,7 @@ const Edit = () => {
           <h2 className={'text-xl font-semibold text-gray-800'}>Chapters</h2>
           <AddChapter course={course}/>
         </div>
-        <ChaptersTable chapters={chapters}/>
+        <ChaptersTable chapters={course.chapters}/>
       </div>
     </div>
   )

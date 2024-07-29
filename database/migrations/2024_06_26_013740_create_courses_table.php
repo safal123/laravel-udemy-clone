@@ -21,13 +21,12 @@ return new class extends Migration
             $table->decimal('price');
             $table->boolean('is_published')->default(false);
             $table->foreignUuid('user_id')
-                ->nullable()
                 ->constrained('users')
-                ->nullOnDelete();
+                ->cascadeOnDelete();
             $table->foreignUuid('category_id')
                 ->nullable()
                 ->constrained('categories')
-                ->nullOnDelete();
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }

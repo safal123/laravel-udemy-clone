@@ -22,7 +22,7 @@ export default function TeacherDashboardLayout({title, children}: MainLayoutProp
             <BottomHeader/>
           </div>
           <div className="flex flex-grow overflow-hidden">
-            <MainMenu className="flex-shrink-0 hidden w-56 overflow-y-auto bg-gray-700 md:block"/>
+            <MainMenu className="flex-shrink-0 hidden w-56 overflow-y-auto md:block"/>
             <div
               className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-12 bg-gray-50"
               scroll-region="true"

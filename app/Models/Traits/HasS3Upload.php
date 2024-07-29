@@ -2,21 +2,30 @@
 
 namespace App\Models\Traits;
 
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 
 trait HasS3Upload
 {
-    public function uploadDefaultImage(string $path, $fileName, $modelName)
+    private Filesystem $s3;
+
+    public function initializeHasS3Upload(): void
     {
-        $defaultImage = public_path("images/default-$modelName-image.jpg");
-        $newFileName = $fileName;
-        $this->uploadToS3($path, $defaultImage, $newFileName);
+        $this->s3 = Storage::disk('s3');
     }
 
-    private function uploadToS3(string $path, $file, $fileName): string
+
+    public function getObjectUrl($path, $addMinutes = 3600): string
     {
-        $s3 = Storage::disk('s3');
-        $s3->putFileAs($path, $file, $fileName);
-        return $fileName;
+        $this->initializeHasS3Upload();
+        return $this
+            ->s3
+            ->temporaryUrl($path . $this->id, now()->addMinutes($addMinutes)) ?? '';
+    }
+
+    public function uploadToS3(string $path, $file, $fileName): void
+    {
+        $this->initializeHasS3Upload();
+        $this->s3->putFileAs($path, $file, $fileName);
     }
 }

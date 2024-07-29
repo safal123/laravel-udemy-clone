@@ -10,6 +10,7 @@ export interface User {
   photo: string;
   deleted_at: string;
   courses: Course[];
+  purchased_courses: Course[];
 }
 
 
@@ -26,6 +27,9 @@ export interface Course {
   category_id: string;
   image_url: string;
   chapters: Chapter[];
+  chapters_count: number;
+  duration: number;
+  author: User;
 }
 
 export interface Chapter {
@@ -39,6 +43,7 @@ export interface Chapter {
   updated_at: string;
   is_published: boolean;
   is_free: boolean;
+  video_url: string;
 }
 
 export type PaginatedData<T> = {

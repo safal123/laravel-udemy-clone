@@ -24,10 +24,12 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@inertiajs/inertia": "^0.11.1",
         "@radix-ui/react-avatar": "^1.1.0",
         "@radix-ui/react-label": "^2.1.0",
         "@radix-ui/react-slot": "^1.1.0",
         "@radix-ui/react-switch": "^1.1.0",
+        "@radix-ui/react-tooltip": "^1.1.2",
         "@stripe/react-stripe-js": "^2.7.2",
         "@stripe/stripe-js": "^4.0.0",
         "class-variance-authority": "^0.7.0",

@@ -12,17 +12,15 @@ export default function MainMenuItem({ icon, link, text }: MainMenuItemProps) {
   const isActive = route().current(link + '*');
 
   const iconClasses = classNames({
-    'text-white': isActive,
-    'text-indigo-400 group-hover:text-white': !isActive
+    'text-gray-900 group-hover:text-gray-700': !isActive
   });
 
   const textClasses = classNames({
-    'text-white': isActive,
-    'text-indigo-200 group-hover:text-white': !isActive
+    'text-gray-900 group-hover:text-gray-700': !isActive
   });
 
   return (
-    <div className={cn('mb-2', isActive && 'bg-black')}>
+    <div className={cn('mb-2', isActive && 'bg-gray-100 rounded-md')}>
       <Link
         href={route(link)}
         className="flex items-center group py-3 space-x-3 px-2"

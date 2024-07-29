@@ -19,7 +19,7 @@ const ChapterTogglePublish = ({ chapter }: ChapterTogglePublishProps) => {
         chapter: chapter.id
       })).then(() => {
         router.reload({
-          only: ['chapters']
+          only: ['course']
         })
         toast.error(`Chapter ${chapter.is_published ? 'unpublished' : 'published'} successfully.`);
       })

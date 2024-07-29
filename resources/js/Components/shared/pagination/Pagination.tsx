@@ -52,6 +52,11 @@ function PaginationItem({ active, label, url }: PaginationItem) {
    * In this case, `label` from the API is a string, so it's safe to use it.
    * It will be either `&laquo; Previous` or `Next &raquo;`
    */
+  // convert the url to https if it is ngrok
+  // TODO: need to find a better way to handle this
+  if (url?.includes('ngrok')) {
+    url = url.replace('http', 'https');
+  }
   return (
     <Link className={className} href={url as string} preserveScroll>
       <span dangerouslySetInnerHTML={{ __html: label }}></span>

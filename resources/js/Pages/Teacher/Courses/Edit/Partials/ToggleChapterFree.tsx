@@ -19,7 +19,7 @@ const ToggleChapterIsFree = ({ chapter }: ToggleChapterIsFreeProps) => {
         chapter: chapter.id
       })).then(() => {
         router.reload({
-          only: ['chapters']
+          only: ['course']
         })
         toast.error(`Chapter ${chapter.title} is now ${chapter.is_free ? 'paid' : 'free'}`);
       })
@@ -37,7 +37,7 @@ const ToggleChapterIsFree = ({ chapter }: ToggleChapterIsFreeProps) => {
         id="toggle-is-free"
       />
       <Label htmlFor="toggle-is-free">
-        {chapter.is_free ? 'Make Paid' : 'Make Free'}
+        {chapter.is_free ? 'Free' : 'Free'}
       </Label>
     </div>
   )

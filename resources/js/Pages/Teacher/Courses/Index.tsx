@@ -21,7 +21,6 @@ const Index = () => {
 
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-bold">Organizations</h1>
       <div className="flex items-center justify-between mb-6">
         {/*<FilterBar />*/}
         <Link
@@ -39,16 +38,16 @@ const Index = () => {
             label: 'Title',
             name: 'title',
             renderCell: (row: any) => (
-              <div className={'text-gray-800'}>
-                {truncate(row.title, {length: 20})}
-              </div>
+              <Link href={route('teachers.courses.edit', row.id)} className="text-blue-500 hover:underline">
+                {row.title}
+              </Link>
             )
           },
           {
             label: 'Price',
             name: 'price',
             renderCell: (row: any) => (
-              <div className={`px-2 py-1 text-lg font-semibold text-gray-700 rounded-full`}>
+              <div className={`px-2 py-1 text-medium font-semibold text-gray-700 rounded-full`}>
                 ${row.price}
               </div>
             )
