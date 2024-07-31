@@ -1,5 +1,4 @@
 import {Link} from '@inertiajs/react';
-// @ts-ignore
 import get from 'lodash/get';
 import {ChevronRight} from 'lucide-react';
 

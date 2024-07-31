@@ -1,5 +1,3 @@
-// @ts-ignore
-import {truncate} from "lodash";
 import Table from "@/Components/shared/table/Table";
 import React from "react";
 import UpdateChapter from "@/Pages/Teacher/Courses/Edit/Partials/UpdateChapter";
@@ -8,7 +6,7 @@ import DeleteChapter from "@/Pages/Teacher/Courses/Edit/Partials/DeleteChapter";
 import ChapterVideo from "@/Pages/Teacher/Courses/Edit/Partials/ChapterVideo";
 import ChapterTogglePublish from "@/Pages/Teacher/Courses/Edit/Partials/ChapterTogglePublish";
 import ToggleChapterFree from "@/Pages/Teacher/Courses/Edit/Partials/ToggleChapterFree";
-import {CustomTooltip} from "@/Components/shared/tooltip/Index";
+import {truncate} from "lodash";
 
 type ChaptersTableProps = {
   chapters: Chapter[]

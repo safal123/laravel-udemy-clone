@@ -4,15 +4,11 @@ import {Link, usePage} from "@inertiajs/react";
 import {Button} from "@/Components/ui/button";
 import {Course, PaginatedData} from "@/types";
 import Pagination from "@/Components/shared/pagination/Pagination";
-// @ts-ignore
-import {truncate} from 'lodash'
 
 const Index = () => {
   const {courses} = usePage<{
     courses: PaginatedData<Course>;
   }>().props;
-
-  console.log(courses);
 
   const {
     data,
