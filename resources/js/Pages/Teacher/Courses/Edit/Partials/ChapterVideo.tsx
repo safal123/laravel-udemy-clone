@@ -1,6 +1,6 @@
 import {Video} from "lucide-react";
 import {Chapter} from "@/types";
-import React, {useEffect} from "react";
+import React from "react";
 import Modal from "@/Components/Modal";
 import axios from "axios";
 import FileInput from "@/Components/shared/form/FileInput";
@@ -13,33 +13,8 @@ type ChapterVideoProps = {
 const ChapterVideo = ({chapter}: ChapterVideoProps) => {
   const [show, setShow] = React.useState(false);
   const [video, setVideo] = React.useState<File | null>(null);
-  const [videoUrl, setVideoUrl] = React.useState<string>('');
   const [previewUrl, setPreviewUrl] = React.useState<string>('');
   const [isUploading, setIsUploading] = React.useState<boolean>(false);
-
-  const getObjectFromS3 = async () => {
-    try {
-      if (!chapter.video_storage_id) {
-        return
-      }
-      const objectUrl = await axios.post('/s3/get-object-url', {
-        fileName: chapter.id,
-        path: 'courses/chapters/videos'
-      })
-      if (!objectUrl) {
-        return
-      }
-      setVideoUrl(objectUrl.data.url)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  useEffect(() => {
-    if (chapter.video_storage_id) {
-      getObjectFromS3()
-    }
-  }, [])
 
   const handleVideoUpload = async () => {
     console.log('uploading video');
@@ -91,7 +66,7 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
           <FileInput
             accept={'video/*'}
             previewUrl={previewUrl}
-            objectUrl={videoUrl}
+            objectUrl={chapter.video_url}
             loading={isUploading}
             uploadToS3={handleVideoUpload}
             onChange={handleVideoFileChange}
