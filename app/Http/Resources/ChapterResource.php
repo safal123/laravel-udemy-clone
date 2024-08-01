@@ -23,8 +23,7 @@ class ChapterResource extends JsonResource
             'video_storage_id' => $this->video_storage_id,
             'is_published' => $this->is_published,
             'duration' => $this->duration,
-            // TODO: Change this to use the storage disk
-            'video_url' => '',
+            'video_url' => $this->video_url ?? '',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'course' => $this->whenLoaded('course'),

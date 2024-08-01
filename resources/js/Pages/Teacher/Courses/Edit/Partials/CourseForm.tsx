@@ -5,16 +5,16 @@ import TextareaInput from "@/Components/shared/form/TextareaInput";
 import LoadingButton from "@/Components/shared/button/LoadingButton";
 import UploadCourseImage from "@/Pages/Teacher/Courses/Edit/Partials/UploadCourseImage";
 import React, {useEffect} from "react";
-import {useForm} from "@inertiajs/react";
+import {useForm, usePage} from "@inertiajs/react";
 import {Course} from "@/types";
 import slugify from "slugify";
 
 type CourseFormProps = {
   course: Course;
-  categories: any;
 }
 
-const CourseForm = ({ course, categories }: CourseFormProps) => {
+const CourseForm = ({ course }: CourseFormProps) => {
+  const { categories } = usePage().props as any;
   const {data, setData, errors, put, processing} = useForm({
     'title': course.title || '',
     'description': course.description || '',

@@ -51,10 +51,8 @@ class CourseController extends Controller
 
     public function edit(Course $course): Response
     {
-        $course = Course::findOrfail($course->id);
         return Inertia::render('Teacher/Courses/Edit/Index', [
             'course' => new CourseResource($course->load('chapters')),
-            'categories' => Category::orderBy('name')->get(),
         ]);
     }
 

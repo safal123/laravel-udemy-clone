@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\UserResource;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -38,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                     new UserResource($request->user())
                     : null,
             ],
+            'categories' => fn () => CategoryResource::collection(Category::all()),
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
