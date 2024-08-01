@@ -61,7 +61,7 @@ const Edit = () => {
         </div>
       </div>
       <div className="overflow-hidden bg-white rounded shadow">
-        <CourseForm course={course} categories={categories}/>
+        <CourseForm course={course} />
       </div>
       <div className={'mt-6'}>
         <div className={'flex items-center justify-between py-4'}>
