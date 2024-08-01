@@ -24,7 +24,8 @@ class CourseResource extends JsonResource
             'image_storage_id' => $this->image_storage_id,
             'is_published' => $this->is_published,
             'price' => $this->price,
-            'image_url' => $this->image_url ?? '',
+            // TODO: Change this to use the storage disk
+            'image_url' => '',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'author' => $this->whenLoaded('author'),

@@ -13,8 +13,7 @@ interface MainLayoutProps {
 
 export default function TeacherDashboardLayout({title, children}: MainLayoutProps) {
   return (
-    <>
-      <Head title={'Dashboard'}/>
+    <div>
       <div className="flex flex-col">
         <div className="flex flex-col h-screen">
           <div className="md:flex">
@@ -31,11 +30,11 @@ export default function TeacherDashboardLayout({title, children}: MainLayoutProp
               <Toaster
                 position={'top-right'}
               />
-              {children}
+              <main>{children}</main>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
