@@ -6,7 +6,6 @@ import DeleteChapter from "@/Pages/Teacher/Courses/Edit/Partials/DeleteChapter";
 import ChapterVideo from "@/Pages/Teacher/Courses/Edit/Partials/ChapterVideo";
 import ChapterTogglePublish from "@/Pages/Teacher/Courses/Edit/Partials/ChapterTogglePublish";
 import ToggleChapterFree from "@/Pages/Teacher/Courses/Edit/Partials/ToggleChapterFree";
-import {truncate} from "lodash";
 
 type ChaptersTableProps = {
   chapters: Chapter[]
@@ -21,7 +20,7 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
           name: 'title',
           renderCell: (row: any) => (
             <div className={'text-gray-800'}>
-              {truncate(row.title, {length: 20})}
+              {row.title}
             </div>
           )
         },
