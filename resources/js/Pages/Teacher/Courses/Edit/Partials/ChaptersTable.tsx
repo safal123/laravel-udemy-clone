@@ -47,17 +47,16 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
           colSpan: 2,
           renderCell: (row: any) => (
             <div className={'flex items-center space-x-4'}>
-              <UpdateChapter chapter={row}/>
-              <DeleteChapter chapter={row}/>
+              {/*<UpdateChapter chapter={row}/>*/}
+              {/*<DeleteChapter chapter={row}/>*/}
               {/*<ChapterVideo chapter={row}/>*/}
-              <ChapterTogglePublish chapter={row}/>
-              <ToggleChapterFree chapter={row}/>
+              {/*<ChapterTogglePublish chapter={row}/>*/}
+              {/*<ToggleChapterFree chapter={row}/>*/}
             </div>
           )
         }
       ]}
       rows={chapters}
-      getRowDetailsUrl={(row: any) => route('teachers.courses.edit', row.id)}
     />
   )
 }
