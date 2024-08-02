@@ -12,7 +12,7 @@ import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
 
 const Edit = () => {
   const {course} = usePage<{ course: Course }>().props
-  const chapters = course.chapters
+  const chapters = course?.chapters
   const [isPublishing, setIsPublishing] = useState<boolean>(false)
 
   const handleCoursePublish = async () => {
@@ -68,7 +68,10 @@ const Edit = () => {
           <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
           <AddChapter course={course}/>
         </div>
-        <ChaptersTable chapters={chapters}/>
+        {/*<ChaptersTable chapters={chapters}/>*/}
+        <pre>
+          {JSON.stringify(chapters, null, 2)}
+        </pre>
       </div>
     </div>
   )
