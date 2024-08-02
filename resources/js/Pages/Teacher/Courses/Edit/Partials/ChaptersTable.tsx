@@ -49,7 +49,7 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
             <div className={'flex items-center space-x-4'}>
               <UpdateChapter chapter={row}/>
               <DeleteChapter chapter={row}/>
-              <ChapterVideo chapter={row}/>
+              {/*<ChapterVideo chapter={row}/>*/}
               <ChapterTogglePublish chapter={row}/>
               <ToggleChapterFree chapter={row}/>
             </div>

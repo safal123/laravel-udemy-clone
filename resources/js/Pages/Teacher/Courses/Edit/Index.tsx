@@ -65,7 +65,7 @@ const Edit = () => {
       <div className={'mt-6'}>
         <div className={'flex items-center justify-between py-4 mt-2 bg-white mb-2 px-8 rounded-md'}>
           <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
-          {/*<AddChapter course={course}/>*/}
+          <AddChapter course={course}/>
         </div>
         <ChaptersTable chapters={course.chapters}/>
       </div>
