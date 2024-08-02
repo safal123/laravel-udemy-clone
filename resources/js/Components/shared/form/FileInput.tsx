@@ -3,7 +3,6 @@ import {Loader, UploadIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {Button} from "@/Components/ui/button";
 import ReactPlayer from "react-player";
-import {CustomTooltip} from "@/Components/shared/tooltip/Index";
 
 interface TextInputProps extends ComponentProps<'input'> {
   error?: string;
@@ -89,7 +88,6 @@ export default function FileInput
             </div>
           }
         </div>
-
       </div>
       <input
         ref={fileRef}

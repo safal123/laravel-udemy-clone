@@ -12,7 +12,6 @@ import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
 
 const Edit = () => {
   const {course} = usePage<{ course: Course }>().props
-  const {categories} = usePage<any>().props
   const [isPublishing, setIsPublishing] = useState<boolean>(false)
 
   const handleCoursePublish = async () => {
@@ -32,7 +31,7 @@ const Edit = () => {
   }
   return (
     <div>
-      <Head title={course.title}/>
+      <Head title={'Edit Course'}/>
       <div className="flex items-center px-8 py-4 bg-white border-b border-gray-200 mb-2 rounded-md">
         <h1 className="text-xl lg:text-xl font-bold">
           <Link
@@ -64,8 +63,8 @@ const Edit = () => {
         <CourseForm course={course} />
       </div>
       <div className={'mt-6'}>
-        <div className={'flex items-center justify-between py-4'}>
-          <h2 className={'text-xl font-semibold text-gray-800'}>Chapters</h2>
+        <div className={'flex items-center justify-between py-4 mt-2 bg-white mb-2 px-8 rounded-md'}>
+          <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
           <AddChapter course={course}/>
         </div>
         <ChaptersTable chapters={course.chapters}/>

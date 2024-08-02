@@ -32,12 +32,11 @@ const UploadCourseImage =
       try {
         setUploading(true)
         const preSignedUrl = await axios.post('/s3/get-signed-url', {
-          // @ts-ignore
           fileName: course.id,
           path: 'courses/images'
         })
         if (!preSignedUrl) {
-          return
+          throw new Error('Failed to get signed url')
         }
         const response = await fetch(preSignedUrl.data.url, {
           method: 'PUT',
@@ -49,6 +48,7 @@ const UploadCourseImage =
         toast('Image uploaded successfully')
       } catch (e) {
         console.log(e)
+        toast('Failed to upload image')
       } finally {
         setUploading(false)
       }

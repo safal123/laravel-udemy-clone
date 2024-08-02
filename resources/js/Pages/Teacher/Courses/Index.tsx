@@ -1,6 +1,6 @@
 import TeacherDashboardLayout from "@/Layouts/TeacherDashboardLayout";
 import Table from "@/Components/shared/table/Table";
-import {Link, usePage} from "@inertiajs/react";
+import {Head, Link, usePage} from "@inertiajs/react";
 import {Button} from "@/Components/ui/button";
 import {Course, PaginatedData} from "@/types";
 import Pagination from "@/Components/shared/pagination/Pagination";
@@ -17,6 +17,7 @@ const Index = () => {
 
   return (
     <div>
+      <Head title="Courses"/>
       <div className="flex items-center justify-between mb-6">
         {/*<FilterBar />*/}
         <Link
