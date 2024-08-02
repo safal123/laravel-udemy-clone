@@ -68,7 +68,7 @@ const Edit = () => {
           <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
           <AddChapter course={course}/>
         </div>
-        <ChaptersTable chapters={chapters}/>
+        <ChaptersTable chapters={chapters[0]}/>
       </div>
     </div>
   )

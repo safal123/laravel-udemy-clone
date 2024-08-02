@@ -7,70 +7,32 @@ import ChapterTogglePublish from "@/Pages/Teacher/Courses/Edit/Partials/ChapterT
 import ToggleChapterFree from "@/Pages/Teacher/Courses/Edit/Partials/ToggleChapterFree";
 
 type ChaptersTableProps = {
-  chapters: Chapter[]
+  chapters: Chapter
 }
 
 const ChaptersTable = ({chapters}: ChaptersTableProps) => {
   return (
     <div>
-      {chapters.map((chapter) => (
-        <div key={chapter.id} className={'flex items-center space-x-4 mb-4'}>
-          {chapter.title}
-          <div className={'ml-auto flex items-center'}>
-            <UpdateChapter chapter={chapter}/>
-            <DeleteChapter chapter={chapter}/>
-            <ChapterVideo chapter={chapter}/>
-            <ChapterTogglePublish chapter={chapter}/>
-            <ToggleChapterFree chapter={chapter}/>
-          </div>
-        </div>
-      ))}
+      <div className={'ml-auto flex items-center'}>
+        <UpdateChapter chapter={chapters}/>
+        <DeleteChapter chapter={chapters}/>
+        <ChapterVideo chapter={chapters}/>
+        <ChapterTogglePublish chapter={chapters}/>
+        <ToggleChapterFree chapter={chapters}/>
+      </div>
+      {/*{chapters.map((chapter) => (*/}
+      {/*  <div key={chapter.id} className={'flex items-center space-x-4 mb-4'}>*/}
+      {/*    {chapter.title}*/}
+      {/*    <div className={'ml-auto flex items-center'}>*/}
+      {/*      <UpdateChapter chapter={chapter}/>*/}
+      {/*      <DeleteChapter chapter={chapter}/>*/}
+      {/*      <ChapterVideo chapter={chapter}/>*/}
+      {/*      <ChapterTogglePublish chapter={chapter}/>*/}
+      {/*      <ToggleChapterFree chapter={chapter}/>*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*))}*/}
     </div>
-
-    // <Table
-    //   columns={[
-    //     {
-    //       label: 'Title',
-    //       name: 'title',
-    //       renderCell: (row: any) => (
-    //         <div className={'text-gray-800'}>
-    //           {row.title}
-    //         </div>
-    //       )
-    //     },
-    //     {
-    //       label: 'Preview',
-    //       name: 'is_free',
-    //       renderCell: (row: any) => (
-    //         <div className={'text-gray-800'}>
-    //           {row.is_free ?
-    //             <div className={'text-green-500 bg-green-50 text-xs border px-4 py-1 rounded-3xl border-green-500'}>
-    //               Free
-    //             </div> :
-    //             <div className={'text-red-500 bg-red-50 text-xs border px-4 py-1 rounded-3xl border-red-500'}>
-    //               Paid
-    //             </div>
-    //           }
-    //         </div>
-    //       )
-    //     },
-    //     {
-    //       label: 'Actions',
-    //       name: 'actions',
-    //       colSpan: 2,
-    //       renderCell: (row: any) => (
-    //         <div className={'flex items-center space-x-4'}>
-    //           {/*<UpdateChapter chapter={row}/>*/}
-    //           {/*<DeleteChapter chapter={row}/>*/}
-    //           {/*<ChapterVideo chapter={row}/>*/}
-    //           {/*<ChapterTogglePublish chapter={row}/>*/}
-    //           {/*<ToggleChapterFree chapter={row}/>*/}
-    //         </div>
-    //       )
-    //     }
-    //   ]}
-    //   rows={chapters}
-    // />
   )
 }
 
