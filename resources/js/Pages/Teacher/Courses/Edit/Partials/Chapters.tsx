@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChaptersTable = () => {
+const Chapters = () => {
   return (
     <div>
       <div className={'ml-auto flex items-center'}>
@@ -10,4 +10,4 @@ const ChaptersTable = () => {
   )
 }
 
-export default ChaptersTable;
+export default Chapters;

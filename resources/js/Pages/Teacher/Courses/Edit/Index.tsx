@@ -5,7 +5,7 @@ import {Course} from "@/types";
 import {Button} from "@/Components/ui/button";
 import axios from "axios";
 import AddChapter from "@/Pages/Teacher/Courses/Edit/Partials/AddChapter";
-import ChaptersTable from "./Partials/ChaptersTable"
+import Chapters from "./Partials/Chapters"
 import {Loader} from "lucide-react";
 import {toast} from "sonner";
 import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
@@ -68,7 +68,7 @@ const Edit = () => {
           <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
           <AddChapter course={course}/>
         </div>
-        <ChaptersTable />
+        <Chapters />
       </div>
     </div>
   )
