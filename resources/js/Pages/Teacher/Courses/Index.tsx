@@ -4,6 +4,7 @@ import {Head, Link, usePage} from "@inertiajs/react";
 import {Button} from "@/Components/ui/button";
 import {Course, PaginatedData} from "@/types";
 import Pagination from "@/Components/shared/pagination/Pagination";
+import React from "react";
 
 const Index = () => {
   const {courses} = usePage<{

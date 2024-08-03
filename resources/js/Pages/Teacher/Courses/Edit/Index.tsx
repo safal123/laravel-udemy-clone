@@ -10,7 +10,7 @@ import {Loader} from "lucide-react";
 import {toast} from "sonner";
 import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
 
-const Edit = () => {
+const Index = () => {
   const {course} = usePage<{ course: Course }>().props
   const chapters = course?.chapters
   const [isPublishing, setIsPublishing] = useState<boolean>(false)
@@ -74,6 +74,6 @@ const Edit = () => {
   )
 }
 
-Edit.layout = (page: React.ReactNode) => <TeacherDashboardLayout>{page}</TeacherDashboardLayout>;
+Index.layout = (page: React.ReactNode) => <TeacherDashboardLayout>{page}</TeacherDashboardLayout>;
 
-export default Edit;
+export default Index;
