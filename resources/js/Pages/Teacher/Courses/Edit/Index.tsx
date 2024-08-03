@@ -8,7 +8,6 @@ import AddChapter from "@/Pages/Teacher/Courses/Edit/Partials/AddChapter";
 import {Loader} from "lucide-react";
 import {toast} from "sonner";
 import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
-import CourseChapters from "./Partials/CourseChapters";
 
 const Index = () => {
   const {course} = usePage<{ course: Course }>().props
@@ -59,7 +58,6 @@ const Index = () => {
           </Button>
         </div>
       </div>
-      <CourseChapters />
       <div className="overflow-hidden bg-white rounded shadow">
         <CourseForm course={course} />
       </div>
