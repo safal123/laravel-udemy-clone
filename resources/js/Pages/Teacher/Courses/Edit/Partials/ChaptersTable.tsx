@@ -14,11 +14,7 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
   return (
     <div>
       <div className={'ml-auto flex items-center'}>
-        <UpdateChapter chapter={chapters}/>
-        <DeleteChapter chapter={chapters}/>
-        <ChapterVideo chapter={chapters}/>
-        <ChapterTogglePublish chapter={chapters}/>
-        <ToggleChapterFree chapter={chapters}/>
+        I am ChaptersTable
       </div>
       {/*{chapters.map((chapter) => (*/}
       {/*  <div key={chapter.id} className={'flex items-center space-x-4 mb-4'}>*/}
