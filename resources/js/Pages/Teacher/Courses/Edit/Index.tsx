@@ -5,7 +5,7 @@ import {Course} from "@/types";
 import {Button} from "@/Components/ui/button";
 import axios from "axios";
 import AddChapter from "@/Pages/Teacher/Courses/Edit/Partials/AddChapter";
-import ChaptersTable from "@/Pages/Teacher/Courses/Edit/Partials/ChaptersTable";
+import ChaptersTable from "./Partials/ChaptersTable"
 import {Loader} from "lucide-react";
 import {toast} from "sonner";
 import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
