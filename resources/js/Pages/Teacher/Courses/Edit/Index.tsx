@@ -5,10 +5,10 @@ import {Course} from "@/types";
 import {Button} from "@/Components/ui/button";
 import axios from "axios";
 import AddChapter from "@/Pages/Teacher/Courses/Edit/Partials/AddChapter";
-import Chapters from "./Partials/Chapters"
 import {Loader} from "lucide-react";
 import {toast} from "sonner";
 import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
+import CourseChapters from "./Partials/CourseChapters";
 
 const Index = () => {
   const {course} = usePage<{ course: Course }>().props
@@ -68,7 +68,7 @@ const Index = () => {
           <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
           <AddChapter course={course}/>
         </div>
-        <Chapters />
+        <CourseChapters />
       </div>
     </div>
   )
