@@ -5,6 +5,7 @@ import {Button} from "@/Components/ui/button";
 import {Course, PaginatedData} from "@/types";
 import Pagination from "@/Components/shared/pagination/Pagination";
 import React from "react";
+import TestComponent from "@/Pages/Teacher/Courses/Edit/Partials/TestComponent";
 
 const Index = () => {
   const {courses} = usePage<{
@@ -66,6 +67,7 @@ const Index = () => {
         getRowDetailsUrl={(row: any) => route('teachers.courses.edit', row.id)}
       />
       <Pagination links={links}/>
+      <TestComponent />
     </div>
   );
 }
