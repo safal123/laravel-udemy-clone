@@ -4,6 +4,7 @@ import {toast} from "sonner";
 import React from "react";
 import {Course} from "@/types";
 import {Loader, Video} from "lucide-react";
+import {Badge} from "@/Components/ui/badge";
 
 type CheckoutFormProps = {
   course: Course
@@ -26,7 +27,7 @@ const CheckoutForm = ({course}: CheckoutFormProps) => {
       const {error} = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/${course.id}?success=true`,
+          return_url: `${window.location.origin}/courses/${course.slug}`,
         },
       });
       if (error) {
@@ -52,8 +53,10 @@ const CheckoutForm = ({course}: CheckoutFormProps) => {
         <span className={'text-blue-500'}> {course.title} </span>
         and get access to all chapters.
       </h1>
-      <form onSubmit={handleSubmit} className={'p-4 bg-white mb-4 rounded-md'}>
-        <PaymentElement/>
+      <form onSubmit={handleSubmit} className={'p-4 bg-gray-900 text-white mb-4 rounded-md'}>
+        <PaymentElement
+          className={'bg-white p-4 rounded-md'}
+        />
         <Button
           disabled={isSubmitting}
           type={"submit"}
@@ -65,18 +68,22 @@ const CheckoutForm = ({course}: CheckoutFormProps) => {
       </form>
       <div className={'mt-2 max-h-[400px] overflow-y-scroll'}>
         <h1 className={'text-xl font-semibold'}>
-          Chapters in this course
+          Chapters
         </h1>
         {course.chapters.map((chapter, index) => (
-          <div key={chapter.id} className={'p-4 bg-gray-200 my-2 flex items-center rounded-md'}>
-            <span className={'text-gray-700 text-lg font-semibold'}>{index + 1}.</span>
-            <h2 className={'text-lg font-semibold'}>
-              {chapter.title} {chapter.is_free && <span className={'text-sm border rounded-md px-2 py-1 bg-gradient text-white'}>Free</span>}
+          <div key={chapter.id} className={'p-4 bg-gray-900 my-2 flex items-center rounded-md'}>
+            <span className={'text-gray-100 text-lg font-semibold mr-1'}>{index + 1}.</span>
+            <h2 className={'text-lg font-semibold text-gray-100'}>
+              {chapter.title}
+              {chapter.is_free && <span className={'text-sm border rounded-md px-2 py-1 bg-gradient'}>Free</span>}
               <br/>
             </h2>
             <div className={'ml-auto'}>
               {chapter.is_free &&
-                <Video className={'w-6 h-6 text-gradient'}/>}
+                <Badge>
+                  <Video className={'w-6 h-6 text-gradient'}/>
+                </Badge>
+              }
             </div>
           </div>
         ))}

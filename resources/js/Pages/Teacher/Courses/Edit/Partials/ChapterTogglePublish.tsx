@@ -13,6 +13,10 @@ type ChapterTogglePublishProps = {
 
 const ChapterTogglePublish = ({ chapter }: ChapterTogglePublishProps) => {
   const handleTogglePublish = async (chapter: Chapter) => {
+    if (!chapter.video_storage_id) {
+      toast.error('Please upload a video first.');
+      return
+    }
     try {
       await axios.put(route('teachers.courses.chapters.toggle-publish', {
         course: chapter.course_id,
@@ -21,11 +25,10 @@ const ChapterTogglePublish = ({ chapter }: ChapterTogglePublishProps) => {
         router.reload({
           only: ['course']
         })
-        toast.error(`Chapter ${chapter.is_published ? 'unpublished' : 'published'} successfully.`);
+        toast.success(`Chapter ${chapter.is_published ? 'unpublished' : 'published'} successfully.`);
       })
-    } catch (e) {
-      console.error(e);
-      toast.error('An error occurred. Please try again.');
+    } catch (e: Error | any) {
+      toast.error(e.response.data.message || 'An error occurred. Please try again.');
     }
   }
 

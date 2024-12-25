@@ -1,6 +1,5 @@
 import {Chapter} from "@/types";
-import {Trash2} from "lucide-react";
-import ChapterForm from "@/Pages/Teacher/Courses/Edit/Partials/ChapterForm";
+import {CircleX, Trash2} from "lucide-react";
 import Modal from "@/Components/Modal";
 import React from "react";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -33,27 +32,33 @@ const DeleteChapter = ({ chapter }: DeleteChapterProps) => {
       />
       <Modal show={show} onClose={() => setShow(false)}>
         <form onSubmit={handleSubmit}>
-          <div className="p-6">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Are you sure you want to delete this chapter?
-            </h2>
+          <div className="px-6 py-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Are you sure you want to delete this chapter?
+              </h2>
+              <CircleX
+                onClick={() => setShow(false)}
+                className="w-8 h-8 text-gray-600 cursor-pointer"
+              />
+            </div>
 
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
               Once chapter is deleted, all of its resources and data will be permanently deleted. Before
               deleting your chapter, please download any data or information that you wish to retain.
-              <br/>
-              <span className={'text-red-600'}>
-                Note: This action is irreversible.
-              </span>
-            </p>
+            <br/>
+          </p>
+          <p className={'text-red-600 mt-6 text-sm border border-red-200 p-2 rounded'}>
+            Note: This action is irreversible.
+          </p>
           </div>
-          <div className="m-6 flex justify-end">
-            <SecondaryButton onClick={() => setShow(false)}>Cancel</SecondaryButton>
+  <div className="m-4 flex justify-end">
+    <SecondaryButton onClick={() => setShow(false)}>Cancel</SecondaryButton>
 
-            <DangerButton className="ms-3" disabled={processing}>
-              Delete Chapter
-            </DangerButton>
-          </div>
+    <DangerButton className="ms-3" disabled={processing}>
+      Delete Chapter
+    </DangerButton>
+  </div>
         </form>
       </Modal>
     </div>

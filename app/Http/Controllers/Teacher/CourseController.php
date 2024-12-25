@@ -10,10 +10,8 @@ use App\Http\Resources\CourseResource;
 use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use function Termwind\render;
 
 class CourseController extends Controller
 {

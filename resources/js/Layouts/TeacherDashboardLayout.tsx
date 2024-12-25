@@ -16,7 +16,7 @@ export default function TeacherDashboardLayout({title, children}: MainLayoutProp
     <div>
       <div className="flex flex-col">
         <div className="flex flex-col h-screen">
-          <div className="md:flex">
+          <div className="flex">
             <TopHeader/>
             <BottomHeader/>
           </div>

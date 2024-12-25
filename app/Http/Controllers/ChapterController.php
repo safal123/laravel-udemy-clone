@@ -18,7 +18,7 @@ class ChapterController extends Controller
 
         $course
             ->chapters()
-            ->create($request->all());
+            ->create($request->only('title', 'description'));
 
         return redirect()
             ->route('teachers.courses.edit', $course)
@@ -50,6 +50,12 @@ class ChapterController extends Controller
 
     public function togglePublish(Course $course, Chapter $chapter)
     {
+        // check if the chapter has a video
+        if (!$chapter->video_storage_id) {
+            return response()->json([
+                'message' => 'Please add a video to the chapter first.',
+            ], 422);
+        }
         $chapter->update(['is_published' => !$chapter->is_published]);
 
         return response()->json([
@@ -66,7 +72,7 @@ class ChapterController extends Controller
         ]);
     }
 
-    public function destroy(Course $course, Chapter $chapter)
+    public function destroy(Course $course, Chapter $chapter): \Illuminate\Http\RedirectResponse
     {
         $chapter->delete();
 

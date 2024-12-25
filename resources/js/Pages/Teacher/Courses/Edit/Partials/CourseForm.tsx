@@ -28,6 +28,7 @@ const CourseForm = ({ course }: CourseFormProps) => {
     put(route('teachers.courses.update', course.id))
   }
   useEffect(() => {
+    if (!data.title || data.slug) return;
     setData('slug', slugify(data.title, {lower: true}))
   }, [data.title])
   return (
@@ -55,7 +56,6 @@ const CourseForm = ({ course }: CourseFormProps) => {
             <TextInput
               name="slug"
               error={errors.slug}
-              disabled={true}
               value={data.slug}
               onChange={(e: any) => setData('slug', e.target.value)}
             />

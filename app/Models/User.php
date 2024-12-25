@@ -56,9 +56,10 @@ class User extends Authenticatable
 
     public function purchasedCourses(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class)
-            ->using(CourseUser::class)
-            ->withPivot('id', 'created_at', 'user_id', 'course_id');
+        return $this
+            ->belongsToMany(Course::class, 'course_user')
+            ->withPivot('id', 'created_at', 'user_id', 'course_id')
+            ->as('purchaseDetails');
     }
 
     public static function boot()

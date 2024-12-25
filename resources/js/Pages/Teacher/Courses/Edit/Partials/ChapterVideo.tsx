@@ -62,7 +62,7 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
         className={'w-6 h-6 cursor-pointer text-green-600'}
       />
       <Modal show={show} onClose={() => setShow(false)}>
-        <div className={'w-full h-full'}>
+        <div className={'w-full'}>
           <FileInput
             accept={'video/*'}
             previewUrl={previewUrl}

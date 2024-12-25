@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Builders\CourseBuilder;
+use App\Models\Constants\CourseConstants;
 use App\Models\Traits\HasS3Upload;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Course extends Model
+class Course extends Model implements CourseConstants
 {
     use HasFactory, HasUuids, HasS3Upload;
 
@@ -33,19 +35,25 @@ class Course extends Model
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function users(): BelongsToMany
+    public function students(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)
-            ->using(CourseUser::class)
-            ->withPivot('id', 'created_at', 'user_id', 'course_id');
+        return $this
+            ->belongsToMany(User::class, 'course_user')
+            ->withPivot('id', 'created_at', 'user_id', 'course_id')
+            ->as('purchaseDetails');
     }
 
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class);
+    }
+
+    public function newEloquentBuilder($query): CourseBuilder
+    {
+        return new CourseBuilder($query);
     }
 
     public static function boot()
@@ -55,7 +63,6 @@ class Course extends Model
             $course->update([
                 'image_storage_id' => $course->id,
             ]);
-            // Once the course is created, upload the default image
             $file = public_path("images/default-course-image.jpg");
             $course->uploadToS3('courses/images', $file, $course->id);
         });

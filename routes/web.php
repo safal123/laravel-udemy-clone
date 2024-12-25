@@ -31,8 +31,10 @@ Route::middleware('auth')->group(function () {
         ->name('payment.show');
 });
 
-Route::get('/{course}', [\App\Http\Controllers\CourseController::class, 'show'])
-    ->name('courses.show');
+Route::group(['prefix' => 'courses'], function () {
+    Route::get('/{course:slug}', [\App\Http\Controllers\CourseController::class, 'show'])
+        ->name('courses.show');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/teachers/dashboard', [DashboardController::class, 'index'])
@@ -81,7 +83,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/{course}/{chapter}', [ChapterController::class, 'show'])
         ->name('courses.chapters.show');
-
 
     /*
      * S3 Routes

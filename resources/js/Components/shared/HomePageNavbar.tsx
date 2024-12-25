@@ -1,9 +1,8 @@
 import {Link} from "@inertiajs/react";
-import {Menu} from "lucide-react";
-import {UserAvatar} from "@/Components/shared/UserAvatar";
 import Logo from "@/Components/shared/Logo";
 import {PageProps} from "@/types";
 import {Button} from "@/Components/ui/button";
+import {UserMenu} from "@/Components/shared/tooltip/UserMenu";
 
 type HomePageNavbarProps = {
   auth?: PageProps['auth']
@@ -11,41 +10,31 @@ type HomePageNavbarProps = {
 
 const HomePageNavbar = ({auth}: HomePageNavbarProps) => {
   return (
-    <nav className="px-4 md:px-8 py-4 bg-gray-900">
-      <div className="flex items-center justify-between">
+    <nav className="border-b border-gray-800 py-6 bg-gray-900">
+      <div className="container flex items-center justify-between">
         <div>
           <Link href={'/'}>
             <Logo/>
           </Link>
         </div>
         <div>
-          {
-            auth && auth.user
-              ?
-              <div className={'flex items-center space-x-2'}>
-                <Link href={'/dashboard'}>
-                  <Button
-                    className={'border border-yellow-600 bg-yellow-300 hover:bg-yellow-400 text-black'}
-                    variant={'outline'}
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
-                <UserAvatar src={''} fallback={'SP'}/>
-              </div>
-              :
-              <div className={'flex items-center space-x-1'}>
-                <Link href={'/login'}>
-                  <Button>
-                    Login
-                  </Button>
-                </Link>
-                <Link href={'/register'}>
-                  <Button variant={'outline'}>
-                    Register
-                  </Button>
-                </Link>
-              </div>
+          {auth?.user ?
+            <div className={'flex items-center space-x-2'}>
+              <UserMenu/>
+            </div>
+            :
+            <div className={'flex items-center space-x-1'}>
+              <Link href={'/login'}>
+                <Button>
+                  Login
+                </Button>
+              </Link>
+              <Link href={'/register'}>
+                <Button variant={'outline'}>
+                  Register
+                </Button>
+              </Link>
+            </div>
           }
         </div>
       </div>

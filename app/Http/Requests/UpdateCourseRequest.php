@@ -25,9 +25,33 @@ class UpdateCourseRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'price' => ['required', 'numeric'],
-            'slug' => ['required', 'string', Rule::unique('courses')->ignore($this->route('course')->id)],
+            'price' => ['required', 'numeric', 'min:0', 'max:999'],
+            'slug' => [
+                'required',
+                'string',
+                Rule::unique('courses')
+                    ->ignore($this->route('course')->id)
+            ],
             'category_id' => ['required', 'exists:categories,id'],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Course title is required',
+            'description.required' => 'Course description is required',
+            'price.required' => 'Course price is required',
+            'price.numeric' => 'Course price must be a number',
+            'price.min' => 'Course price cannot be negative',
+            'price.max' => 'Course price cannot be more than 999',
+            'slug.unique' => 'Slug is already taken',
+            'category_id.required' => 'Category is required',
         ];
     }
 }

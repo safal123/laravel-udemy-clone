@@ -5,7 +5,7 @@ import TextInput from "@/Components/shared/form/TextInput";
 import TextareaInput from "@/Components/shared/form/TextareaInput";
 import {Button} from "@/Components/ui/button";
 import {cn} from "@/lib/utils";
-import {Loader, Loader2} from "lucide-react";
+import {Loader} from "lucide-react";
 import {Chapter, Course} from "@/types";
 
 type ChapterFormProps = {
@@ -48,13 +48,15 @@ const ChapterForm = ({course, setShow, chapter, action = 'create'}: ChapterFormP
       <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100">
         {action === 'update' ? 'Update Chapter' : 'Add New Chapter'}
       </h2>
-      <p className="mt-6 text-gray-600 dark:text-gray-400 bg-yellow-100 px-6 py-4 text-sm rounded-md">
+      <p className="mt-6 text-gray-700 dark:text-gray-400 bg-yellow-50 px-6 py-4 text-sm rounded-md">
         {action === 'update' ? 'Update the chapter details.' : 'Add a new chapter to the course.'}
-        You can add videos to the chapter after creating it. You can also update the chapter details later.
+        You can add video and other resources to the chapter after creating it.
+        You can also update the chapter details later.
       </p>
 
-      {Object.keys(errors).length > 0 && <p className={cn('text-red-500 text-sm mt-6 bg-red-100 px-6 py-4 rounded-md', errors && 'block')}>
-        Ooops! There are errors in the form. Please fix them and try again.
+      {Object.keys(errors).length > 0 &&
+        <p className={cn('text-red-500 text-sm mt-6 bg-red-100 px-6 py-4 rounded-md', errors && 'block')}>
+        Oops! There are errors in the form. Please fix them and try again.
       </p>}
       <div className={'w-full flex flex-col gap-6 mt-6'}>
         <FieldGroup label="Chapter Title" name="title" error={errors.title}>

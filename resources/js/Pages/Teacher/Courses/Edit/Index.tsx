@@ -9,6 +9,8 @@ import {Loader} from "lucide-react";
 import {toast} from "sonner";
 import CourseForm from "@/Pages/Teacher/Courses/Edit/Partials/CourseForm";
 import TestComponent from "@/Pages/Teacher/Courses/Edit/Partials/TestComponent";
+import CourseChapters from "@/Pages/Teacher/Courses/Edit/Partials/CourseChapters";
+import ChaptersTable from "@/Pages/Teacher/Courses/Edit/Partials/ChaptersTable";
 
 const Index = () => {
   const {course} = usePage<{ course: Course }>().props
@@ -67,7 +69,7 @@ const Index = () => {
           <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
           <AddChapter course={course}/>
         </div>
-        <TestComponent />
+        <ChaptersTable chapters={course.chapters} />
       </div>
     </div>
   )

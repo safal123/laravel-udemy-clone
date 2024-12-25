@@ -64,7 +64,7 @@ const UploadCourseImage =
         <FileInput
           name="image"
           accept={'image/*'}
-          objectUrl={course.image_url}
+          objectUrl={`https://dh7506awg2na5.cloudfront.net/courses/images/${course.id}`}
           previewUrl={previewImageUrl}
           error={errors.image_storage_id}
           onChange={handleImageChange}

@@ -18,7 +18,7 @@ export default function Welcome({auth}: PageProps<{
     <div>
       <Head title="Udemy Clone"/>
       <HomePageNavbar auth={auth}/>
-      <div className={'pb-12 pt-2 px-6'}>
+      <div className={'pb-12 pt-2 px-6 bg-gray-900'}>
         <div className={'px-2'}>
           <HomePageCarousel courses={courses?.data}/>
         </div>

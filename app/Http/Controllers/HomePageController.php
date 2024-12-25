@@ -5,23 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class HomePageController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('Welcome', [
             'courses' => CourseResource::collection(
-                Course::query()
-                    ->where('is_published', true)
-                    ->orderBy('created_at', 'desc')
-                    ->with('author')
-                    // check if the chapters is present
-                    ->whereHas('chapters', function ($query) {
-                        $query->where('is_published', true);
-                    })
-                    ->withCount('chapters'      )
-                    ->paginate(4)
+                Course::allPublishedCourses()
+                    ->paginate(10)
             )
         ]);
     }
