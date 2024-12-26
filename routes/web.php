@@ -1,12 +1,11 @@
 <?php
 
-use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\S3Controller;
 use App\Http\Controllers\StripeController;
-use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Teacher\ChapterController;
 use App\Http\Controllers\Teacher\CourseController;
 use App\Http\Controllers\Teacher\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +33,8 @@ Route::middleware('auth')->group(function () {
 Route::group(['prefix' => 'courses'], function () {
     Route::get('/{course:slug}', [\App\Http\Controllers\CourseController::class, 'show'])
         ->name('courses.show');
+    Route::get('/{course:slug}/chapters/{chapter}', [\App\Http\Controllers\ChapterController::class, 'show'])
+        ->name('courses.chapters.show');
 });
 
 Route::middleware('auth')->group(function () {

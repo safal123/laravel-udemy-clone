@@ -77,12 +77,14 @@ const Index = ({auth}: PageProps) => {
                 </div>
                 <div className="flex flex-col md:flex-row gap-4">
                   {hasPurchased &&
-                    <Button className="rounded-xl bg-blue-500 hover:bg-blue-600 w-full sm:w-auto">
-                      <VideoIcon size={16} className="mr-2"/>
-                      <span className="flex items-center gap-2">
+                    <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
+                      <Button className="rounded-xl bg-blue-500 hover:bg-blue-600 w-full sm:w-auto">
+                        <VideoIcon size={16} className="mr-2"/>
+                        <span className="flex items-center gap-2">
                         Continue Series
                       </span>
-                    </Button>
+                      </Button>
+                    </Link>
                   }
                   <Button className={'rounded-xl'}>
                     <SaveIcon size={16} className="mr-2"/>
