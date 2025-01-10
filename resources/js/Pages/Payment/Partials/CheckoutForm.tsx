@@ -45,7 +45,7 @@ const CheckoutForm = ({course}: CheckoutFormProps) => {
       setIsSubmitting(false);
     }
   }
-  // m&#9OhmD7~[n
+
   if (!stripe || !elements) {
     return <div className={'flex items-center justify-center h-72'}>
       <Loader2 className={'animate-spin w-12 h-12'}/>
