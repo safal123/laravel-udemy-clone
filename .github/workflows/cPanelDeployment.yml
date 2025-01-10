@@ -20,3 +20,11 @@ jobs:
           log-level: verbose
           protocol: ftps
           port: 1234
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .gitignore
+            .gitattributes
+            .env
+            .env.example
