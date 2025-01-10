@@ -1,8 +1,9 @@
+import { Badge } from '@/Components/ui/badge'
 import {Course, PageProps} from "@/types";
 import {Card, CardContent, CardHeader} from "@/Components/ui/card";
 import {Button} from "@/Components/ui/button";
 import {Link, usePage} from "@inertiajs/react";
-import {DollarSignIcon, HeartIcon, StarHalfIcon, StarIcon, User2Icon, VideoIcon} from "lucide-react";
+import { DollarSignIcon, HeartIcon, StarHalfIcon, StarIcon, User2Icon, Users2Icon, VideoIcon } from 'lucide-react'
 import {UserAvatar} from "@/Components/shared/UserAvatar";
 
 const CourseCard = ({ course }: { course: Course }) => {
@@ -18,7 +19,7 @@ const CourseCard = ({ course }: { course: Course }) => {
           <img
             src={course.image_url}
             alt={course.title}
-            className={'w-full h-64 object-cover rounded-t-lg'}
+            className={'w-full h-56 object-cover rounded-t-lg'}
           />
         </Link>
       </CardHeader>
@@ -32,13 +33,13 @@ const CourseCard = ({ course }: { course: Course }) => {
             </span>
           </div>
           <div className={'flex items-center justify-between'}>
-            <p className={'text-gray-100 text-medium font-semibold'}>
-              {course.title}
+            <p className={'text-gray-100 text-medium font-semibold truncate'}>
+              {course.title.substring(0, 20)}...
             </p>
-            <span className={'text-green-700 text-xs bg-green-100 rounded-xl px-2 py-0.5 font-semibold'}>
+            <Badge>
               {course.chapters_count}
               {course.chapters_count > 1 ? ' Chapters' : ' Chapter'}
-            </span>
+            </Badge>
           </div>
           <div className={'mt-2 flex gap-2 items-center mb-3'}>
             <UserAvatar src={''} fallback={'SP'}/>
@@ -57,7 +58,7 @@ const CourseCard = ({ course }: { course: Course }) => {
               </span>
             </div>
             <div className={'flex items-center gap-2'}>
-              <User2Icon size={20} className={'text-gray-100'}/>
+              <Users2Icon size={20} className={'text-gray-100'}/>
               <span className={'text-gray-100 text-xs'}>
                 2500+ Students
               </span>
@@ -90,7 +91,7 @@ const CourseCard = ({ course }: { course: Course }) => {
                     </Button>
                   </Link>
                   :
-                  <Link href={route('courses.show', course.id)}>
+                  <Link href={route('courses.show', course.slug)}>
                     <Button className={'bg-gradient'}>
                       Continue Learning
                     </Button>

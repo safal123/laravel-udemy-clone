@@ -26,6 +26,7 @@ class CourseResource extends JsonResource
             'is_published' => $this->is_published,
             'price' => $this->price,
             'image_url' => $this->image_url ?? '',
+            'user_id' => $this->user_id,
             'created_at' => $this->created_at,
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
             'author' => $this->whenLoaded('author'),

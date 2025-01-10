@@ -56,6 +56,7 @@ const useS3Upload = ({ fileStorageId, path }: {
   }
   return {
     previewImageUrl,
+    setPreviewImageUrl,
     objectUrl,
     uploading,
     file,

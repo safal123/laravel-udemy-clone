@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -62,9 +62,34 @@ class User extends Authenticatable
             ->as('purchaseDetails');
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
     }
 
+    public function isTeacher(): bool
+    {
+        // TODO: Implement isTeacher() method.
+        return true;
+    }
+
+    public function isTeacherOfCourse(Course $course): bool
+    {
+        return $this->id === $course->user_id;
+    }
+
+    public function hasCoursePurchased(Course $course): bool
+    {
+        return $this->purchasedCourses()
+            ->where('course_id', $course->id)
+            ->exists();
+    }
+
+//    public function students(): BelongsToMany
+//    {
+//        return $this
+//            ->belongsToMany(User::class, 'student_teacher')
+//            ->withPivot('id', 'created_at', 'user_id', 'teacher_id')
+//            ->as('studentDetails');
+//    }
 }

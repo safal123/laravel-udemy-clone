@@ -1,6 +1,6 @@
-import {Link} from '@inertiajs/react';
-import get from 'lodash/get';
-import {ChevronRight} from 'lucide-react';
+import { Link } from '@inertiajs/react'
+import get from 'lodash/get'
+import { ChevronRight } from 'lucide-react'
 
 interface TableProps<T> {
   columns: {
@@ -11,14 +11,15 @@ interface TableProps<T> {
   }[];
   rows: T[];
   getRowDetailsUrl?: (row: T) => string;
+  showLink?: boolean | false;
 }
 
-export default function Table<T>
-({
-   columns = [],
-   rows = [],
-   getRowDetailsUrl
- }: TableProps<T>) {
+export default function Table<T>({
+  columns = [],
+  rows = [],
+  getRowDetailsUrl,
+  showLink = false
+}: TableProps<T>) {
   return (
     <div className="overflow-x-auto bg-white rounded shadow">
       <table className="w-full whitespace-nowrap">
@@ -36,7 +37,7 @@ export default function Table<T>
         </tr>
         </thead>
         <tbody>
-        {/* Empty state */}
+
         {rows?.length === 0 && (
           <tr>
             <td
@@ -67,14 +68,14 @@ export default function Table<T>
                   </td>
                 );
               })}
-              <td className="w-px border-t">
+              {showLink && <td className="w-px border-t">
                 <Link
                   href={getRowDetailsUrl?.(row)!}
                   className="flex items-center px-4 focus:outline-none"
                 >
                   <ChevronRight size={24} className="text-gray-400"/>
                 </Link>
-              </td>
+              </td>}
             </tr>
           );
         })}

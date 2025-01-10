@@ -11,6 +11,7 @@ import { Chapter } from "@/types";
 import Logo from "@/Components/shared/Logo";
 import { Link, usePage } from "@inertiajs/react";
 import { cn } from "@/lib/utils";
+import {UserMenu} from "@/Components/shared/tooltip/UserMenu";
 
 export function AppSidebar() {
   const { course } = usePage<{ course: { slug: string; chapters: Chapter[] } }>().props;
@@ -54,8 +55,9 @@ export function AppSidebar() {
         </SidebarGroupContent>
       </SidebarContent>
 
-      {/* Sidebar Footer */}
-      <SidebarFooter />
+      <SidebarFooter className={'bg-gray-900'}>
+        <UserMenu />
+      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -1,48 +1,47 @@
-
-import {Label} from "@/Components/ui/label";
-import {Chapter} from "@/types";
-import axios from "axios";
-import {router} from "@inertiajs/react";
-import React from "react";
-import {Switch} from "@/Components/ui/switch";
-import {toast} from "sonner";
+import { Label } from '@/Components/ui/label'
+import { Switch } from '@/Components/ui/switch'
+import { Chapter } from '@/types'
+import { useForm } from '@inertiajs/react'
+import { Loader2 } from 'lucide-react'
+import React from 'react'
 
 type ChapterTogglePublishProps = {
   chapter: Chapter
 }
 
-const ChapterTogglePublish = ({ chapter }: ChapterTogglePublishProps) => {
-  const handleTogglePublish = async (chapter: Chapter) => {
-    if (!chapter.video_storage_id) {
-      toast.error('Please upload a video first.');
-      return
-    }
-    try {
-      await axios.put(route('teachers.courses.chapters.toggle-publish', {
-        course: chapter.course_id,
-        chapter: chapter.id
-      })).then(() => {
-        router.reload({
-          only: ['course']
-        })
-        toast.success(`Chapter ${chapter.is_published ? 'unpublished' : 'published'} successfully.`);
-      })
-    } catch (e: Error | any) {
-      toast.error(e.response.data.message || 'An error occurred. Please try again.');
-    }
+const ChapterTogglePublish = ({chapter}: ChapterTogglePublishProps) => {
+  const {put, processing, reset} = useForm()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    put(route('teachers.courses.chapters.toggle-publish', {
+      course: chapter.course_id,
+      chapter: chapter.id
+    }), {
+      preserveScroll: true,
+      onSuccess: () => reset(),
+      onError: () => reset()
+    })
+  }
+  if (processing) {
+    return (
+      <div className="flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin"/>
+      </div>
+    )
   }
 
   return (
-    <div className="flex items-center space-x-2">
+    <form onSubmit={handleSubmit} className="flex items-center space-x-2">
       <Switch
+        type={'submit'}
         checked={chapter.is_published}
-        onCheckedChange={() => handleTogglePublish(chapter)}
         id="toggle-publish"
       />
       <Label htmlFor="toggle-publish">
         {chapter.is_published ? 'Unpublish' : 'Publish'}
       </Label>
-    </div>
+    </form>
   )
 }
 

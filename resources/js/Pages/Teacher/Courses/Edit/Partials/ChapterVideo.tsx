@@ -1,27 +1,27 @@
-import {Video} from "lucide-react";
-import {Chapter} from "@/types";
-import React from "react";
-import Modal from "@/Components/Modal";
-import axios from "axios";
-import FileInput from "@/Components/shared/form/FileInput";
-import {toast} from "sonner";
+import FileInput from '@/Components/shared/form/FileInput'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/Components/ui/dialog'
+import { Chapter } from '@/types'
+import axios from 'axios'
+import { Video } from 'lucide-react'
+import React from 'react'
+import { toast } from 'sonner'
 
 type ChapterVideoProps = {
   chapter: Chapter
 }
 
 const ChapterVideo = ({chapter}: ChapterVideoProps) => {
-  const [show, setShow] = React.useState(false);
-  const [video, setVideo] = React.useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = React.useState<string>('');
-  const [isUploading, setIsUploading] = React.useState<boolean>(false);
+  const [show, setShow] = React.useState(false)
+  const [video, setVideo] = React.useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = React.useState<string>('')
+  const [isUploading, setIsUploading] = React.useState<boolean>(false)
 
   const handleVideoUpload = async () => {
-    console.log('uploading video');
+    console.log('uploading video')
     try {
       setIsUploading(true)
       if (!video) {
-        return;
+        return
       }
       const presignedUrl = await axios.post('/s3/get-signed-url', {
         fileName: chapter.id,
@@ -39,6 +39,7 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
         chapter: chapter.id
       }))
       toast('Video uploaded successfully')
+      onUploadSuccess()
     } catch (e) {
       console.log(e);
       toast.error('Failed to upload video')
@@ -55,14 +56,27 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
     }
   }
 
+  const onUploadSuccess = () => {
+    setPreviewUrl('')
+    setVideo(null)
+    setIsUploading(false)
+  }
+
   return (
-    <div>
-      <Video
-        onClick={() => setShow(true)}
-        className={'w-6 h-6 cursor-pointer text-green-600'}
-      />
-      <Modal show={show} onClose={() => setShow(false)}>
-        <div className={'w-full'}>
+    <Dialog>
+      <DialogTrigger>
+        <Video
+          onClick={() => setShow(true)}
+          className={'w-6 h-6 cursor-pointer text-green-600'}
+        />
+      </DialogTrigger>
+      <DialogContent className={'max-w-7xl'}>
+        <DialogHeader>
+          <DialogTitle>
+            Chapter Video
+          </DialogTitle>
+        </DialogHeader>
+        <div className={'rounded-md'}>
           <FileInput
             accept={'video/*'}
             previewUrl={previewUrl}
@@ -73,8 +87,8 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
             name={'video'}
           />
         </div>
-      </Modal>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 export default ChapterVideo

@@ -10,6 +10,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $students = auth()
+            ->user()
+            ->students()
+            ->count();
+        dd($students);
         return Inertia::render('Teacher/Dashboard/Index');
     }
 }

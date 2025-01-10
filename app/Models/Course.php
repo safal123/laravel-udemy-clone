@@ -16,7 +16,6 @@ class Course extends Model implements CourseConstants
 {
     use HasFactory, HasUuids, HasS3Upload;
 
-
     protected $fillable = [
         'title',
         'description',
@@ -74,5 +73,18 @@ class Course extends Model implements CourseConstants
             return '';
         }
         return $this->getObjectUrl('courses/images/');
+    }
+
+    public function hasPublishedChapter(): bool
+    {
+        return $this
+            ->chapters()
+            ->where('is_published', true)
+            ->exists();
+    }
+
+    public function isFree(): bool
+    {
+        return $this->price === 0;
     }
 }

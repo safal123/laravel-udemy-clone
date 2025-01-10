@@ -1,12 +1,11 @@
-import {Head, usePage} from '@inertiajs/react';
-import {Course, PageProps} from '@/types';
-import HomePageCarousel from "@/Components/shared/HomePageCarousel";
-import HomePageNavbar from "@/Components/shared/HomePageNavbar";
-import {Card, CardContent, CardHeader} from "@/Components/ui/card";
-import {Button} from "@/Components/ui/button";
-import Pagination from "@/Components/shared/pagination/Pagination";
-import CourseCard from "@/Components/shared/card/CourseCard";
-import Courses from "@/Pages/Partials/Courses";
+import Footer from '@/Components/shared/Footer'
+import HeroSection from '@/Components/shared/HeroSection'
+import HomePageNavbar from '@/Components/shared/HomePageNavbar'
+import Pagination from '@/Components/shared/pagination/Pagination'
+import Testimonials from '@/Components/shared/Testimonials'
+import Courses from '@/Pages/Partials/Courses'
+import { PageProps } from '@/types'
+import { Head, usePage } from '@inertiajs/react'
 
 export default function Welcome({auth}: PageProps<{
   laravelVersion: string,
@@ -15,18 +14,22 @@ export default function Welcome({auth}: PageProps<{
   const props = usePage().props as any
   const {courses} = props
   return (
-    <div>
+    <div className={'bg-gray-900'}>
       <Head title="Udemy Clone"/>
       <HomePageNavbar auth={auth}/>
-      <div className={'pb-12 pt-2 px-6 bg-gray-900'}>
+      <div className={'flex flex-col gap-6 pb-12 pt-2 px-6 container'}>
         <div className={'px-2'}>
-          <HomePageCarousel courses={courses?.data}/>
+          <HeroSection />
         </div>
-        <Courses courses={courses?.data} />
-        <div className={'mt-4 flex justify-center'}>
-          {courses && <Pagination links={courses.meta.links}/>}
+        <div className={'mt-4 flex flex-col gap-4'}>
+          <h2 className={'text-white text-2xl mt-4 px-2'}>
+            Recently Added Courses
+          </h2>
+          <Courses courses={courses?.data}/>
         </div>
+        <Testimonials />
       </div>
+      <Footer />
     </div>
   );
 }

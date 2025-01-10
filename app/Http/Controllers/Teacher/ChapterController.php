@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Inertia;
 use App\Models\Chapter;
 use App\Models\Course;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ChapterController extends Controller
@@ -32,9 +33,7 @@ class ChapterController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
-
         $chapter->update($request->all());
-
         return redirect()
             ->route('teachers.courses.edit', $course)
             ->with('success', 'Chapter updated successfully.');
@@ -49,44 +48,45 @@ class ChapterController extends Controller
         ]);
     }
 
-    public function togglePublish(Course $course, Chapter $chapter)
+    public function togglePublish(Course $course, Chapter $chapter): RedirectResponse
     {
-        // check if the chapter has a video
         if (!$chapter->video_storage_id) {
-            return response()->json([
-                'message' => 'Please add a video to the chapter first.',
-            ], 422);
+            return redirect()
+                ->back()
+                ->with('error', 'Please add a video to the chapter before publishing.');
         }
-        $chapter->update(['is_published' => !$chapter->is_published]);
 
-        return response()->json([
-            'message' => 'Chapter publish status updated successfully.',
-        ]);
+        \DB::transaction(function () use ($course, $chapter) {
+            $chapter->update(['is_published' => !$chapter->is_published]);
+            // Ensure the course is unpublished if no chapters are published
+            if (!$course->hasPublishedChapter() && $course->is_published) {
+                $course->update(['is_published' => false]);
+            }
+        });
+
+        // Determine success message
+        $status = $chapter->is_published ? 'published' : 'unpublished';
+
+        return redirect()
+            ->back()
+            ->with('success', "Chapter '{$chapter->title}' {$status} successfully.");
     }
 
-    public function toggleFree(Course $course, Chapter $chapter)
+
+    public function toggleFree(Course $course, Chapter $chapter): RedirectResponse
     {
         $chapter->update(['is_free' => !$chapter->is_free]);
-
-        return response()->json([
-            'message' => 'Chapter free status updated successfully.',
-        ]);
+        $message = $chapter->is_free ? 'free' : 'paid';
+        return redirect()
+            ->back()
+            ->with('success', "Chapter {$chapter->title} is now {$message}.");
     }
 
-    public function destroy(Course $course, Chapter $chapter): \Illuminate\Http\RedirectResponse
+    public function destroy(Course $course, Chapter $chapter): RedirectResponse
     {
         $chapter->delete();
-
         return redirect()
             ->route('teachers.courses.edit', $course)
             ->with('success', 'Chapter deleted successfully.');
-    }
-
-    public function show(Course $course, Chapter $chapter)
-    {
-        return Inertia::render('Course/Show/Index', [
-            'course' => $course,
-            'chapter' => $chapter,
-        ]);
     }
 }

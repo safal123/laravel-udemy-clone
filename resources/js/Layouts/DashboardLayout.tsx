@@ -1,9 +1,9 @@
-import {Head} from '@inertiajs/react';
-import MainMenu from "@/Components/shared/menu/MainMenu";
-import React from "react";
-import TopHeader from "@/Components/shared/header/TopHeader";
-import BottomHeader from "@/Components/shared/header/BottomHeader";
-import {Toaster} from "@/Components/ui/sonner";
+import { Head } from '@inertiajs/react'
+import MainMenu from '@/Components/shared/menu/MainMenu'
+import React from 'react'
+import TopHeader from '@/Components/shared/header/TopHeader'
+import BottomHeader from '@/Components/shared/header/BottomHeader'
+import { Toaster } from '@/Components/ui/sonner'
 
 interface MainLayoutProps {
   title?: string;
@@ -13,20 +13,16 @@ interface MainLayoutProps {
 export default function DashboardLayout({title, children}: MainLayoutProps) {
   return (
     <>
-      <Head title={'Dashbaord'}/>
+      <Head title={'Dashboard'}/>
       <div className="flex flex-col">
         <div className="flex flex-col h-screen">
           <div className="md:flex">
-            <TopHeader />
-            <BottomHeader />
+            <TopHeader/>
+            <BottomHeader/>
           </div>
           <div className="flex flex-grow overflow-hidden">
             <MainMenu className="flex-shrink-0 hidden w-56 overflow-y-auto md:block"/>
-            <div
-              className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-12 bg-gray-50"
-              scroll-region="true"
-            >
-              {/*<FlashMessages />*/}
+            <div className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-12 bg-gray-50">
               {children}
               <Toaster />
             </div>

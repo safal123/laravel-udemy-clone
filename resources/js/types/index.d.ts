@@ -2,7 +2,7 @@
 import { Config } from 'ziggy-js';
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   first_name: string;
   last_name: string;
@@ -32,6 +32,7 @@ export interface Course {
   chapters_count: number;
   duration: number;
   author: User;
+  user_id: string;
 }
 
 export interface Chapter {

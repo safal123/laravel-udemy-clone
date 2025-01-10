@@ -1,13 +1,16 @@
 <?php
 
-use App\Http\Controllers\HomePageController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\S3Controller;
-use App\Http\Controllers\StripeController;
-use App\Http\Controllers\Teacher\ChapterController;
-use App\Http\Controllers\Teacher\CourseController;
-use App\Http\Controllers\Teacher\DashboardController;
+use App\Http\Controllers\
+{
+    HomePageController,
+    PaymentController,
+    ProfileController,
+    S3Controller,
+    StripeController,
+    Teacher\ChapterController,
+    Teacher\CourseController,
+    Teacher\DashboardController
+};
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,46 +20,28 @@ Route::get('/', [HomePageController::class, 'index'])
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::stripeWebhooks('stripe/webhook');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     Route::get('/payment', [PaymentController::class, 'show'])
         ->name('payment.show');
-});
 
-Route::group(['prefix' => 'courses'], function () {
-    Route::get('/{course:slug}', [\App\Http\Controllers\CourseController::class, 'show'])
-        ->name('courses.show');
-    Route::get('/{course:slug}/chapters/{chapter}', [\App\Http\Controllers\ChapterController::class, 'show'])
-        ->name('courses.chapters.show');
-});
-
-Route::middleware('auth')->group(function () {
     Route::get('/teachers/dashboard', [DashboardController::class, 'index'])
         ->name('teachers.dashboard');
     /*
      * Teacher Courses Routes
      */
-    Route::group(['prefix' => 'teachers/courses'], function () {
-        Route::get('/', [CourseController::class, 'index'])
-            ->name('teachers.courses');
-        Route::delete('/{course}', [CourseController::class, 'destroy'])
-            ->name('teachers.courses.destroy');
-        Route::get('/create', [CourseController::class, 'create'])
-            ->name('teachers.courses.create');
-        Route::post('/', [CourseController::class, 'store'])
-            ->name('teachers.courses.store');
-        Route::get('/{course}/edit', [CourseController::class, 'edit'])
-            ->name('teachers.courses.edit');
-        Route::put('/{course}', [CourseController::class, 'update'])
-            ->name('teachers.courses.update');
-        Route::put('/{course}/toggle-publish', [CourseController::class, 'togglePublish'])
+    Route::group(['prefix' => 'teachers'], function () {
+        Route::resource('courses', CourseController::class)
+            ->names('teachers.courses');
+        Route::put('{course}/toggle-publish', [CourseController::class, 'togglePublish'])
             ->name('teachers.courses.toggle-publish');
     });
 
@@ -78,12 +63,12 @@ Route::middleware('auth')->group(function () {
             ->name('teachers.courses.chapters.toggle-is-free');
     });
 
-    /*
-     * Student Course Chapters Routes
-     */
-
-    Route::get('/{course}/{chapter}', [ChapterController::class, 'show'])
-        ->name('courses.chapters.show');
+    Route::group(['prefix' => 'courses'], function () {
+        Route::get('/{course:slug}', [\App\Http\Controllers\CourseController::class, 'show'])
+            ->name('courses.show');
+        Route::get('/{course:slug}/chapters/{chapter}', [\App\Http\Controllers\ChapterController::class, 'show'])
+            ->name('courses.chapters.show');
+    });
 
     /*
      * S3 Routes

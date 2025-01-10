@@ -11,6 +11,7 @@ import {
 } from "@/Components/ui/dropdown-menu"
 import {UserAvatar} from "@/Components/shared/UserAvatar";
 import {Link} from "@inertiajs/react";
+import {Button} from "@/Components/ui/button";
 
 export function UserMenu() {
 
@@ -21,12 +22,12 @@ export function UserMenu() {
           <UserAvatar src={''} fallback={'SP'}/>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 mr-6">
-        <DropdownMenuLabel className={'text-center'}>
+      <DropdownMenuContent className="w-full min-w-56 mr-6 bg-gray-800 text-white border-none">
+        <DropdownMenuLabel className={'text-center border-none'}>
           My Account
         </DropdownMenuLabel>
-        <DropdownMenuSeparator/>
-        <DropdownMenuGroup>
+        <DropdownMenuSeparator className={'bg-gray-700'}/>
+        <DropdownMenuGroup className={'flex flex-col gap-y-3'}>
           <DropdownMenuItem asChild={true} className={'cursor-pointer'}>
             <Link href={'/dashboard'}>
               Dashboard
@@ -37,14 +38,18 @@ export function UserMenu() {
               Profile
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem className={'py-2'}>
+          <DropdownMenuItem
+            asChild={true}
+            className={'cursor-pointer bg-red-900 hover:bg-red-800'}>
             <Link
               method="post"
               href={route('logout')}
               as="button"
-              className="block w-full px-6 py-2 text-left focus:outline-none bg-indigo-700 rounded-md hover:bg-indigo-600 text-white"
+              className={'w-full'}
             >
-              Logout
+              <Button className={'w-full'}>
+                  Logout
+              </Button>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

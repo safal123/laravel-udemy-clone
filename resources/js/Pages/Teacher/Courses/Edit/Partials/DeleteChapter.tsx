@@ -1,18 +1,18 @@
-import {Chapter} from "@/types";
-import {CircleX, Trash2} from "lucide-react";
-import Modal from "@/Components/Modal";
-import React from "react";
-import SecondaryButton from "@/Components/SecondaryButton";
-import DangerButton from "@/Components/DangerButton";
-import {useForm} from "@inertiajs/react";
+import DangerButton from '@/Components/DangerButton'
+import Modal from '@/Components/Modal'
+import SecondaryButton from '@/Components/SecondaryButton'
+import { Chapter } from '@/types'
+import { useForm } from '@inertiajs/react'
+import { CircleX, Trash2 } from 'lucide-react'
+import React from 'react'
 
 type DeleteChapterProps = {
   chapter: Chapter;
 }
 
-const DeleteChapter = ({ chapter }: DeleteChapterProps) => {
-  const [show, setShow] = React.useState(false);
-  const { errors, delete: destroy, processing, reset } = useForm()
+const DeleteChapter = ({chapter}: DeleteChapterProps) => {
+  const [show, setShow] = React.useState(false)
+  const {delete: destroy, processing, reset} = useForm()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -20,7 +20,7 @@ const DeleteChapter = ({ chapter }: DeleteChapterProps) => {
       preserveScroll: true,
       onSuccess: () => setShow(false),
       onError: () => setShow(true),
-      onFinish: () => reset(),
+      onFinish: () => reset()
     })
   }
 
@@ -46,11 +46,11 @@ const DeleteChapter = ({ chapter }: DeleteChapterProps) => {
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
               Once chapter is deleted, all of its resources and data will be permanently deleted. Before
               deleting your chapter, please download any data or information that you wish to retain.
-            <br/>
-          </p>
-          <p className={'text-red-600 mt-6 text-sm border border-red-200 p-2 rounded'}>
-            Note: This action is irreversible.
-          </p>
+              <br/>
+            </p>
+            <p className={'text-red-600 mt-6 bg-red-50 text-lg border border-red-200 p-6 rounded'}>
+              This action is irreversible.
+            </p>
           </div>
   <div className="m-4 flex justify-end">
     <SecondaryButton onClick={() => setShow(false)}>Cancel</SecondaryButton>

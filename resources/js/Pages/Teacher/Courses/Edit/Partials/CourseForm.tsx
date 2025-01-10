@@ -1,13 +1,13 @@
-import FieldGroup from "@/Components/shared/form/FieldGroup";
-import TextInput from "@/Components/shared/form/TextInput";
-import SelectInput from "@/Components/shared/form/SelectInput";
-import TextareaInput from "@/Components/shared/form/TextareaInput";
-import LoadingButton from "@/Components/shared/button/LoadingButton";
-import UploadCourseImage from "@/Pages/Teacher/Courses/Edit/Partials/UploadCourseImage";
-import React, {useEffect} from "react";
-import {useForm, usePage} from "@inertiajs/react";
-import {Course} from "@/types";
-import slugify from "slugify";
+import LoadingButton from '@/Components/shared/button/LoadingButton'
+import FieldGroup from '@/Components/shared/form/FieldGroup'
+import SelectInput from '@/Components/shared/form/SelectInput'
+import TextareaInput from '@/Components/shared/form/TextareaInput'
+import TextInput from '@/Components/shared/form/TextInput'
+import UploadCourseImage from '@/Pages/Teacher/Courses/Edit/Partials/UploadCourseImage'
+import { Course } from '@/types'
+import { useForm, usePage } from '@inertiajs/react'
+import React, { useEffect } from 'react'
+import slugify from 'slugify'
 
 type CourseFormProps = {
   course: Course;

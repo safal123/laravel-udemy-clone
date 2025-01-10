@@ -10,6 +10,7 @@ use App\Http\Resources\CourseResource;
 use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,13 +24,15 @@ class CourseController extends Controller
                     ->user()
                     ->courses()
                     ->orderBy('created_at', 'desc')
-                    ->paginate(7)
+                    ->paginate(4)
             ),
         ]);
     }
 
     public function create(): Response
     {
+        Gate::authorize('create', Course::class);
+
         return Inertia::render('Teacher/Courses/Create/Index', [
             'categories' => Category::orderBy('name')->get(),
         ]);
@@ -43,12 +46,14 @@ class CourseController extends Controller
             ->create($request->validated());
 
         return redirect()
-            ->route('teachers.courses')
+            ->route('teachers.courses.index')
             ->with('success', 'Course created successfully');
     }
 
     public function edit(Course $course): Response
     {
+        Gate::authorize('view', $course);
+
         return Inertia::render('Teacher/Courses/Edit/Index', [
             'course' => new CourseResource($course->load('chapters')),
         ]);
@@ -56,6 +61,8 @@ class CourseController extends Controller
 
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
+        Gate::authorize('update', $course);
+
         $course->update($request->validated());
 
         return redirect()
@@ -63,22 +70,25 @@ class CourseController extends Controller
             ->with('success', 'Course updated successfully');
     }
 
-    public function togglePublish(Course $course)
-    {
-        $course->update([
-            'is_published' => !$course->is_published,
-        ]);
-        return \response()->json([
-            'message' => 'Course published status updated successfully',
-        ]);
-    }
 
     public function destroy(Course $course): RedirectResponse
     {
+        Gate::authorize('delete', $course);
+
         $course->delete();
 
         return redirect()
-            ->route('teachers.courses')
+            ->route('teachers.courses.index')
             ->with('success', 'Course deleted successfully');
+    }
+
+    public function togglePublish(Course $course): RedirectResponse
+    {
+        Gate::authorize('publish', $course);
+
+        $course->update(['is_published' => !$course->is_published]);
+        return redirect()
+            ->back()
+            ->with('success', 'Course updated successfully');
     }
 }

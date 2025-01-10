@@ -1,37 +1,36 @@
-import FileInput from "@/Components/shared/form/FileInput";
-import FieldGroup from "@/Components/shared/form/FieldGroup";
-import React, {useState} from "react";
-import axios from "axios";
-import {toast} from "sonner"
-import {Course} from "@/types";
+import FieldGroup from '@/Components/shared/form/FieldGroup'
+import FileInput from '@/Components/shared/form/FileInput'
+import { Course } from '@/types'
+import axios from 'axios'
+import React, { useState } from 'react'
+import { toast } from 'sonner'
 
 type UploadCourseImageProps = {
   errors: any;
   course: Course;
 }
 
-const UploadCourseImage =
-  ({
-     errors,
-     course
-   }: UploadCourseImageProps) => {
-    const [previewImageUrl, setPreviewImageUrl] = useState<string>('')
-    const [uploading, setUploading] = useState<boolean>(false)
-    const [courseFile, setCourseFile] = useState<File | null>(null)
+const UploadCourseImage = ({
+  errors,
+  course
+}: UploadCourseImageProps) => {
+  const [previewImageUrl, setPreviewImageUrl] = useState<string>('')
+  const [uploading, setUploading] = useState<boolean>(false)
+  const [courseFile, setCourseFile] = useState<File | null>(null)
 
-    function handleImageChange(e: any) {
-      const file = e.target.files?.[0]
-      if (!file) {
-        return
-      }
-      setPreviewImageUrl(URL.createObjectURL(file))
-      setCourseFile(file)
+  function handleImageChange(e: any) {
+    const file = e.target.files?.[0]
+    if (!file) {
+      return
     }
+    setPreviewImageUrl(URL.createObjectURL(file))
+    setCourseFile(file)
+  }
 
-    const uploadToS3 = async () => {
-      try {
-        setUploading(true)
-        const preSignedUrl = await axios.post('/s3/get-signed-url', {
+  const uploadToS3 = async () => {
+    try {
+      setUploading(true)
+      const preSignedUrl = await axios.post('/s3/get-signed-url', {
           fileName: course.id,
           path: 'courses/images'
         })
@@ -54,7 +53,6 @@ const UploadCourseImage =
       }
     }
 
-
     return (
       <FieldGroup
         label="Course Image"
@@ -64,7 +62,8 @@ const UploadCourseImage =
         <FileInput
           name="image"
           accept={'image/*'}
-          objectUrl={`https://dh7506awg2na5.cloudfront.net/courses/images/${course.id}`}
+          // objectUrl={`https://dh7506awg2na5.cloudfront.net/courses/images/${course.id}`}
+          objectUrl={course.image_url}
           previewUrl={previewImageUrl}
           error={errors.image_storage_id}
           onChange={handleImageChange}

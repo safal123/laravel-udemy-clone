@@ -34,7 +34,7 @@ const Index = () => {
       <div className="flex items-center px-8 py-4 bg-white border-b border-gray-200 mb-2 rounded-md">
         <h1 className="text-xl lg:text-3xl font-bold">
           <Link
-            href={route('teachers.courses')}
+            href={route('teachers.courses.index')}
             className="text-indigo-600 hover:text-indigo-700"
           >
             Courses

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use App\Models\CourseUser;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,8 +13,10 @@ class PaymentController extends Controller
 {
     public function show(): Response
     {
-        $user = request()->user();
         $courseId = request('course');
+        $course = Course::where('id', $courseId)->first();
+        Gate::authorize('enroll', $course);
+        $user = request()->user();
         $hasPurchase = CourseUser::query()
             ->where('user_id', $user->id)
             ->where('course_id', $courseId)
