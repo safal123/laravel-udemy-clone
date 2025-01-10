@@ -33,7 +33,6 @@ jobs:
       - name: Clear Config and Cache
         run: |
           php artisan config:clear
-          php artisan cache:clear
           php artisan route:clear
       - name: Set Directory Permissions
         run: chmod -R 777 storage bootstrap/cache
