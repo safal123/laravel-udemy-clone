@@ -17,4 +17,6 @@ jobs:
           server: ${{ secrets.SERVER }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          log_level: verbose
+          log-level: verbose
+          protocol: ftps
+          port: 1234
