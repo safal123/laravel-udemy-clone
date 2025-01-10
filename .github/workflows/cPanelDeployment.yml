@@ -42,15 +42,15 @@ jobs:
           node-version: "lts/*"
       - name: Install npm Dependencies
         run: |
-          npm install -g npm@latest
+          npm install
           npm cache clean --force
-      - name: Build Frontend Assets
-        run: npm run build
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: public/
+#      - name: Build Frontend Assets
+#        run: npm run build
+#      - name: Upload Artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: dist
+#          path: public/
       - name: Deploy to Server
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
