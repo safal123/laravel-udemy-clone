@@ -40,4 +40,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return $response;
         });
-    })->create();
+    })
+    ->withSchedule(function ($schedule) {
+        // run queue worker every minute
+        $schedule->command('queue:work --stop-when-empty')
+            ->everySecond();
+    })
+
+    ->create();
