@@ -42,9 +42,10 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withSchedule(function ($schedule) {
-        // run queue worker every minute
         $schedule->command('queue:work --stop-when-empty')
-            ->everySecond();
+            ->everyMinute()
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/queue-worker.log'));
     })
 
     ->create();
