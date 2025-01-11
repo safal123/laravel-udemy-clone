@@ -1,7 +1,8 @@
 /.phpunit.cache
 /bootstrap/ssr
 /node_modules
-/public/build
+# TODO: Fix this
+#/public/build
 /public/hot
 /public/storage
 /storage/*.key
