@@ -23,3 +23,12 @@ jobs:
 
       - name: Build Frontend Assets
         run: npm run build
+
+      - name: Deploy to Server via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          local-dir: public/build
+          server-dir: /laravel-udemy-clone/public/build
