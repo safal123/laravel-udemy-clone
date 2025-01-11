@@ -31,4 +31,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           local-dir: public/build/
-          server-dir: /laravel-udemy-clone/public/build
+          server-dir: /laravel-udemy-clone/public/
