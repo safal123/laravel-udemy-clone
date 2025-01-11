@@ -1,0 +1,1 @@
+import{j as s}from"./app-B_dPBHtO.js";function i({label:e,name:l,error:t,children:a}){return s.jsxs("div",{className:"space-y-2",children:[e&&s.jsxs("label",{className:"block font-semibold text-gray-600 select-none",htmlFor:l,children:[e,":"]}),a,t&&s.jsx("div",{className:"text-red-500 mt-2 text-sm",children:t})]})}export{i as F};
