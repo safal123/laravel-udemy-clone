@@ -1,10 +1,10 @@
+import { UserAvatar } from '@/Components/shared/UserAvatar'
 import { Badge } from '@/Components/ui/badge'
-import {Course, PageProps} from "@/types";
-import {Card, CardContent, CardHeader} from "@/Components/ui/card";
-import {Button} from "@/Components/ui/button";
-import {Link, usePage} from "@inertiajs/react";
-import { DollarSignIcon, HeartIcon, StarHalfIcon, StarIcon, User2Icon, Users2Icon, VideoIcon } from 'lucide-react'
-import {UserAvatar} from "@/Components/shared/UserAvatar";
+import { Button } from '@/Components/ui/button'
+import { Card, CardContent, CardHeader } from '@/Components/ui/card'
+import { Course, PageProps } from '@/types'
+import { Link, usePage } from '@inertiajs/react'
+import { DollarSignIcon, HeartIcon, StarHalfIcon, StarIcon, Users2Icon, VideoIcon } from 'lucide-react'
 
 const CourseCard = ({ course }: { course: Course }) => {
   const {purchased_courses, id: userId} = usePage<PageProps>().props.auth.user || {}

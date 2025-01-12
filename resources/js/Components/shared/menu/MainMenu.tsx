@@ -31,8 +31,8 @@ export default function MainMenu({className}: MainMenuProps) {
             icon={<Layout size={20}/>}
           />
           <MainMenuItem
-            text="Teacher Dashboard"
-            link={`teachers.dashboard`}
+            text="Profile"
+            link={`profile.edit`}
             icon={<User size={20}/>}
           />
         </> :

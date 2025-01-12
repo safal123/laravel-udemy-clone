@@ -22,7 +22,7 @@ export function UserMenu() {
           <UserAvatar src={''} fallback={'SP'}/>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-full min-w-56 mr-6 bg-gray-800 text-white border-none">
+      <DropdownMenuContent className="w-full min-w-60 mr-20 bg-gray-800 text-white border-none">
         <DropdownMenuLabel className={'text-center border-none'}>
           My Account
         </DropdownMenuLabel>
@@ -33,23 +33,20 @@ export function UserMenu() {
               Dashboard
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild={true} className={'cursor-pointer'}>
-            <Link href={'/profile'}>
+          <DropdownMenuItem asChild={true} className={'bg-gray-800 hover:bg-gray-700'}>
+            <Link href={'/profile'} className={'cursor-pointer'}>
               Profile
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
-            asChild={true}
-            className={'cursor-pointer bg-red-900 hover:bg-red-800'}>
+            className={'cursor-pointer p-0 bg-gray-800'}>
             <Link
               method="post"
               href={route('logout')}
               as="button"
-              className={'w-full'}
+              className={'w-full p-2 text-left'}
             >
-              <Button className={'w-full'}>
-                  Logout
-              </Button>
+              Logout
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

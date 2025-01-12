@@ -30,7 +30,6 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
     public function handle(): void
     {
         $event = Event::constructFrom($this->webhookCall->payload);
-
         // get the metadata from the event
         $metadata = $event->data->object->metadata;
 
@@ -39,6 +38,7 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
             ->where('course_id', $metadata['course_id'])
             ->exists();
         Log::info('Has purchase', ['hasPurchase' => $hasPurchase]);
+
         if ($hasPurchase) {
             Log::info('User is already enrolled in the course', ['metadata' => $metadata]);
             return;

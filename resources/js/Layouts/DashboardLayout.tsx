@@ -22,9 +22,9 @@ export default function DashboardLayout({title, children}: MainLayoutProps) {
           </div>
           <div className="flex flex-grow overflow-hidden">
             <MainMenu className="flex-shrink-0 hidden w-56 overflow-y-auto md:block"/>
-            <div className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-12 bg-gray-50">
-              {children}
+            <div className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-2 bg-gray-50">
               <Toaster />
+              {children}
             </div>
           </div>
         </div>
