@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\RunQueueCommand;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -42,10 +43,9 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withSchedule(function ($schedule) {
-        $schedule->command('queue:work --stop-when-empty')
-            ->everyMinute()
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/queue-worker.log'));
+        $schedule
+            ->command(RunQueueCommand::class)
+            ->everySecond();
     })
 
     ->create();
