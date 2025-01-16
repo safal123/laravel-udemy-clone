@@ -28,6 +28,7 @@ class ChapterResource extends JsonResource
             'updated_at' => $this->updated_at,
             'course' => $this->whenLoaded('course'),
             'is_free' => $this->is_free,
+            'order' => $this->order,
         ];
     }
 }

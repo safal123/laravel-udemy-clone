@@ -47,7 +47,9 @@ class Course extends Model implements CourseConstants
 
     public function chapters(): HasMany
     {
-        return $this->hasMany(Chapter::class);
+        return $this
+            ->hasMany(Chapter::class)
+            ->orderBy('order');
     }
 
     public function newEloquentBuilder($query): CourseBuilder

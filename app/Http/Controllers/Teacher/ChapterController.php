@@ -8,10 +8,11 @@ use App\Models\Chapter;
 use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ChapterController extends Controller
 {
-    public function store(Course $course, Request $request)
+    public function store(Course $course, Request $request): RedirectResponse
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -27,7 +28,7 @@ class ChapterController extends Controller
             ->with('success', 'Chapter created successfully.');
     }
 
-    public function update(Course $course, Chapter $chapter, Request $request)
+    public function update(Course $course, Chapter $chapter, Request $request): RedirectResponse
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -39,7 +40,7 @@ class ChapterController extends Controller
             ->with('success', 'Chapter updated successfully.');
     }
 
-    public function addChapterVideo(Course $course, Chapter $chapter)
+    public function addChapterVideo(Course $course, Chapter $chapter): \Illuminate\Http\JsonResponse
     {
         $chapter->update(['video_storage_id' => $chapter->id]);
 
@@ -88,5 +89,30 @@ class ChapterController extends Controller
         return redirect()
             ->route('teachers.courses.edit', $course)
             ->with('success', 'Chapter deleted successfully.');
+    }
+
+    public function updateOrder(Request $request)
+    {
+        try {
+            DB::transaction(function () use ($request) {
+                $activePosition = $request->input('active_position');
+                $overPosition = $request->input('over_position');
+
+                $chapter1 = Chapter::find($activePosition);
+                $chapter2 = Chapter::find($overPosition);
+
+                if (!$chapter1 || !$chapter2) {
+                    throw new \Exception('One or both chapters not found');
+                }
+
+                $tempValue = $chapter1->order;
+                $chapter1->update(['order' => $chapter2->order]);
+                $chapter2->update(['order' => $tempValue]);
+
+                return response()->json(['success' => true, 'message' => 'Order swapped successfully']);
+            });
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

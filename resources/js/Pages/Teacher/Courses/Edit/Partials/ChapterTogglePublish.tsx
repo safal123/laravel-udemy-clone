@@ -38,9 +38,9 @@ const ChapterTogglePublish = ({chapter}: ChapterTogglePublishProps) => {
         checked={chapter.is_published}
         id="toggle-publish"
       />
-      <Label htmlFor="toggle-publish">
-        {chapter.is_published ? 'Unpublish' : 'Publish'}
-      </Label>
+      {/*<Label htmlFor="toggle-publish">*/}
+      {/*  {chapter.is_published ? 'Unpublish' : 'Publish'}*/}
+      {/*</Label>*/}
     </form>
   )
 }

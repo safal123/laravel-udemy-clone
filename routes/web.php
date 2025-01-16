@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function () {
      * Teacher Chapters Routes
      */
     Route::group(['prefix' => 'teachers/courses/{course}/chapters'], function () {
+        Route::put('/order', [ChapterController::class, 'updateOrder'])
+            ->name('teachers.courses.chapters.order');
         Route::post('/', [ChapterController::class, 'store'])
             ->name('teachers.courses.chapters.store');
         Route::put('/{chapter}', [ChapterController::class, 'update'])
