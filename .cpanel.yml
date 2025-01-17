@@ -1,0 +1,31 @@
+---
+deployment:
+  tasks:
+    # Set deployment paths
+    - export DEPLOYPATH=/home5/picblurc/public_html/laravel-udemy-clone
+    - export REPOPATH=/home5/picblurc/laravel-udemy-clone
+
+    # Build frontend assets
+    - cd ${REPOPATH}
+    - npm install
+    - npm run build
+
+    # Install PHP dependencies
+    - /opt/cpanel/ea-php74/root/usr/bin/composer install
+
+    # Migrate database
+    - /opt/cpanel/ea-php74/root/usr/bin/php artisan migrate --force
+
+    # Remove old files
+    - /bin/rm -Rf ${DEPLOYPATH}_old
+
+    # Copy old site files to another directory
+    - /bin/cp -R ${DEPLOYPATH} ${DEPLOYPATH}_old
+
+    # Sync repository files to the deploy target path, excluding .git folder
+    - /bin/rsync -aP --exclude '.git' ${REPOPATH}/ ${DEPLOYPATH} --delete-after
+
+    # Set correct permissions
+    - /bin/chmod 755 ${DEPLOYPATH}
+    - /bin/find ${DEPLOYPATH} -type d -exec /bin/chmod 755 '{}' \;
+    - /bin/find ${DEPLOYPATH} -type f -exec /bin/chmod 644 '{}' \;
