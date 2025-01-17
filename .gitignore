@@ -2,7 +2,7 @@
 /bootstrap/ssr
 /node_modules
 # TODO: Fix this
-#/public/build
+/public/build
 /public/hot
 /public/storage
 /storage/*.key
