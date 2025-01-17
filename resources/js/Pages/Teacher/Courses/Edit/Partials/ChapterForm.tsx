@@ -1,12 +1,13 @@
-import {useForm} from "@inertiajs/react";
-import React from "react";
-import FieldGroup from "@/Components/shared/form/FieldGroup";
-import TextInput from "@/Components/shared/form/TextInput";
-import TextareaInput from "@/Components/shared/form/TextareaInput";
-import {Button} from "@/Components/ui/button";
-import {cn} from "@/lib/utils";
-import {Loader} from "lucide-react";
-import {Chapter, Course} from "@/types";
+import FieldGroup from '@/Components/shared/form/FieldGroup'
+import TextareaInput from '@/Components/shared/form/TextareaInput'
+import TextInput from '@/Components/shared/form/TextInput'
+import { Button } from '@/Components/ui/button'
+import { Input } from '@/Components/ui/input'
+import { cn } from '@/lib/utils'
+import { Chapter, Course } from '@/types'
+import { useForm } from '@inertiajs/react'
+import { Loader } from 'lucide-react'
+import React from 'react'
 
 type ChapterFormProps = {
   course?: Course
@@ -60,9 +61,15 @@ const ChapterForm = ({course, setShow, chapter, action = 'create'}: ChapterFormP
       </p>}
       <div className={'w-full flex flex-col gap-6 mt-6'}>
         <FieldGroup label="Chapter Title" name="title" error={errors.title}>
-          <TextInput
-            name="name"
-            error={errors.title}
+          {/*<TextInput*/}
+          {/*  name="name"*/}
+          {/*  error={errors.title}*/}
+          {/*  value={data.title}*/}
+          {/*  onChange={e => setData('title', e.target.value)}*/}
+          {/*/>*/}
+          <Input
+            type="text"
+            name="title"
             value={data.title}
             onChange={e => setData('title', e.target.value)}
           />
@@ -85,10 +92,11 @@ const ChapterForm = ({course, setShow, chapter, action = 'create'}: ChapterFormP
           {processing && <Loader className="w-4 h-4 animate-spin inline-block mr-2"/>}
           {action === 'update' ? 'Update Chapter' : 'Add Chapter'}
         </Button>
-        <Button type={"button"} onClick={() => {
-          // reset()
-          setShow(false)
-        }}>
+        <Button
+          type={'button'}
+          onClick={() => {
+            setShow(false)
+          }}>
           Cancel
         </Button>
       </div>
