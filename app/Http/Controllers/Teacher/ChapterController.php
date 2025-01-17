@@ -109,7 +109,9 @@ class ChapterController extends Controller
                 $chapter1->update(['order' => $chapter2->order]);
                 $chapter2->update(['order' => $tempValue]);
 
-                return response()->json(['success' => true, 'message' => 'Order swapped successfully']);
+                return redirect()
+                    ->back()
+                    ->with('success', 'Chapters reordered successfully.');
             });
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

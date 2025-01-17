@@ -9,7 +9,7 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
 import { GripVertical } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 type ChaptersTableProps = {
   chapters: Chapter[],
@@ -18,6 +18,10 @@ type ChaptersTableProps = {
 const ChaptersTable = ({chapters}: ChaptersTableProps) => {
   const [isDragging, setIsDragging] = React.useState(false)
   const [localChapters, setLocalChapters] = React.useState(chapters)
+
+  useEffect(() => {
+    setLocalChapters(chapters)
+  }, [chapters])
 
   const handleDragEnd = (event: any) => {
     setIsDragging(true)
@@ -30,9 +34,6 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
         over_position: over.id
       },
       preserveScroll: true,
-      onSuccess: () => {
-        setIsDragging(false)
-      }
     })
     const getChapterIndex = (id: string) => localChapters.findIndex(chapter => chapter.id === id)
 
@@ -48,7 +49,9 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
     <DndContext
       onDragEnd={handleDragEnd}
       collisionDetection={closestCenter}
+      onDragStart={() => setIsDragging(true)}
     >
+      {isDragging && <div className="fixed bg-gray-800 bg-opacity-90 z-50"/>}
       <Chapters chapters={localChapters}/>
     </DndContext>
   )
@@ -120,9 +123,10 @@ const SingleChapter = (chapter: Chapter) => {
                 </>
               }
             </div>
-            <p className={'text-red-500 bg-red-100 px-2 text-xs rounded-full font-bold'}>
+            {!chapter?.video_storage_id &&
+              <p className={'text-red-500 bg-red-100 px-2 text-xs rounded-full font-bold'}>
               Please upload a video first to publish or make it free.
-            </p>
+            </p>}
           </div>
         </div>
       </div>
