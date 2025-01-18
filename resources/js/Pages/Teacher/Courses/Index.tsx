@@ -36,7 +36,7 @@ const Index = () => {
             label: 'Title',
             name: 'title',
             renderCell: (row: any) => (
-              <Link href={route('teachers.courses.edit', row.id)} className="text-blue-500 hover:underline">
+              <Link href={route('teachers.courses.edit', row.id)} className="leading-7 [&:not(:first-child)]:mt-6 hover:underline">
                 {row.title}
               </Link>
             )

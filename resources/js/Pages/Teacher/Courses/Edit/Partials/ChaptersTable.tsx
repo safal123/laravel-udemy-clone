@@ -24,7 +24,9 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
   }, [chapters])
 
   const handleDragEnd = (event: any) => {
+    debugger
     setIsDragging(true)
+    if (!event.over) return
     const {active, over} = event
     setIsDragging(true)
     router.visit(route('teachers.courses.chapters.order', {course: chapters[0].course_id}), {

@@ -1,8 +1,8 @@
 import LoadingButton from '@/Components/shared/button/LoadingButton'
 import FieldGroup from '@/Components/shared/form/FieldGroup'
-import SelectInput from '@/Components/shared/form/SelectInput'
-import TextareaInput from '@/Components/shared/form/TextareaInput'
-import TextInput from '@/Components/shared/form/TextInput'
+import { Input } from '@/Components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select'
+import { Textarea } from '@/Components/ui/textarea'
 import UploadCourseImage from '@/Pages/Teacher/Courses/Edit/Partials/UploadCourseImage'
 import { Course } from '@/types'
 import { useForm, usePage } from '@inertiajs/react'
@@ -10,76 +10,85 @@ import React, { useEffect } from 'react'
 import slugify from 'slugify'
 
 type CourseFormProps = {
-  course: Course;
+  course?: Course;
+  mode?: 'create' | 'edit';
 }
 
-const CourseForm = ({ course }: CourseFormProps) => {
-  const { categories } = usePage().props as any;
-  const {data, setData, errors, put, processing} = useForm({
-    'title': course.title || '',
-    'description': course.description || '',
-    'price': course.price,
-    'image_storage_id': course.image_storage_id || '',
-    'category_id': course.category_id || '',
-    'slug': course.slug || '',
+const CourseForm = ({course, mode}: CourseFormProps) => {
+  const {categories} = usePage().props as any
+  const {data, setData, errors, put, post, processing} = useForm({
+    'title': course?.title || '',
+    'description': course?.description || '',
+    'price': course?.price,
+    'image_storage_id': course?.image_storage_id || '',
+    'category_id': course?.category_id || '',
+    'slug': course?.slug || ''
   })
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    put(route('teachers.courses.update', course.id))
+    e.preventDefault()
+    if (mode === 'create') return post(route('teachers.courses.store'))
+    put(route('teachers.courses.update', course?.id))
   }
   useEffect(() => {
-    if (!data.title || data.slug) return;
+    if (!data.title ) return
     setData('slug', slugify(data.title, {lower: true}))
   }, [data.title])
+
   return (
     <form onSubmit={handleSubmit} className={'flex flex-col lg:flex-row h-full items-stretch'}>
       <div className="w-full lg:w-1/2 flex-1 min-h-full h-full">
         <div className="grid gap-8 p-8 lg:grid-cols-2">
           <FieldGroup label="Course Title" name="title" error={errors.title}>
-            <TextInput
+            <Input
               name="title"
-              error={errors.title}
               value={data.title}
-              onChange={e => setData('title', e.target.value)}
+              onChange={(e: any) => setData('title', e.target.value)}
             />
           </FieldGroup>
           <FieldGroup label="Course Price" name="price" error={errors.price}>
-            <TextInput
+            <Input
               name="price"
-              type={'number'}
-              error={errors.price}
+              type="number"
               value={data.price}
-              onChange={(e: any) => setData('price', parseFloat(e.target.value))}
+              onChange={(e: any) => setData('price', e.target.value)}
             />
           </FieldGroup>
           <FieldGroup label="Course Slug" name="price" error={errors.slug}>
-            <TextInput
+            <Input
               name="slug"
-              error={errors.slug}
               value={data.slug}
               onChange={(e: any) => setData('slug', e.target.value)}
             />
           </FieldGroup>
           <FieldGroup label="Course Category" name="category_id" error={errors.category_id}>
-            <SelectInput
-              name="category_id"
-              error={errors.category_id}
-              value={data.category_id}
-              onChange={e => setData('category_id', e.target.value)}
-              options={categories.map((category: any) => ({
-                label: category.name,
-                value: category.id
-              }))}
-            />
+            <Select
+              onValueChange={(value) => setData('category_id', value)}
+              defaultValue={data.category_id}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={'Select Category'}/>
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category: any) => (
+                  <SelectItem
+                    key={category.id}
+                    value={category.id}
+
+                    onClick={() => setData('category_id', category)}
+                  >
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </FieldGroup>
         </div>
         <div className={'px-6'}>
           <FieldGroup label="Course Description" name="description" error={errors.description}>
-            <TextareaInput
+            <Textarea
               name="description"
-              error={errors.description}
               value={data.description}
-              onChange={e => setData('description', e.target.value)}
+              onChange={(e: any) => setData('description', e.target.value)}
             />
           </FieldGroup>
         </div>
@@ -87,20 +96,21 @@ const CourseForm = ({ course }: CourseFormProps) => {
           <LoadingButton
             loading={processing}
             type="submit"
-            className="btn-indigo"
           >
-            {processing ? 'Updating...' : 'Update Course'}
+            {mode === 'create' ? 'Create Course' : 'Update Course'}
           </LoadingButton>
         </div>
       </div>
-      <div className="w-full lg:w-1/2 flex-1">
-        <div className={'px-6 py-4 min-h-[400px]'}>
-          <UploadCourseImage
-            errors={errors}
-            course={course}
-          />
+      {course &&
+        <div className="w-full lg:w-1/2 flex-1">
+          <div className={'px-6 py-4 min-h-[400px]'}>
+            <UploadCourseImage
+              errors={errors}
+              course={course}
+            />
+          </div>
         </div>
-      </div>
+      }
     </form>
   )
 }
