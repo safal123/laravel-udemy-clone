@@ -27,7 +27,7 @@ export function UserMenu() {
           My Account
         </DropdownMenuLabel>
         <DropdownMenuSeparator className={'bg-gray-700'}/>
-        <DropdownMenuGroup className={'flex flex-col gap-y-3'}>
+        <DropdownMenuGroup className={'flex flex-col gap-y-3 p-4'}>
           <DropdownMenuItem asChild={true} className={'cursor-pointer'}>
             <Link href={'/dashboard'}>
               Dashboard

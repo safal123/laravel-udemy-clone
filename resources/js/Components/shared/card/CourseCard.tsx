@@ -3,14 +3,29 @@ import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardHeader } from '@/Components/ui/card'
 import { Course, PageProps } from '@/types'
-import { Link, usePage } from '@inertiajs/react'
+import { Link, router, usePage } from '@inertiajs/react'
 import { DollarSignIcon, HeartIcon, StarHalfIcon, StarIcon, Users2Icon, VideoIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
 const CourseCard = ({ course }: { course: Course }) => {
   const {purchased_courses, id: userId} = usePage<PageProps>().props.auth.user || {}
   const hasPurchased = purchased_courses?.some((c: Course) => c.id === course.id)
   const isAuthor = course.author.id === userId
   const canEnroll = !hasPurchased && !isAuthor
+
+  const addToWishlist = (course: Course) => {
+    if (!userId || !course || isAuthor) {
+      return false
+    }
+    router.post(route('wishlists.store'), {course_id: course.id}, {
+      preserveScroll: true,
+      onError: (errors) => {
+        console.error(errors)
+        toast.error(errors.error || 'An error occurred')
+      }
+    })
+  }
+
   return (
     <Card
       className={'bg-gray-800 border-none'}>
@@ -78,7 +93,9 @@ const CourseCard = ({ course }: { course: Course }) => {
                     Enroll Now for ${course.price}
                   </Button>
                 </Link>
-                <Button>
+                <Button
+                  onClick={()  => addToWishlist(course)}
+                >
                   <HeartIcon size={24}/>
                 </Button>
               </div>

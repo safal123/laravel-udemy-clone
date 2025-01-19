@@ -15,12 +15,16 @@ class PaymentController extends Controller
     {
         $courseId = request('course');
         $course = Course::where('id', $courseId)->first();
+
         Gate::authorize('enroll', $course);
+
         $user = request()->user();
+
         $hasPurchase = CourseUser::query()
             ->where('user_id', $user->id)
             ->where('course_id', $courseId)
             ->exists();
+
         $course = Course::with([
             'author',
             'chapters' => fn($query) => $query->where('is_published', true)

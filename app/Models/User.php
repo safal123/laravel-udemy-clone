@@ -85,11 +85,8 @@ class User extends Authenticatable
             ->exists();
     }
 
-//    public function students(): BelongsToMany
-//    {
-//        return $this
-//            ->belongsToMany(User::class, 'student_teacher')
-//            ->withPivot('id', 'created_at', 'user_id', 'teacher_id')
-//            ->as('studentDetails');
-//    }
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }

@@ -26,6 +26,7 @@ class ChapterController extends Controller
                     ->orderBy('order');
             }])
             ->get();
+
         return Inertia::render('Course/Show/Chapter/Index', [
             'course' => $course,
             'chapter' => ChapterResource::collection($chapter),

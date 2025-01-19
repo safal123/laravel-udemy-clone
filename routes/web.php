@@ -1,16 +1,14 @@
 <?php
 
-use App\Http\Controllers\
-{
-    HomePageController,
+use App\Http\Controllers\{HomePageController,
     PaymentController,
     ProfileController,
     S3Controller,
     StripeController,
     Teacher\ChapterController,
     Teacher\CourseController,
-    Teacher\DashboardController
-};
+    Teacher\DashboardController,
+    WishlistController};
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController as StudentDashboardController;
 
@@ -33,6 +31,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/teachers/dashboard', [DashboardController::class, 'index'])
         ->name('teachers.dashboard');
+
+    Route::resource('wishlists', WishlistController::class)
+        ->only(['index', 'store', 'destroy'])
+        ->names('wishlists');
     /*
      * Teacher Courses Routes
      */

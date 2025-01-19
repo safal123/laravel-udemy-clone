@@ -6,6 +6,7 @@ import Testimonials from '@/Components/shared/Testimonials'
 import Courses from '@/Pages/Partials/Courses'
 import { PageProps } from '@/types'
 import { Head, usePage } from '@inertiajs/react'
+import { Toaster } from 'sonner'
 
 export default function Welcome({auth}: PageProps<{
   laravelVersion: string,
@@ -15,6 +16,7 @@ export default function Welcome({auth}: PageProps<{
   const {courses} = props
   return (
     <div className={'bg-gray-900'}>
+      <Toaster />
       <Head title="Udemy Clone"/>
       <HomePageNavbar auth={auth}/>
       <div className={'flex flex-col gap-6 pb-12 pt-2 px-6 container'}>
