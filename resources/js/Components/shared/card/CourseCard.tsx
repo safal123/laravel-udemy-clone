@@ -19,6 +19,9 @@ const CourseCard = ({ course }: { course: Course }) => {
     }
     router.post(route('wishlists.store'), {course_id: course.id}, {
       preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Course added to wishlist')
+      },
       onError: (errors) => {
         console.error(errors)
         toast.error(errors.error || 'An error occurred')

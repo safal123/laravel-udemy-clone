@@ -13,6 +13,7 @@ export interface User {
   email_verified_at: string;
   courses: Course[];
   purchased_courses: Course[];
+  wishlists: Wishlist[];
 }
 
 
@@ -33,6 +34,14 @@ export interface Course {
   duration: number;
   author: User;
   user_id: string;
+}
+
+export interface Wishlist {
+  id: string;
+  user_id: string;
+  course_id: string;
+  created_at: string;
+  course: Course;
 }
 
 export interface Chapter {

@@ -24,4 +24,13 @@ class WishlistController extends Controller
         return redirect()
             ->back();
     }
+
+    public function destroy(Request $request, $id): RedirectResponse
+    {
+        $request->user()->wishlists()->findOrFail($id)->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Course removed from wishlist.');
+    }
 }
