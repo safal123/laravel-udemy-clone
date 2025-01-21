@@ -13,7 +13,8 @@ class HomePageController extends Controller
     {
         return Inertia::render('Welcome', [
             'courses' => CourseResource::collection(
-                Course::allPublishedCourses()
+                Course::query()
+                    ->allPublishedCourses()
                     ->paginate(10)
             )
         ]);

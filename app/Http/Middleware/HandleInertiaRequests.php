@@ -40,7 +40,13 @@ class HandleInertiaRequests extends Middleware
                     new UserResource($request->user()->load('wishlists.course'))
                     : null,
             ],
-            'categories' => fn () => CategoryResource::collection(Category::all()),
+            'categories' => function () {
+                $date = now()->addDay();
+                $cacheKey = "categories.{$date->format('Y-m-d')}";
+                return cache()->remember($cacheKey, 60 * 60 * 24, function () {
+                    return CategoryResource::collection(Category::all());
+                });
+            },
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

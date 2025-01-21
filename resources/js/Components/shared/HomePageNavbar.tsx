@@ -16,12 +16,14 @@ const HomePageNavbar = ({auth}: HomePageNavbarProps) => {
           <Link href={'/'}>
             <Logo/>
           </Link>
-          <Link href={'/courses'} className={'text-white'}>
-            Courses
-          </Link>
-          <Link href={'/categories'} className={'text-white'}>
-            Categories
-          </Link>
+          <div className={'hidden md:flex items-center space-x-4'}>
+            <Link href={'/courses'} className={'text-white'}>
+              Courses
+            </Link>
+            <Link href={'/categories'} className={'text-white'}>
+              Categories
+            </Link>
+          </div>
         </div>
         <div>
           {auth?.user ?

@@ -23,12 +23,11 @@ class CourseBuilder extends Builder
      */
     public function whereHasPublishedChapters(): self
     {
-        return $this
-            ->whereHas('chapters', function ($query) {
-                $query
-                    ->where('is_published', true)
-                    ->whereNotNull('video_storage_id');
-            });
+        return $this->whereHas('chapters', function ($query) {
+            $query
+                ->where('is_published', true)
+                ->whereNotNull('video_storage_id');
+        });
     }
 
     public function loadAuthor(): self
@@ -47,7 +46,7 @@ class CourseBuilder extends Builder
         ]);
     }
 
-    public function countChapters(): self
+    public function countPublishedChapters(): self
     {
         return $this->withCount([
             'chapters' => function ($query) {
@@ -74,9 +73,18 @@ class CourseBuilder extends Builder
         return $this
             ->published()
             ->whereHasPublishedChapters()
-            ->loadAuthor()
-            ->loadPublishedChapters()
-            ->countChapters()
+            ->with([
+                'author',
+                'chapters' => function ($query) {
+                    $query->where('is_published', true)->whereNotNull('video_storage_id');
+                },
+            ])
+            ->withCount([
+                'chapters' => function ($query) {
+                    $query->where('is_published', true)->whereNotNull('video_storage_id');
+                },
+            ])
             ->orderByCreatedAtDesc();
     }
+
 }

@@ -4,7 +4,7 @@ import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardHeader } from '@/Components/ui/card'
 import { Course, PageProps } from '@/types'
 import { Link, router, usePage } from '@inertiajs/react'
-import { DollarSignIcon, HeartIcon, StarHalfIcon, StarIcon, Users2Icon, VideoIcon } from 'lucide-react'
+import { DollarSignIcon, HeartIcon, Loader2, StarHalfIcon, StarIcon, Users2Icon, VideoIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 const CourseCard = ({ course }: { course: Course }) => {
@@ -19,11 +19,13 @@ const CourseCard = ({ course }: { course: Course }) => {
     }
     router.post(route('wishlists.store'), {course_id: course.id}, {
       preserveScroll: true,
+      onStart: () => {
+        toast.info(<Loader2 size={24} className="text-gray-700 animate-spin"/>)
+      },
       onSuccess: () => {
         toast.success('Course added to wishlist')
       },
       onError: (errors) => {
-        console.error(errors)
         toast.error(errors.error || 'An error occurred')
       }
     })
@@ -54,6 +56,7 @@ const CourseCard = ({ course }: { course: Course }) => {
             <p className={'text-gray-100 text-medium font-semibold truncate'}>
               {course.title.substring(0, 20)}...
             </p>
+            <Loader2 size={24} className={'text-gray-100'}/>
             <Badge>
               {course.chapters_count}
               {course.chapters_count > 1 ? ' Chapters' : ' Chapter'}

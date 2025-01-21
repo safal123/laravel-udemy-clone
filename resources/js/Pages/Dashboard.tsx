@@ -3,12 +3,21 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/Components/ui/card'
 import DashboardLayout from '@/Layouts/DashboardLayout'
 import { Course, PageProps } from '@/types'
 import { Head, Link, router, usePage } from '@inertiajs/react'
+import { toast } from 'sonner'
 
 export default function Dashboard({auth}: PageProps) {
   const courses = usePage<{ courses: Course[] }>().props.courses
   const remove = (wishlist: any) => {
     console.log(wishlist)
-    router.delete(route('wishlists.destroy', {wishlist: wishlist.id}))
+    router.delete(route('wishlists.destroy', {wishlist: wishlist.id}), {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Course removed from wishlist')
+      },
+      onError: (errors) => {
+        toast.error(errors.error || 'An error occurred')
+      }
+    })
   }
   return (
     <DashboardLayout>
@@ -68,7 +77,8 @@ export default function Dashboard({auth}: PageProps) {
                 </div>
                 : <div className={'mt-4'}>
                   <p>No courses in wishlist</p>
-                </div>}
+                </div>
+              }
             </div>
           </CardContent>
         </Card>

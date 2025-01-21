@@ -28,8 +28,10 @@ const HeroSection = () => {
             Build an interactive and engaging LMS that brings your courses,
             chapters, and certifications into one place for your users.
           </p>
-          <div className="flex gap-4">
-            <Button>
+          <div className="flex flex-col md:flex-row gap-4">
+            <Button
+              className={'border border-blue-400 shadow-lg hover:bg-blue-400 hover:text-gray-900 transition-colors'}
+            >
               Get Started for Free
             </Button>
             <Button variant="secondary">

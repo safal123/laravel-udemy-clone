@@ -34,9 +34,11 @@ class CourseResource extends JsonResource
             'chapters_count' => $this->chapters_count,
             'duration' => $this->duration ?? 10,
             'level' => $this->level,
-            $this->mergeWhen($this->relationLoaded('students'), [
-                'users' => UserResource::collection($this->students),
-            ]),
+            'students' => UserResource::collection($this->whenLoaded('students')),
+            // TODO: Figure out why this is written this way 🤔🤔🤔🤔
+//            $this->mergeWhen($this->relationLoaded('students'), [
+//                'users' => UserResource::collection($this->students),
+//            ]),
         ];
     }
 }
