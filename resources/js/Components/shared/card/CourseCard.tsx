@@ -2,6 +2,7 @@ import { UserAvatar } from '@/Components/shared/UserAvatar'
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardHeader } from '@/Components/ui/card'
+import { useWishlist } from '@/hooks/useWishlist'
 import { Course, PageProps } from '@/types'
 import { Link, router, usePage } from '@inertiajs/react'
 import { DollarSignIcon, HeartIcon, Loader2, StarHalfIcon, StarIcon, Users2Icon, VideoIcon } from 'lucide-react'
@@ -13,22 +14,13 @@ const CourseCard = ({ course }: { course: Course }) => {
   const isAuthor = course.author.id === userId
   const canEnroll = !hasPurchased && !isAuthor
 
-  const addToWishlist = (course: Course) => {
-    if (!userId || !course || isAuthor) {
+  const { addToWishlist } = useWishlist()
+
+  const addCourseToWishlist = async (course: Course) => {
+    if (!course || isAuthor) {
       return false
     }
-    router.post(route('wishlists.store'), {course_id: course.id}, {
-      preserveScroll: true,
-      onStart: () => {
-        toast.info(<Loader2 size={24} className="text-gray-700 animate-spin"/>)
-      },
-      onSuccess: () => {
-        toast.success('Course added to wishlist')
-      },
-      onError: (errors) => {
-        toast.error(errors.error || 'An error occurred')
-      }
-    })
+    await addToWishlist(course)
   }
 
   return (
@@ -45,18 +37,17 @@ const CourseCard = ({ course }: { course: Course }) => {
       </CardHeader>
       <CardContent className={'p-0'}>
         <div className={'px-4 py-4'}>
-          <div className={'flex items-center'}>
-            {[...Array(4)].map((_, i) => <StarIcon size={16} fill={'green'} className={'text-green-500'}/>)}
-            <StarHalfIcon size={16} fill={'green'} className={'text-gray-500'}/>
-            <span className={'text-green-100 text-xs bg-green-500 rounded-xl px-2 py-0.5 font-semibold'}>
-              {4.5}
-            </span>
-          </div>
+          {/*<div className={'flex items-center'}>*/}
+          {/*  {[...Array(4)].map((_, i) => <StarIcon size={16} fill={'green'} className={'text-green-500'}/>)}*/}
+          {/*  <StarHalfIcon size={16} fill={'green'} className={'text-gray-500'}/>*/}
+          {/*  <span className={'text-green-100 text-xs bg-green-500 rounded-xl px-2 py-0.5 font-semibold'}>*/}
+          {/*    {4.5}*/}
+          {/*  </span>*/}
+          {/*</div>*/}
           <div className={'flex items-center justify-between'}>
             <p className={'text-gray-100 text-medium font-semibold truncate'}>
               {course.title.substring(0, 20)}...
             </p>
-            <Loader2 size={24} className={'text-gray-100'}/>
             <Badge>
               {course.chapters_count}
               {course.chapters_count > 1 ? ' Chapters' : ' Chapter'}
@@ -71,20 +62,20 @@ const CourseCard = ({ course }: { course: Course }) => {
               </Link>
             </div>
           </div>
-          <div className={'flex flex-col gap-1 mb-4'}>
-            <div className={'flex items-center gap-2'}>
-              <VideoIcon size={20} className={'text-gray-100'}/>
-              <span className={'text-gray-100 text-xs'}>
-                20 Videos
-              </span>
-            </div>
-            <div className={'flex items-center gap-2'}>
-              <Users2Icon size={20} className={'text-gray-100'}/>
-              <span className={'text-gray-100 text-xs'}>
-                2500+ Students
-              </span>
-            </div>
-          </div>
+          {/*<div className={'flex flex-col gap-1 mb-4'}>*/}
+          {/*  <div className={'flex items-center gap-2'}>*/}
+          {/*    <VideoIcon size={20} className={'text-gray-100'}/>*/}
+          {/*    <span className={'text-gray-100 text-xs'}>*/}
+          {/*      {course.chapters_count} Videos*/}
+          {/*    </span>*/}
+          {/*  </div>*/}
+          {/*  <div className={'flex items-center gap-2'}>*/}
+          {/*    <Users2Icon size={20} className={'text-gray-100'}/>*/}
+          {/*    <span className={'text-gray-100 text-xs'}>*/}
+          {/*      {course.enrollments_count} Enrollments*/}
+          {/*    </span>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
           <div className={'mt-1'}>
             {canEnroll ?
               <div className={'flex items-center justify-between'}>
@@ -100,7 +91,7 @@ const CourseCard = ({ course }: { course: Course }) => {
                   </Button>
                 </Link>
                 <Button
-                  onClick={()  => addToWishlist(course)}
+                  onClick={()  => addCourseToWishlist(course)}
                 >
                   <HeartIcon size={24}/>
                 </Button>

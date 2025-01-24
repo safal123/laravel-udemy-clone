@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
   ColumnDef,
@@ -36,47 +34,12 @@ import {
   TableRow,
 } from "@/Components/ui/table"
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-]
-
-export type Payment = {
+export type Student = {
   id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
   email: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Student>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -100,13 +63,6 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
     accessorKey: "email",
     header: ({ column }) => {
       return (
@@ -122,8 +78,8 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "course",
+    header: () => <div className="text-right">Course</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"))
 
@@ -167,7 +123,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ]
 
-export function Students() {
+export function Students({ students }: { students: any }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -175,6 +131,7 @@ export function Students() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const data = students as Student[]
 
   const table = useReactTable({
     data,

@@ -52,6 +52,16 @@ class Course extends Model implements CourseConstants
             ->orderBy('order');
     }
 
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(CourseRating::class);
+    }
+
+    public function averageRating(): float
+    {
+        return $this->ratings()->avg('rating') ?? 0;
+    }
+
     public function newEloquentBuilder($query): CourseBuilder
     {
         return new CourseBuilder($query);

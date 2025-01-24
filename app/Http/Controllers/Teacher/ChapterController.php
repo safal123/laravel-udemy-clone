@@ -95,24 +95,38 @@ class ChapterController extends Controller
     {
         try {
             DB::transaction(function () use ($request) {
-                $activePosition = $request->input('active_position');
-                $overPosition = $request->input('over_position');
+                $activeUuid = $request->input('active_position');
+                $overUuid = $request->input('over_position');
 
-                $chapter1 = Chapter::find($activePosition);
-                $chapter2 = Chapter::find($overPosition);
+                // Find chapters by UUID
+                $chapterToMove = Chapter::where('id', $activeUuid)->first();
+                $targetChapter = Chapter::where('id', $overUuid)->first();
 
-                if (!$chapter1 || !$chapter2) {
+                if (!$chapterToMove || !$targetChapter) {
                     throw new \Exception('One or both chapters not found');
                 }
 
-                $tempValue = $chapter1->order;
-                $chapter1->update(['order' => $chapter2->order]);
-                $chapter2->update(['order' => $tempValue]);
+                $currentOrder = $chapterToMove->order;
+                $targetOrder = $targetChapter->order;
 
-                return redirect()
-                    ->back()
-                    ->with('success', 'Chapters reordered successfully.');
+                // Reorder chapters
+                if ($currentOrder < $targetOrder) {
+                    // Moving down: Shift items up
+                    Chapter::whereBetween('order', [$currentOrder + 1, $targetOrder])
+                        ->decrement('order');
+                } elseif ($currentOrder > $targetOrder) {
+                    // Moving up: Shift items down
+                    Chapter::whereBetween('order', [$targetOrder, $currentOrder - 1])
+                        ->increment('order');
+                }
+
+                // Update the moved chapter's order
+                $chapterToMove->update(['order' => $targetOrder]);
             });
+
+            return redirect()
+                ->back()
+                ->with('success', 'Chapters reordered successfully.');
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

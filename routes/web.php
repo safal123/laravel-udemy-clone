@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\{HomePageController,
+use App\Http\Controllers\{CourseRatingController,
+    HomePageController,
     PaymentController,
     ProfileController,
     S3Controller,
@@ -35,6 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('wishlists', WishlistController::class)
         ->only(['index', 'store', 'destroy'])
         ->names('wishlists');
+
+    Route::resource('/course-rating', CourseRatingController::class)
+        ->only(['store'])
+        ->names('course-rating');
     /*
      * Teacher Courses Routes
      */

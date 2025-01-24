@@ -34,11 +34,13 @@ class CourseResource extends JsonResource
             'chapters_count' => $this->chapters_count,
             'duration' => $this->duration ?? 10,
             'level' => $this->level,
+            'ratings' => $this->averageRating(),
             'students' => UserResource::collection($this->whenLoaded('students')),
             // TODO: Figure out why this is written this way 🤔🤔🤔🤔
 //            $this->mergeWhen($this->relationLoaded('students'), [
 //                'users' => UserResource::collection($this->students),
 //            ]),
+            'enrollments_count' => $this->students()->count(),
         ];
     }
 }

@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user() !== null ?
-                    new UserResource($request->user()->load('wishlists.course'))
+                    new UserResource($request->user()->load(['roles', 'wishlists.course']))
                     : null,
             ],
             'categories' => function () {

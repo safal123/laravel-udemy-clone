@@ -1,6 +1,6 @@
-import React from 'react';
-import { Check, CircleX, TriangleAlert } from 'lucide-react';
-import CloseButton from "@/Components/shared/button/CloseButton";
+import CloseButton from '@/Components/shared/button/CloseButton'
+import { Check, CircleX, TriangleAlert } from 'lucide-react'
+import React from 'react'
 
 interface Alert {
   message: string;
@@ -10,13 +10,14 @@ interface Alert {
   variant?: 'success' | 'error' | 'warning';
 }
 
-export default function Alert({
-                                icon,
-                                action,
-                                message,
-                                variant,
-                                onClose
-                              }: Alert) {
+export default function Alert
+({
+  icon,
+  action,
+  message,
+  variant,
+  onClose
+}: Alert) {
   const color = {
     success: 'green',
     error: 'red',
@@ -24,7 +25,7 @@ export default function Alert({
   }[variant || 'success'];
 
   const backGroundColor = {
-    success: 'bg-green-500 text-white',
+    success: 'bg-green-800 text-white',
     error: 'bg-red-500 text-white',
     warning: 'bg-yellow-500 text-yellow-800'
   }[variant || 'success'];

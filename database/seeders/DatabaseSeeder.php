@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Chapter;
+use App\Models\Course;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,16 +16,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Safal Pokharel',
-            'email' => 'safal@safal.com',
-            'password' => bcrypt('password'),
-        ]);
-
         $this->call([
             CategorySeeder::class,
+            RolesAndPermissionsSeeder::class,
+            CourseSeeder::class,
         ]);
+
+
+        User::factory()
+            ->create([
+                'name' => 'Safal Pokharel',
+                'email' => 'safal@safal.com',
+                'password' => bcrypt('password'),
+            ])
+            ->assignRole('super-admin') // Assign the role first
+            ->each(function ($user) {
+                // Create courses for the user
+                Course::factory(20)
+                    ->create(['user_id' => $user->id])
+                    ->each(function ($course) {
+                        // Create chapters for each course
+                        Chapter::factory(5)->create(['course_id' => $course->id]);
+                    });
+            });
+
     }
 }

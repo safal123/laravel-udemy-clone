@@ -24,10 +24,10 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
   }, [chapters])
 
   const handleDragEnd = (event: any) => {
-    debugger
-    setIsDragging(true)
-    if (!event.over) return
     const {active, over} = event
+    if (chapters.length < 2 || !active || !over) {
+      return
+    }
     setIsDragging(true)
     router.visit(route('teachers.courses.chapters.order', {course: chapters[0].course_id}), {
       method: 'put',
@@ -36,6 +36,8 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
         over_position: over.id
       },
       preserveScroll: true,
+      // only re-render the chapters table
+      preserveState: true
     })
     const getChapterIndex = (id: string) => localChapters.findIndex(chapter => chapter.id === id)
 
@@ -53,7 +55,7 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
       collisionDetection={closestCenter}
       onDragStart={() => setIsDragging(true)}
     >
-      {isDragging && <div className="fixed bg-gray-800 bg-opacity-90 z-50"/>}
+      {isDragging}
       <Chapters chapters={localChapters}/>
     </DndContext>
   )
@@ -62,8 +64,15 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
 export default ChaptersTable
 
 const Chapters = ({chapters}: ChaptersTableProps) => {
+  if (!chapters.length) {
+    return (
+      <div className="border border-dotted border-gray-300 p-4 rounded-md">
+        <p className="text-gray-500">No chapters yet</p>
+      </div>
+    )
+  }
   return (
-    <div className={'space-y-1 bg-gray-100 p-4 rounded-md'}>
+    <div className={'space-y-1 bg-gray-200 p-4 rounded-md'}>
       <SortableContext
         items={chapters}
         strategy={verticalListSortingStrategy}

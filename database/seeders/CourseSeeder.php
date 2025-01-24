@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Chapter;
+use App\Models\Course;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +14,12 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Course::factory(10)
+            ->create()
+            ->each(function (Course $course) {
+                Chapter::factory(5)->create([
+                    'course_id' => $course->id,
+                ]);
+            });
     }
 }

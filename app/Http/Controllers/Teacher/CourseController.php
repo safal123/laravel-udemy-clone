@@ -24,7 +24,7 @@ class CourseController extends Controller
                     ->user()
                     ->courses()
                     ->orderBy('created_at', 'desc')
-                    ->paginate(4)
+                    ->paginate(8)
             ),
         ]);
     }

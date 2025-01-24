@@ -12,6 +12,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "spatie/laravel-permission": "^6.10",
         "spatie/laravel-stripe-webhooks": "^3.8",
         "spatie/laravel-webhook-client": "^3.4",
         "tightenco/ziggy": "^2.0"
@@ -36,7 +37,8 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": ["tests/Suite/helpers.php"]
     },
     "scripts": {
         "post-autoload-dump": [

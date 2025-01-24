@@ -1,8 +1,11 @@
+import { cn } from '@/lib/utils'
+
 interface FieldGroupProps {
   name?: string;
   label?: string;
   error?: string;
   children: React.ReactNode;
+  className?: string;
 }
 
 export default function FieldGroup
@@ -10,10 +13,11 @@ export default function FieldGroup
   label,
   name,
   error,
-  children
+  children,
+  className,
 }: FieldGroupProps) {
   return (
-    <div className="space-y-2">
+    <div className={cn('space-y-1 ', className)}>
       {label && (
         <label className="block font-semibold text-gray-600 select-none" htmlFor={name}>
           {label}:

@@ -1,25 +1,36 @@
 import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/button'
+import { useWishlist } from '@/hooks/useWishlist'
 import CourseLayout from '@/Layouts/CourseLayout'
 import { Course, PageProps } from '@/types'
-import { Link, usePage } from '@inertiajs/react'
+import { Link, router, usePage } from '@inertiajs/react'
 import {
   AudioLines,
   BookAIcon,
   CheckCircle2Icon,
   ChevronLeft,
   CircleDollarSign,
-  Clock,
+  Clock, Loader2,
   LockIcon,
   SaveIcon,
   VideoIcon
 } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { toast } from 'sonner'
 
 const Index = ({auth}: PageProps) => {
   const course = usePage().props.course as Course
   const hasPurchased = auth.user?.purchased_courses?.some((c: Course) => c.id === course.id)
   const isOwner = auth.user.id === course.user_id
+  const { addToWishlist } = useWishlist()
+
+  const addCourseToWishlist = async (course: Course) => {
+    if (!course || isOwner && !hasPurchased) {
+      return false
+    }
+    await addToWishlist(course)
+  }
+
   return (
     <div className={'border border-gray-700 rounded-md p-4'}>
       <div className={'flex-1 space-y-4'}>
@@ -70,13 +81,16 @@ const Index = ({auth}: PageProps) => {
                   </Button>
                 </Link>
               }
-              <Button
-                variant={'outline'}
-                className="bg-gray-700 hover:bg-gray-800 text-gray-400 hover:text-white border border-gray-700"
-              >
-                <SaveIcon size={16} className="mr-2"/>
-                Add to Watchlist
-              </Button>
+              {!hasPurchased &&
+                <Button
+                  variant={'outline'}
+                  onClick={() => addCourseToWishlist(course)}
+                  className="bg-gray-700 hover:bg-gray-800 text-gray-400 hover:text-white border border-gray-700"
+                >
+                  <SaveIcon size={16} className="mr-2"/>
+                  Add to wishlist
+                </Button>
+              }
               {!hasPurchased && (
                 <Link href={`/payment?course=${course.id}&price=${course.price}`} className={'md:ml-auto w-full'}>
                   <Button
@@ -97,7 +111,7 @@ const Index = ({auth}: PageProps) => {
                 <div className={'flex items-center gap-1'}>
                   <BookAIcon size={12}/>
                   <span className="text-sm">
-                  5 Lessons
+                  {course.chapters.length} Lessons
                 </span>
                 </div>
                 <div className={'flex items-center gap-1'}>

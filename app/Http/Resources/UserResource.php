@@ -23,6 +23,8 @@ class UserResource extends JsonResource
             'purchased_courses' => $this->purchasedCourses,
             'email_verified_at' => $this->email_verified_at,
             'wishlists' => WishlistResource::collection($this->whenLoaded('wishlists')),
+            'roles' => $this->whenLoaded('roles'),
+            'is_teacher' => $this->isTeacher(),
         ];
     }
 }

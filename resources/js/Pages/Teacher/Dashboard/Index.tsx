@@ -2,10 +2,11 @@ import { Card } from '@/Components/ui/card'
 import TeacherDashboardLayout from "@/Layouts/TeacherDashboardLayout";
 import { CardsStats } from '@/Pages/Teacher/Dashboard/Partials/CardStats'
 import { Students } from '@/Pages/Teacher/Dashboard/Partials/Students'
-import { Head } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 import React from "react";
 
 const Index = () => {
+  const students = usePage().props.students
   return (
     <Card className={"p-6 min-h-screen"}>
       <Head title="Teacher Dashboard"/>
@@ -16,7 +17,7 @@ const Index = () => {
       <div className="mt-4">
         <h2 className="text-xl font-semibold">Students</h2>
       </div>
-      <Students />
+      <Students students={students as any}/>
       <div>
       </div>
     </Card>

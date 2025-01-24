@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
+ use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+ class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuids, Billable;
+    use HasFactory, Notifiable, HasUuids, Billable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -69,8 +70,7 @@ class User extends Authenticatable
 
     public function isTeacher(): bool
     {
-        // TODO: Implement isTeacher() method.
-        return true;
+        return $this->hasAnyRole(['super-admin', 'teacher']);
     }
 
     public function isTeacherOfCourse(Course $course): bool

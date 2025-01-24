@@ -16,7 +16,6 @@ class DashboardController extends Controller
             ->purchasedCourses()
             ->with(['author', 'chapters'])
             ->get();
-
         return Inertia::render('Dashboard', [
             'courses' => CourseResource::collection($userCourses),
         ]);

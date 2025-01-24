@@ -1,6 +1,7 @@
+import { UserMenu } from '@/Components/shared/tooltip/UserMenu'
 import {useState} from 'react';
 import {Link, usePage} from '@inertiajs/react';
-import {PageProps} from '@/types';
+import { PageProps, User } from '@/types'
 import {ChevronDown} from 'lucide-react';
 
 export default () => {
@@ -14,14 +15,7 @@ export default () => {
           className="flex items-center cursor-pointer select-none group ml-auto"
           onClick={() => setMenuOpened(true)}
         >
-          <div className="mr-1 text-gray-800 whitespace-nowrap group-hover:text-indigo-600 focus:text-indigo-600">
-            <span>{auth.user.name}</span>
-            {/*<span className="hidden ml-1 md:inline">{auth.user.name}</span>*/}
-          </div>
-          <ChevronDown
-            size={20}
-            className="text-gray-800 group-hover:text-indigo-600"
-          />
+          <UserMenu />
         </div>
         <div className={menuOpened ? '' : 'hidden'}>
           <div
