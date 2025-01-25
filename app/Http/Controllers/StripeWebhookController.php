@@ -5,13 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\StripeWebhooks\ProcessStripeWebhookJob;
 use Spatie\StripeWebhooks\StripeSignatureValidator;
-use Spatie\WebhookClient\Models\WebhookCall;
 use Spatie\WebhookClient\WebhookConfig;
 use Spatie\WebhookClient\WebhookProcessor;
 
 class StripeWebhookController extends Controller
 {
-    public function handle(Request $request, string $configKey = null)
+    public function handle(Request $request, ?string $configKey = null)
     {
         $webhookConfig = new WebhookConfig([
             'name' => 'stripe',

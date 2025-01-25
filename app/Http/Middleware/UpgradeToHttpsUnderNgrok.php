@@ -15,7 +15,7 @@ class UpgradeToHttpsUnderNgrok
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-{
+    {
         if (
             str_ends_with($request->getHost(), '.ngrok-free.app') ||
             // production

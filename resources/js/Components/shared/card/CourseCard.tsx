@@ -6,7 +6,6 @@ import { useWishlist } from '@/hooks/useWishlist'
 import { Course, PageProps } from '@/types'
 import { Link, router, usePage } from '@inertiajs/react'
 import { DollarSignIcon, HeartIcon, Loader2, StarHalfIcon, StarIcon, Users2Icon, VideoIcon } from 'lucide-react'
-import { toast } from 'sonner'
 
 const CourseCard = ({ course }: { course: Course }) => {
   const {purchased_courses, id: userId} = usePage<PageProps>().props.auth.user || {}

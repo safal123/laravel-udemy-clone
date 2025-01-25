@@ -38,7 +38,7 @@ class CoursePolicy
 
     public function publish(User $user, Course $course): Response
     {
-        if (!$course->hasPublishedChapter()) {
+        if (! $course->hasPublishedChapter()) {
             return Response::deny('You cannot publish a course without at least one chapter published.');
         }
 
@@ -57,8 +57,7 @@ class CoursePolicy
             || $course->isFree()
             || $user->isTeacherOfCourse($course)
         ) {
-            dd('denied');
-            return Response::deny("You are not authorized to enroll in this course.");
+            return Response::deny('You are not authorized to enroll in this course.');
         }
 
         return Response::allow();

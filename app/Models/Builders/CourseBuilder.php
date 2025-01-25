@@ -8,8 +8,6 @@ class CourseBuilder extends Builder
 {
     /**
      * Only return published courses.
-     *
-     * @return self
      */
     public function published(): self
     {
@@ -18,8 +16,6 @@ class CourseBuilder extends Builder
 
     /**
      * Only return courses with published chapters.
-     *
-     * @return self
      */
     public function whereHasPublishedChapters(): self
     {
@@ -42,7 +38,7 @@ class CourseBuilder extends Builder
                 $query
                     ->where('is_published', true)
                     ->whereNotNull('video_storage_id');
-            }
+            },
         ]);
     }
 
@@ -53,7 +49,7 @@ class CourseBuilder extends Builder
                 $query
                     ->where('is_published', true)
                     ->whereNotNull('video_storage_id');
-            }
+            },
         ]);
     }
 
@@ -65,8 +61,6 @@ class CourseBuilder extends Builder
     /**
      * All Published Courses which have published chapters
      * eager load author, published chapters, count chapters and order by created_at desc
-     *
-     * @return self
      */
     public function allPublishedCourses(): self
     {
@@ -86,5 +80,4 @@ class CourseBuilder extends Builder
             ])
             ->orderByCreatedAtDesc();
     }
-
 }

@@ -30,7 +30,7 @@ class UpdateCourseRequest extends FormRequest
                 'required',
                 'string',
                 Rule::unique('courses')
-                    ->ignore($this->route('course')->id)
+                    ->ignore($this->route('course')->id),
             ],
             'category_id' => ['required', 'exists:categories,id'],
         ];

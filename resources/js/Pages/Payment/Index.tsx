@@ -1,15 +1,12 @@
-import {Head, Link, router} from "@inertiajs/react";
-import {loadStripe} from "@stripe/stripe-js";
-import {Elements} from "@stripe/react-stripe-js";
-import CheckoutForm from "@/Pages/Payment/Partials/CheckoutForm";
-import {Course, PageProps} from "@/types";
-import HomePageNavbar from "@/Components/shared/HomePageNavbar";
-import {Toaster} from "@/Components/ui/sonner";
-import React from "react";
-import ChapterLayout from "@/Layouts/CourseLayout";
-import CourseLayout from "@/Layouts/CourseLayout";
+import CourseLayout from '@/Layouts/CourseLayout'
+import CheckoutForm from '@/Pages/Payment/Partials/CheckoutForm'
+import { Course, PageProps } from '@/types'
+import { router } from '@inertiajs/react'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import React from 'react'
 
-const stripePromise = loadStripe('pk_test_51PY3wiCKzGstGhEeysB3zOfMD1Wuv76IwA2xjkXvj9rZD69KIH0P17d731dvSYm6mxwgmEpU10iM0wbhZaLpo6z800uhwx77KX');
+const stripePromise = loadStripe('pk_test_51PY3wiCKzGstGhEeysB3zOfMD1Wuv76IwA2xjkXvj9rZD69KIH0P17d731dvSYm6mxwgmEpU10iM0wbhZaLpo6z800uhwx77KX')
 
 type PaymentIndexProps = {
   auth: PageProps['auth']
@@ -39,8 +36,9 @@ const PaymentIndex = ({auth, course, clientSecret, hasPurchase}: PaymentIndexPro
   );
 }
 
-PaymentIndex.layout = (page: React.ReactNode) => <CourseLayout>
-  {page}
-</CourseLayout>
+PaymentIndex.layout = (page: React.ReactNode) =>
+  <CourseLayout>
+    {page}
+  </CourseLayout>
 
 export default PaymentIndex;

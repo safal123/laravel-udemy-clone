@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
         ]);
 
-
         User::factory()
             ->create([
                 'name' => 'Safal Pokharel',

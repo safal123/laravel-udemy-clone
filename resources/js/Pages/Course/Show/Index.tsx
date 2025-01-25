@@ -24,6 +24,8 @@ const Index = ({auth}: PageProps) => {
   const isOwner = auth.user.id === course.user_id
   const { addToWishlist } = useWishlist()
 
+  const isOnWishlist = auth.user?.wishlists?.some((c) => c.course_id === course.id)
+
   const addCourseToWishlist = async (course: Course) => {
     if (!course || isOwner && !hasPurchased) {
       return false
@@ -88,7 +90,7 @@ const Index = ({auth}: PageProps) => {
                   className="bg-gray-700 hover:bg-gray-800 text-gray-400 hover:text-white border border-gray-700"
                 >
                   <SaveIcon size={16} className="mr-2"/>
-                  Add to wishlist
+                  {isOnWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
                 </Button>
               }
               {!hasPurchased && (

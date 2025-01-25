@@ -34,7 +34,7 @@ export const CoursePageHeader = ({course}: CoursePageHeaderProps) => {
     })
   }
   return (
-    <div className="flex items-center bg-gray-200 px-8 py-4 border-gray-200 rounded-md">
+    <div className="flex items-center border px-8 py-4 border-gray-200 rounded-md">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -64,13 +64,6 @@ export const CoursePageHeader = ({course}: CoursePageHeaderProps) => {
             {course.is_published ? 'Unpublish' : 'Publish'}
           </Button>
         </form>
-        <Button
-          className="ml-4"
-          variant={'destructive'}
-          onClick={() => console.log('clicked')}
-        >
-          Delete
-        </Button>
       </div>
     </div>
   )

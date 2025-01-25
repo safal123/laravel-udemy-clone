@@ -40,6 +40,7 @@ class CourseController extends Controller
 
     public function store(StoreCourseRequest $request): RedirectResponse
     {
+        Gate::authorize('create', Course::class);
         $request
             ->user()
             ->courses()
@@ -70,7 +71,6 @@ class CourseController extends Controller
             ->with('success', 'Course updated successfully');
     }
 
-
     public function destroy(Course $course): RedirectResponse
     {
         Gate::authorize('delete', $course);
@@ -86,7 +86,8 @@ class CourseController extends Controller
     {
         Gate::authorize('publish', $course);
 
-        $course->update(['is_published' => !$course->is_published]);
+        $course->update(['is_published' => ! $course->is_published]);
+
         return redirect()
             ->back()
             ->with('success', 'Course updated successfully');

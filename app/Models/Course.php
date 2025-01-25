@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model implements CourseConstants
 {
-    use HasFactory, HasUuids, HasS3Upload;
+    use HasFactory, HasS3Upload, HasUuids;
 
     protected $fillable = [
         'title',
@@ -59,7 +59,9 @@ class Course extends Model implements CourseConstants
 
     public function averageRating(): float
     {
-        return $this->ratings()->avg('rating') ?? 0;
+        return $this
+            ->ratings()
+            ->avg('rating') ?? 0;
     }
 
     public function newEloquentBuilder($query): CourseBuilder
@@ -74,7 +76,7 @@ class Course extends Model implements CourseConstants
             $course->update([
                 'image_storage_id' => $course->id,
             ]);
-            $file = public_path("images/default-course-image.jpg");
+            $file = public_path('images/default-course-image.jpg');
             $course->uploadToS3('courses/images', $file, $course->id);
         });
     }
@@ -84,6 +86,7 @@ class Course extends Model implements CourseConstants
         if (empty($this->image_storage_id)) {
             return '';
         }
+
         return $this->getObjectUrl('courses/images/');
     }
 

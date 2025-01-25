@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\Http\Teacher;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Suite\Traits\CreatesUsers;
@@ -10,9 +9,9 @@ use Tests\TestCase;
 
 class DashboardControllerTest extends TestCase
 {
-    use RefreshDatabase, CreatesUsers;
+    use CreatesUsers, RefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
     }

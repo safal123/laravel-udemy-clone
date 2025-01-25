@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Inertia;
 use App\Models\Chapter;
 use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
@@ -35,6 +34,7 @@ class ChapterController extends Controller
             'description' => 'nullable|string',
         ]);
         $chapter->update($request->all());
+
         return redirect()
             ->route('teachers.courses.edit', $course)
             ->with('success', 'Chapter updated successfully.');
@@ -51,16 +51,16 @@ class ChapterController extends Controller
 
     public function togglePublish(Course $course, Chapter $chapter): RedirectResponse
     {
-        if (!$chapter->video_storage_id) {
+        if (! $chapter->video_storage_id) {
             return redirect()
                 ->back()
                 ->with('error', 'Please add a video to the chapter before publishing.');
         }
 
         \DB::transaction(function () use ($course, $chapter) {
-            $chapter->update(['is_published' => !$chapter->is_published]);
+            $chapter->update(['is_published' => ! $chapter->is_published]);
             // Ensure the course is unpublished if no chapters are published
-            if (!$course->hasPublishedChapter() && $course->is_published) {
+            if (! $course->hasPublishedChapter() && $course->is_published) {
                 $course->update(['is_published' => false]);
             }
         });
@@ -73,11 +73,11 @@ class ChapterController extends Controller
             ->with('success', "Chapter '{$chapter->title}' {$status} successfully.");
     }
 
-
     public function toggleFree(Course $course, Chapter $chapter): RedirectResponse
     {
-        $chapter->update(['is_free' => !$chapter->is_free]);
+        $chapter->update(['is_free' => ! $chapter->is_free]);
         $message = $chapter->is_free ? 'free' : 'paid';
+
         return redirect()
             ->back()
             ->with('success', "Chapter {$chapter->title} is now {$message}.");
@@ -86,6 +86,7 @@ class ChapterController extends Controller
     public function destroy(Course $course, Chapter $chapter): RedirectResponse
     {
         $chapter->delete();
+
         return redirect()
             ->route('teachers.courses.edit', $course)
             ->with('success', 'Chapter deleted successfully.');
@@ -102,7 +103,7 @@ class ChapterController extends Controller
                 $chapterToMove = Chapter::where('id', $activeUuid)->first();
                 $targetChapter = Chapter::where('id', $overUuid)->first();
 
-                if (!$chapterToMove || !$targetChapter) {
+                if (! $chapterToMove || ! $targetChapter) {
                     throw new \Exception('One or both chapters not found');
                 }
 

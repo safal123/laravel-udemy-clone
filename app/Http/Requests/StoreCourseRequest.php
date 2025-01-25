@@ -27,7 +27,7 @@ class StoreCourseRequest extends FormRequest
             'description' => 'string',
             'price' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
-            'slug' => ['required', 'string', Rule::unique('courses', 'slug')]
+            'slug' => ['required', 'string', Rule::unique('courses', 'slug')],
         ];
     }
 }

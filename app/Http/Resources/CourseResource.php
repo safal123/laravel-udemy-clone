@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 
 class CourseResource extends JsonResource
 {
@@ -34,13 +33,13 @@ class CourseResource extends JsonResource
             'chapters_count' => $this->chapters_count,
             'duration' => $this->duration ?? 10,
             'level' => $this->level,
-            'ratings' => $this->averageRating(),
+            'ratings' => $this->whenLoaded('ratings'),
             'students' => UserResource::collection($this->whenLoaded('students')),
             // TODO: Figure out why this is written this way 🤔🤔🤔🤔
-//            $this->mergeWhen($this->relationLoaded('students'), [
-//                'users' => UserResource::collection($this->students),
-//            ]),
-            'enrollments_count' => $this->students()->count(),
+            //            $this->mergeWhen($this->relationLoaded('students'), [
+            //                'users' => UserResource::collection($this->students),
+            //            ]),
+            //            'enrollments_count' => $this->students()->count(),
         ];
     }
 }

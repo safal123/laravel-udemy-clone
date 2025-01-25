@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ChapterResource;
 use App\Models\Chapter;
 use App\Models\Course;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ChapterController extends Controller

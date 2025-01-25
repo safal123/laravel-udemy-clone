@@ -41,6 +41,7 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
 
         if ($hasPurchase) {
             Log::info('User is already enrolled in the course', ['metadata' => $metadata]);
+
             return;
         }
 

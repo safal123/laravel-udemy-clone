@@ -29,7 +29,7 @@ export function UserMenu() {
         <DropdownMenuSeparator className={'bg-gray-700'}/>
         <DropdownMenuGroup className={'flex flex-col gap-y-3 p-2'}>
           <DropdownMenuItem asChild={true} className={'dark:bg-gray-800 bg-gray-100 hover:bg-gray-700'}>
-            <Link href={'/dashboard'} className={'text-gray-900'}>
+            <Link href={'/dashboard'} className={'text-gray-900 cursor-pointer'}>
               Dashboard
             </Link>
           </DropdownMenuItem>

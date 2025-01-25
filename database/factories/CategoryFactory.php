@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Psy\Util\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Category>
@@ -117,6 +116,7 @@ class CategoryFactory extends Factory
             'Systems Engineering',
             'Robotics',
         ];
+
         return [
             'name' => $name = $this->faker->unique()->randomElement($categories),
             'slug' => \Illuminate\Support\Str::of($name)->slug('-'),

@@ -55,7 +55,6 @@ const UploadCourseImage = ({
 
     return (
       <FieldGroup
-        label="Course Image"
         name="image"
         error={errors.image_storage_id}
       >

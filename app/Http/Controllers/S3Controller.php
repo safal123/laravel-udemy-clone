@@ -12,18 +12,18 @@ class S3Controller extends Controller
     {
         $validated = $request->validate([
             'fileName' => 'required|string',
-            'path' => 'required|string'
+            'path' => 'required|string',
         ]);
         $s3 = Storage::disk('s3')->getClient();
         $url = $s3->getCommand('PutObject', [
             'Bucket' => \Config::get('filesystems.disks.s3.bucket'),
-            'Key' => $validated['path'] . '/' . $validated['fileName'],
+            'Key' => $validated['path'].'/'.$validated['fileName'],
         ]);
 
         $request = $s3->createPresignedRequest($url, '+20 minutes');
 
         return response()->json([
-            'url' => (string) $request->getUri()
+            'url' => (string) $request->getUri(),
         ]);
     }
 
@@ -31,13 +31,14 @@ class S3Controller extends Controller
     {
         $validated = $request->validate([
             'fileName' => 'required|string',
-            'path' => 'required|string'
+            'path' => 'required|string',
         ]);
         $s3 = Storage::disk('s3');
 
-        $url = $s3->temporaryUrl($validated['path'] . '/' . $validated['fileName'], now()->addMinutes(360));
+        $url = $s3->temporaryUrl($validated['path'].'/'.$validated['fileName'], now()->addMinutes(360));
+
         return response()->json([
-            'url' => $url
+            'url' => $url,
         ]);
     }
 }

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
-use App\Models\CourseUser;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -16,6 +14,7 @@ class DashboardController extends Controller
             ->purchasedCourses()
             ->with(['author', 'chapters'])
             ->get();
+
         return Inertia::render('Dashboard', [
             'courses' => CourseResource::collection($userCourses),
         ]);

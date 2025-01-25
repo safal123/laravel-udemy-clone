@@ -17,7 +17,7 @@ class CourseController extends Controller
                 'chapters' => function ($query) {
                     $query->where('is_published', true)
                         ->where('video_storage_id', '!=', null);
-                }
+                },
             ])
             ->loadCount('chapters');
 

@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\{CourseRatingController,
-    HomePageController,
-    PaymentController,
-    ProfileController,
-    S3Controller,
-    StripeController,
-    Teacher\ChapterController,
-    Teacher\CourseController,
-    Teacher\DashboardController,
-    WishlistController};
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CourseRatingController;
 use App\Http\Controllers\DashboardController as StudentDashboardController;
+use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\S3Controller;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\Teacher\ChapterController;
+use App\Http\Controllers\Teacher\CourseController;
+use App\Http\Controllers\Teacher\DashboardController;
+use App\Http\Controllers\WishlistController;
+use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
 
@@ -19,7 +19,6 @@ Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
 
 Route::stripeWebhooks('stripe/webhook');
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])

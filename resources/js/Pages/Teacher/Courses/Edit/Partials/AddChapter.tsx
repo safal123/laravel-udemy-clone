@@ -13,12 +13,8 @@ const AddChapter = ({course}: AddNewChapterProps) => {
   const [show, setShow] = React.useState(false);
   return (
     <div>
-      <Button
-        className="bg-gradient border border-green-500"
-        onClick={() => setShow(true)}
-      >
-        <PlusIcon size={20} className={'mr-2'}/>
-        {'Add New Chapter'}
+      <Button onClick={() => setShow(true)}>
+        <PlusIcon size={20} />
       </Button>
       <Modal show={show} onClose={() => setShow(false)}>
         <ChapterForm course={course} setShow={setShow}/>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
-use App\Models\Role;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,7 +16,7 @@ class HomePageController extends Controller
                 Course::query()
                     ->allPublishedCourses()
                     ->paginate(10)
-            )
+            ),
         ]);
     }
 }

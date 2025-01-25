@@ -27,8 +27,8 @@ class PaymentController extends Controller
 
         $course = Course::with([
             'author',
-            'chapters' => fn($query) => $query->where('is_published', true)
-                ->whereNotNull('video_storage_id')
+            'chapters' => fn ($query) => $query->where('is_published', true)
+                ->whereNotNull('video_storage_id'),
         ])->findOrFail($courseId);
         $isAuthor = $course->author->is($user);
         if ($hasPurchase) {

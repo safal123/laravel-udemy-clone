@@ -72,7 +72,7 @@ const Chapters = ({chapters}: ChaptersTableProps) => {
     )
   }
   return (
-    <div className={'space-y-1 bg-gray-200 p-4 rounded-md'}>
+    <div className={'space-y-1'}>
       <SortableContext
         items={chapters}
         strategy={verticalListSortingStrategy}
@@ -109,13 +109,13 @@ const SingleChapter = (chapter: Chapter) => {
       {...attributes}
       {...listeners}
       style={style}
-      className="flex items-center border p-4 rounded-md bg-gray-50 w-full"
+      className="flex items-center border p-4 rounded-md bg-gray-50 w-full overflow-y-auto"
     >
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col md:flex-row md:items-center space-x-2">
             <GripVertical className="cursor-move"/>
-            <span className={'text-[0.9rem] font-semibold'}>
+            <span className={'text-[0.9rem] font-semibold mt-4 md:mt-0'}>
             {chapter.title}
           </span>
           </div>
@@ -135,9 +135,10 @@ const SingleChapter = (chapter: Chapter) => {
               }
             </div>
             {!chapter?.video_storage_id &&
-              <p className={'text-red-500 bg-red-100 px-2 text-xs rounded-full font-bold'}>
-              Please upload a video first to publish or make it free.
-            </p>}
+              <p className={'text-red-500 bg-red-50 px-4 text-xs rounded-full tracking-wide border border-red-500'}>
+                Upload a video to publish or set it as free.
+              </p>
+            }
           </div>
         </div>
       </div>
