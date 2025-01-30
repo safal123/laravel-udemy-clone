@@ -15,7 +15,7 @@ class HomePageController extends Controller
             'courses' => CourseResource::collection(
                 Course::query()
                     ->allPublishedCourses()
-                    ->paginate(10)
+                    ->paginate(3)
             ),
         ]);
     }

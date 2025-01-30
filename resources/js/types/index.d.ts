@@ -34,6 +34,8 @@ export interface Course {
   duration: number;
   author: User;
   user_id: string;
+  rating: number;
+  students: number;
 }
 
 export interface Wishlist {

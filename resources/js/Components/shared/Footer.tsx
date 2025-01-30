@@ -7,11 +7,13 @@ export default function Footer() {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
         {/* Company Info */}
         <div>
-          <h2 className="text-xl font-bold text-white">Your Company</h2>
+          <h2 className="text-xl font-bold text-white">
+            Safal Solutions Pvt. Ltd.
+          </h2>
           <p className="mt-2 text-sm text-gray-400">
             Building solutions that make a difference.
           </p>
-          <p className="mt-4 text-sm text-gray-400">&copy; 2025 Your Company. All rights reserved.</p>
+          <p className="mt-4 text-sm text-gray-400">&copy; 2025 Safal Solutions</p>
         </div>
 
         {/* Navigation Links */}

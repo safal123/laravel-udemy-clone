@@ -33,11 +33,11 @@ export function UserMenu() {
               Dashboard
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild={true} className={'dark:bg-gray-800 bg-gray-100 hover:bg-gray-700'}>
-            <Link href={'/profile'} className={'cursor-pointer text-gray-900'}>
-              Profile
-            </Link>
-          </DropdownMenuItem>
+          {/*<DropdownMenuItem asChild={true} className={'dark:bg-gray-800 bg-gray-100 hover:bg-gray-700'}>*/}
+          {/*  <Link href={'/profile'} className={'cursor-pointer text-gray-900'}>*/}
+          {/*    Profile*/}
+          {/*  </Link>*/}
+          {/*</DropdownMenuItem>*/}
           {user.is_teacher && <DropdownMenuItem asChild={true} className={'dark:bg-gray-800 bg-gray-100 hover:bg-gray-700'}>
             <Link href={route('teachers.dashboard')} className={'cursor-pointer text-gray-900'}>
               Teacher Dashboard

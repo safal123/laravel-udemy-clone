@@ -111,35 +111,39 @@ const SingleChapter = (chapter: Chapter) => {
       style={style}
       className="flex items-center border p-4 rounded-md bg-gray-50 w-full overflow-y-auto"
     >
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex flex-col md:flex-row md:items-center space-x-2">
-            <GripVertical className="cursor-move"/>
-            <span className={'text-[0.9rem] font-semibold mt-4 md:mt-0'}>
-            {chapter.title}
-          </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full space-y-4 sm:space-y-0">
+        {/* Left Section */}
+        <div className="flex items-center space-x-2 bg-blue-600 p-2 rounded-lg shadow-sm">
+          <GripVertical className="cursor-move text-white" />
+          <span className="text-[0.9rem] font-semibold text-white">
+      {chapter.title}
+    </span>
+        </div>
+
+        {/* Right Section */}
+        <div
+          className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          {/* Buttons Container */}
+          <div className="flex flex-wrap gap-2 bg-gray-50 p-2 rounded-lg shadow-sm">
+            {chapter?.video_storage_id && (
+              <>
+                <ChapterTogglePublish chapter={chapter} />
+                <ToggleChapterFree chapter={chapter} />
+              </>
+            )}
+            <UpdateChapter chapter={chapter} />
+            <DeleteChapter chapter={chapter} />
+            <ChapterVideo chapter={chapter} />
           </div>
-          <div
-            className="flex flex-col items-center space-y-2 ml-auto"
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center space-x-4">
-              <UpdateChapter chapter={chapter}/>
-              <DeleteChapter chapter={chapter}/>
-              <ChapterVideo chapter={chapter}/>
-              {chapter?.video_storage_id &&
-                <>
-                  <ChapterTogglePublish chapter={chapter}/>
-                  <ToggleChapterFree chapter={chapter}/>
-                </>
-              }
-            </div>
-            {!chapter?.video_storage_id &&
-              <p className={'text-red-500 bg-red-50 px-4 text-xs rounded-full tracking-wide border border-red-500'}>
-                Upload a video to publish or set it as free.
-              </p>
-            }
-          </div>
+
+          {/* Error Message */}
+          {!chapter?.video_storage_id && (
+            <p className="text-red-600 bg-red-50 px-4 py-1 text-xs rounded-full tracking-wide border border-red-200">
+              Cannot publish without video.
+            </p>
+          )}
         </div>
       </div>
     </div>

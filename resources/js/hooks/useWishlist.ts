@@ -8,7 +8,7 @@ export const useWishlist = () => {
       router.post(route('wishlists.store'), {course_id: course.id}, {
         preserveScroll: true,
         onStart: () => {
-          toast.info('Adding to wishlist. Please wait...')
+          console.log('Adding to wishlist. Please wait...')
         },
         onSuccess: () => {
           toast.success('Course added to wishlist')
@@ -23,7 +23,7 @@ export const useWishlist = () => {
       router.delete(route('wishlists.destroy', course.id), {
         preserveScroll: true,
         onStart: () => {
-          toast.info('Removing from wishlist. Please wait...')
+          toast('Removing from wishlist. Please wait...')
         },
         onSuccess: () => {
           toast.success('Course removed from wishlist')

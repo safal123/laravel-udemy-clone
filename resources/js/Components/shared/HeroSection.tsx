@@ -1,68 +1,60 @@
-import { Button } from '@/Components/ui/button'
-import React from "react";
+import { Button } from "@/Components/ui/button"; // shadcn/ui Button
+import { motion } from "framer-motion"; // Framer Motion
 
-const HeroSection = () => {
+export default function HeroSection() {
+  // Animation variants for Framer Motion
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
+  const stagger = {
+    visible: { transition: { staggerChildren: 0.2 } },
+  };
+
   return (
-    <div className="border-gray-800 rounded-lg relative text-white min-h-[calc(100vh-40%)]">
-      <svg
-        className="absolute inset-0 h-full w-full rounded-md overflow-y-auto"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1440 320"
-        preserveAspectRatio="none"
-      >
-        <path
-          fill="#1a2048"
-          fillOpacity="1"
-          d="M0,192L48,186.7C96,181,192,171,288,144C384,117,480,75,576,85.3C672,96,768,160,864,176C960,192,1056,160,1152,128C1248,96,1344,64,1392,48L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-        ></path>
-      </svg>
-      <div className="max-w-7xl mx-auto py-16 flex flex-col lg:flex-row items-center">
-        {/* Left Content */}
-        <div className="lg:w-1/2 z-10">
-          <h1 className="text-4xl lg:text-6xl font-extrabold leading-tight mb-4">
-            Empower Your Learning Platform
-            <br />
-            <span className="text-blue-400">with Simplicity</span>
-          </h1>
-          <p className="text-lg lg:text-xl text-gray-200 mb-6">
-            Build an interactive and engaging LMS that brings your courses,
-            chapters, and certifications into one place for your users.
-          </p>
-          <div className="flex flex-col md:flex-row gap-4">
-            <Button
-              className={'border border-blue-400 shadow-lg hover:bg-blue-400 hover:text-gray-900 transition-colors'}
-            >
-              Get Started for Free
-            </Button>
-            <Button variant="secondary">
-              Learn More
-            </Button>
-          </div>
-        </div>
+    <section className="relative py-32 overflow-hidden">
+      {/* Gradient Background */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_left,_#4F46E5,_#6366F1,_#818CF8,_#A5B4FC,_#C7D2FE)]"></div>
 
-        {/* Right Content */}
-        <div className="mt-10 lg:mt-0 w-full lg:w-1/2 relative overflow-y-auto">
-          <div className="relative z-10">
-            {/* API Code Sample */}
-            <div className="bg-gray-800 text-gray-200 rounded-lg p-6 shadow-lg">
-              <code className="text-sm">
-                <span className="block text-blue-400">$ curl --request POST</span>
-                <span className="block">
-                  --url 'https://api.yourlms.com/v1/course/create' \
-                </span>
-                <span className="block">
-                  --header 'Authorization: Bearer YOUR_API_KEY' \
-                </span>
-                <span className="block">
-                  --data '{`{ "title": "React Basics", "published": true }`}'
-                </span>
-              </code>
-            </div>
-          </div>
-        </div>
+      {/* Content */}
+      <div className="container mx-auto px-4 relative z-10 text-center">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={stagger}
+        >
+          {/* Heading */}
+          <motion.h1
+            variants={fadeInUp}
+            className="text-5xl md:text-6xl font-bold text-white mb-6"
+          >
+            <span className="bg-gradient-to-r from-orange-400 to-pink-500 text-transparent bg-clip-text">Unlock</span>
+            <span className={'text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500'}>Your Potential</span>
+          </motion.h1>
+
+          {/* Subheading */}
+          <motion.p
+            variants={fadeInUp}
+            className="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl mx-auto"
+          >
+            Join thousands of learners worldwide and master the skills you need to succeed in today's digital world.
+          </motion.p>
+
+          {/* Call-to-Action Buttons */}
+          <motion.div
+            variants={fadeInUp}
+            className="flex justify-center space-x-4"
+          >
+            <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg">
+              Get Started
+            </Button>
+            <Button className={'bg-blue-600'}>
+              Explore Coursess
+            </Button>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
-};
-
-export default HeroSection;
+}
