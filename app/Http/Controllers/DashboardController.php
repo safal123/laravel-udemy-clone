@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
+use App\Models\Course;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
     public function index(): \Inertia\Response
     {
-        $userCourses = auth()
-            ->user()
-            ->purchasedCourses()
+        $userCourses = Course::query()
+            ->whereHas('students', function ($query) {
+                $query->where('course_user.user_id', auth()->id());
+            })
             ->with(['author', 'chapters'])
             ->get();
 

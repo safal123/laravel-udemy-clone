@@ -7,7 +7,6 @@ import { Toaster } from '@/Components/ui/sonner'
 import { useWishlist } from '@/hooks/useWishlist'
 import { Course, PageProps } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import {
   AudioLines,
@@ -30,9 +29,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
   const hasPurchased = auth.user?.purchased_courses?.some((c: Course) => c.id === course.id)
   const isOwner = auth.user.id === course.user_id
   const {addToWishlist, removeFromWishlist} = useWishlist()
-
   const isOnWishlist = auth.user?.wishlists?.some((c) => c.course_id === course.id)
-
   const toggleWishlist = async (course: Course) => {
     if (!course || (isOwner && !hasPurchased)) {
       return false
@@ -75,9 +72,9 @@ const CoursePreviewPage = ({auth}: PageProps) => {
     <div className="min-h-screen">
       <Toaster/>
       <HomePageNavbar auth={auth}/>
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-800 py-12 text-white md:py-20 mt-16">
+      <section className="bg-gradient-to-r from-blue-600 to-indigo-800 py-12 text-white md:pt-6 pb-20 mt-16">
         <div className="container flex flex-col mx-auto px-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-12">
             <Button
               size={'sm'}
               variant={'outline'}
@@ -230,9 +227,10 @@ const CoursePreviewPage = ({auth}: PageProps) => {
               </div>
               {!hasPurchased ?
                 <div>
-                  <Elements stripe={stripePromise} options={{clientSecret}}>
-                    <PaymentModal course={course}/>
-                  </Elements>
+                  {/*<Elements stripe={stripePromise} options={{clientSecret}}>*/}
+                  {/*  */}
+                  {/*</Elements>*/}
+                  <PaymentModal course={course} />
                 </div>
                 :
                 <div className={'mt-6 space-y-4'}>

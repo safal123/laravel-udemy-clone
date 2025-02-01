@@ -45,6 +45,11 @@ class Course extends Model implements CourseConstants
             ->as('purchaseDetails');
     }
 
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
     public function chapters(): HasMany
     {
         return $this

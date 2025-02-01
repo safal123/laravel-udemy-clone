@@ -1,9 +1,7 @@
-import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/button'
 import { Course } from '@/types'
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
-import { Loader, Loader2, Video } from 'lucide-react'
+import { Loader, Loader2 } from 'lucide-react'
 import React from 'react'
 import { toast } from 'sonner'
 
@@ -55,21 +53,23 @@ const CheckoutForm = ({course}: CheckoutFormProps) => {
 
   return (
     <div className={'p-2'}>
-      <h1 className={'text-2xl font-semibold mb-4'}>
+      <h1 className={'text-xl font-semibold mb-4'}>
         Pay for
         <span className={'text-blue-500'}> {course.title} </span>
         and get access to all chapters.
       </h1>
-      <form onSubmit={handleSubmit} className={'p-4 bg-gray-100 text-white mb-4 rounded-md'}>
+      <form onSubmit={handleSubmit} className={'border text-white mb-4 rounded-md'}>
         <PaymentElement className={'bg-white p-4 rounded-md'} />
-        <Button
-          disabled={isSubmitting}
-          type={"submit"}
-          className={'w-full mt-4 font-semibold bg-gradient-to-r from-emerald-900 via-slate-900 to-rose-900 hover:from-emerald-800 hover:via-slate-800 hover:to-rose-800'}
-        >
-          {isSubmitting && <Loader className={'animate-spin w-4 h-4 mr-2'}/>}
-          Pay Now for ${course.price}
-        </Button>
+        <div className={'p-4'}>
+          <Button
+            disabled={isSubmitting}
+            type={"submit"}
+            className={'w-full'}
+          >
+            {isSubmitting && <Loader className={'animate-spin w-4 h-4 mr-2'}/>}
+            Pay Now for ${course.price}
+          </Button>
+        </div>
       </form>
     </div>
   )

@@ -36,6 +36,7 @@ export interface Course {
   user_id: string;
   rating: number;
   students: number;
+  is_enrolled: boolean;
 }
 
 export interface Wishlist {

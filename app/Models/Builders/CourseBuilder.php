@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 class CourseBuilder extends Builder
 {
     /**
-     * Only return published courses.
+     * Filter only published courses.
      */
     public function published(): self
     {
@@ -15,69 +15,66 @@ class CourseBuilder extends Builder
     }
 
     /**
-     * Only return courses with published chapters.
+     * Filter only courses that have published chapters.
      */
     public function whereHasPublishedChapters(): self
     {
         return $this->whereHas('chapters', function ($query) {
-            $query
-                ->where('is_published', true)
+            $query->where('is_published', true)
                 ->whereNotNull('video_storage_id');
         });
     }
 
+    /**
+     * Eager load the course author.
+     */
     public function loadAuthor(): self
     {
         return $this->with('author');
     }
 
+    /**
+     * Eager load only published chapters.
+     */
     public function loadPublishedChapters(): self
     {
-        return $this->with([
-            'chapters' => function ($query) {
-                $query
-                    ->where('is_published', true)
-                    ->whereNotNull('video_storage_id');
-            },
+        return $this->with(['chapters' => fn ($query) => $query
+            ->where('is_published', true)
+            ->whereNotNull('video_storage_id'),
         ]);
     }
 
+    /**
+     * Count only published chapters with a valid video.
+     */
     public function countPublishedChapters(): self
     {
-        return $this->withCount([
-            'chapters' => function ($query) {
-                $query
-                    ->where('is_published', true)
-                    ->whereNotNull('video_storage_id');
-            },
+        return $this->withCount(['chapters' => fn ($query) => $query
+            ->where('is_published', true)
+            ->whereNotNull('video_storage_id'),
         ]);
     }
 
+    /**
+     * Order courses by newest first.
+     */
     public function orderByCreatedAtDesc(): self
     {
         return $this->orderBy('created_at', 'desc');
     }
 
     /**
-     * All Published Courses which have published chapters
-     * eager load author, published chapters, count chapters and order by created_at desc
+     * Retrieve all published courses that have at least one published chapter.
+     * Eager loads the author, published chapters, counts chapters, and orders by creation date.
      */
     public function allPublishedCourses(): self
     {
         return $this
             ->published()
             ->whereHasPublishedChapters()
-            ->with([
-                'author',
-                'chapters' => function ($query) {
-                    $query->where('is_published', true)->whereNotNull('video_storage_id');
-                },
-            ])
-            ->withCount([
-                'chapters' => function ($query) {
-                    $query->where('is_published', true)->whereNotNull('video_storage_id');
-                },
-            ])
+            ->loadAuthor()
+            ->loadPublishedChapters()
+            ->countPublishedChapters()
             ->orderByCreatedAtDesc();
     }
 }

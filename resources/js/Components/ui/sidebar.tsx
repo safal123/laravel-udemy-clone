@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { MenuIcon } from "lucide-react"
+import { MenuIcon, PanelLeftOpen, PanelRightOpen } from 'lucide-react'
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/Components/ui/button"
@@ -270,14 +270,15 @@ const SidebarTrigger = React.forwardRef<
       ref={ref}
       data-sidebar="trigger"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      variant={'outline'}
+      className={cn("h-8 w-8", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <MenuIcon />
+      {useSidebar().state === "collapsed" ? <PanelLeftOpen /> : <PanelRightOpen />}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

@@ -22,7 +22,7 @@ interface MainMenuItemProps {
 export function AppSidebar({ children, variant = 'light' }: MainMenuItemProps) {
   return (
     <Sidebar>
-      <SidebarHeader className={cn( variant === 'light' ? '' : 'bg-gray-900')}>
+      <SidebarHeader className={cn( variant === 'light' ? 'bg-gray-200' : 'bg-gray-900')}>
         <Link href="/">
           <div className="flex items-center justify-center p-4 rounded-md">
             <Logo />
@@ -30,7 +30,7 @@ export function AppSidebar({ children, variant = 'light' }: MainMenuItemProps) {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className={cn('text-gray-200', variant === 'light' ? '' : 'bg-gray-900')}>
+      <SidebarContent className={cn('text-gray-200 pt-6', variant === 'light' ? '' : 'bg-gray-900')}>
         <SidebarGroupContent>
           <SidebarMenu>
             {children}

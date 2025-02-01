@@ -3,10 +3,10 @@
 use App\Http\Controllers\CourseRatingController;
 use App\Http\Controllers\DashboardController as StudentDashboardController;
 use App\Http\Controllers\HomePageController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentIntentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\S3Controller;
-use App\Http\Controllers\StripeController;
+use App\Http\Controllers\StripeClientSecretController;
 use App\Http\Controllers\Teacher\ChapterController;
 use App\Http\Controllers\Teacher\CourseController;
 use App\Http\Controllers\Teacher\DashboardController;
@@ -17,7 +17,6 @@ require __DIR__.'/auth.php';
 
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
-
 Route::stripeWebhooks('stripe/webhook');
 
 Route::middleware('auth')->group(function () {
@@ -26,8 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/payment', [PaymentController::class, 'show'])
+    Route::get('/payment', [PaymentIntentController::class, 'show'])
         ->name('payment.show');
+    Route::get('/p/client-secret', [StripeClientSecretController::class, 'createClientSecret'])
+        ->name('payment.client-secret');
 
     Route::get('/teachers/dashboard', [DashboardController::class, 'index'])
         ->name('teachers.dashboard');
@@ -84,13 +85,5 @@ Route::middleware('auth')->group(function () {
             ->name('s3.get-signed-url');
         Route::post('/get-object-url', [S3Controller::class, 'getObjectUrl'])
             ->name('s3.get-object-url');
-    });
-
-    /*
-     * Stripe Routes
-     */
-    Route::group(['prefix' => 'stripe'], function () {
-        Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent'])
-            ->name('stripe.create-payment-intent');
     });
 });

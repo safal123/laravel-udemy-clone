@@ -35,11 +35,8 @@ class CourseResource extends JsonResource
             'level' => $this->level,
             'ratings' => $this->whenLoaded('ratings'),
             'students' => UserResource::collection($this->whenLoaded('students')),
-            // TODO: Figure out why this is written this way 🤔🤔🤔🤔
-            //            $this->mergeWhen($this->relationLoaded('students'), [
-            //                'users' => UserResource::collection($this->students),
-            //            ]),
-            //            'enrollments_count' => $this->students()->count(),
+            'is_enrolled' => $this->is_enrolled ?? false,
+            'is_wishlisted' => $this->is_wishlisted ?? false,
         ];
     }
 }

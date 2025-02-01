@@ -9,31 +9,23 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PaymentController extends Controller
+class PaymentIntentController extends Controller
 {
-    public function show(): Response
+    public function createClientSecret(): Response
     {
         $courseId = request('course');
         $course = Course::where('id', $courseId)->first();
 
         Gate::authorize('enroll', $course);
-
         $user = request()->user();
-
         $hasPurchase = CourseUser::query()
             ->where('user_id', $user->id)
             ->where('course_id', $courseId)
             ->exists();
 
-        $course = Course::with([
-            'author',
-            'chapters' => fn ($query) => $query->where('is_published', true)
-                ->whereNotNull('video_storage_id'),
-        ])->findOrFail($courseId);
         $isAuthor = $course->author->is($user);
-        if ($hasPurchase) {
+        if ($hasPurchase || $isAuthor) {
             return Inertia::render('Payment/Index', [
-                'course' => new CourseResource($course),
                 'clientSecret' => null,
                 'hasPurchase' => true,
                 'isAuthor' => $isAuthor,

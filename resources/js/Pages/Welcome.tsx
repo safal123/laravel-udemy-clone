@@ -4,6 +4,7 @@ import HomePageCategories from '@/Components/shared/HomePageCategories'
 import HomePageNavbar from '@/Components/shared/HomePageNavbar'
 import TrustedBySlider from '@/Components/shared/TrustedBySlider'
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
+import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
 import { useWishlist } from '@/hooks/useWishlist' // shadcn/ui Card
 import { Course, PageProps } from '@/types'
@@ -96,13 +97,23 @@ export default function LandingPage({auth}: PageProps) {
                       {course.description.length > 100 ? course.description.substring(0, 100) + '...' : course.description}
                     </CardDescription>
                     <div className="mt-4 flex justify-between items-center">
-                      <span className="text-lg font-semibold">${course.price}</span>
-                      <button
-                        onClick={() => addToWishlist(course)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                      >
-                        Add to Wishlist
-                      </button>
+                      {!course.is_enrolled &&
+                        <span className="text-lg font-semibold">
+                          ${course.price}
+                        </span>
+                      }
+                      {course.is_enrolled ?
+                        <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
+                          <Button variant={'outline'}>
+                            Continue
+                          </Button>
+                        </Link> :
+                        <button
+                          onClick={() => addToWishlist(course)}
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                          Add to Wishlist
+                        </button>
+                      }
                     </div>
                   </CardContent>
                 </Card>

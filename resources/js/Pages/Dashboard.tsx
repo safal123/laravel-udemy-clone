@@ -8,7 +8,6 @@ import { toast } from 'sonner'
 export default function Dashboard({auth}: PageProps) {
   const courses = usePage<{ courses: Course[] }>().props.courses
   const remove = (wishlist: any) => {
-    console.log(wishlist)
     router.delete(route('wishlists.destroy', {wishlist: wishlist.id}), {
       preserveScroll: true,
       onSuccess: () => {
@@ -24,14 +23,15 @@ export default function Dashboard({auth}: PageProps) {
       <Head title="Student Dashboard"/>
 
       <div className="p-4 sm:p-8 flex flex-col space-y-4">
-        <Card>
+        <Card className={'bg-purple-50/90'}>
           <CardHeader className={'border-b'}>
             <h2 className="text-lg font-semibold">
               My Purchased Courses
             </h2>
           </CardHeader>
           <CardContent>
-            {courses.length > 0 ? <div className={'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'}>
+            {courses.length > 0 ?
+              <div className={'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4'}>
                 {courses.map((course) => (
                   <Card key={course.id}>
                     <CardHeader>
@@ -42,6 +42,9 @@ export default function Dashboard({auth}: PageProps) {
                           className={'w-full h-56 object-cover rounded-lg'}
                         />
                       </Link>
+                      <p className={'text-lg font-semibold mt-4'}>
+                        {course.title}
+                      </p>
                     </CardHeader>
                     <CardFooter>
                       <Button>
@@ -65,8 +68,6 @@ export default function Dashboard({auth}: PageProps) {
             </h2>
           </CardHeader>
           <CardContent>
-            <div>
-              <h2 className="text-lg font-semibold mt-8">My Wishlists</h2>
               {auth.user.wishlists.length > 0 ?
                 <div className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'}>
                   {auth.user.wishlists.map((wishlist) => (
@@ -79,6 +80,9 @@ export default function Dashboard({auth}: PageProps) {
                             className={'w-full h-56 object-cover rounded-lg'}
                           />
                         </Link>
+                        <p className={'text-lg font-semibold'}>
+                          {wishlist.course.title}
+                        </p>
                       </CardHeader>
                       <CardFooter>
                         <Button
@@ -94,7 +98,6 @@ export default function Dashboard({auth}: PageProps) {
                   <p>No courses in wishlist</p>
                 </div>
               }
-            </div>
           </CardContent>
         </Card>
       </div>

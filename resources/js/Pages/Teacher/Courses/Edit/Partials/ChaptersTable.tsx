@@ -114,13 +114,11 @@ const SingleChapter = (chapter: Chapter) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full space-y-4 sm:space-y-0">
         {/* Left Section */}
         <div className="flex items-center space-x-2 bg-blue-600 p-2 rounded-lg shadow-sm">
-          <GripVertical className="cursor-move text-white" />
+          <GripVertical className="cursor-move text-white"/>
           <span className="text-[0.9rem] font-semibold text-white">
       {chapter.title}
     </span>
         </div>
-
-        {/* Right Section */}
         <div
           className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
           onPointerDown={(e) => e.stopPropagation()}
@@ -129,13 +127,13 @@ const SingleChapter = (chapter: Chapter) => {
           <div className="flex flex-wrap gap-2 bg-gray-50 p-2 rounded-lg shadow-sm">
             {chapter?.video_storage_id && (
               <>
-                <ChapterTogglePublish chapter={chapter} />
-                <ToggleChapterFree chapter={chapter} />
+                <ChapterTogglePublish chapter={chapter}/>
+                <ToggleChapterFree chapter={chapter}/>
               </>
             )}
-            <UpdateChapter chapter={chapter} />
-            <DeleteChapter chapter={chapter} />
-            <ChapterVideo chapter={chapter} />
+            <UpdateChapter chapter={chapter}/>
+            <DeleteChapter chapter={chapter}/>
+            <ChapterVideo chapter={chapter}/>
           </div>
 
           {/* Error Message */}
