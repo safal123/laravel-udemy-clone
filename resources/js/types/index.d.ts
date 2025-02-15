@@ -37,6 +37,7 @@ export interface Course {
   rating: number;
   students: number;
   is_enrolled: boolean;
+  students_count: number;
 }
 
 export interface Wishlist {

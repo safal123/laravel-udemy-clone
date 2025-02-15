@@ -71,6 +71,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => 'courses'], function () {
+        Route::get('/', [\App\Http\Controllers\CourseController::class, 'index'])
+            ->name('courses.index');
         Route::get('/{course:slug}', [\App\Http\Controllers\CourseController::class, 'show'])
             ->name('courses.show');
         Route::get('/{course:slug}/chapters/{chapter}', [\App\Http\Controllers\ChapterController::class, 'show'])

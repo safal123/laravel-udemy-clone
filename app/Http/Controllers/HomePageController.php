@@ -16,16 +16,7 @@ class HomePageController extends Controller
             'courses' => CourseResource::collection(
                 Course::query()
                     ->allPublishedCourses()
-                    ->when(Auth::check(), function ($query) {
-                        $query->withExists([
-                            'students as is_enrolled' => function ($query) {
-                                $query->where('course_user.user_id', Auth::id());
-                            },
-                            'wishlists as is_wishlisted' => function ($query) {
-                                $query->where('wishlists.user_id', Auth::id());
-                            }
-                        ]);
-                    })
+                    ->withUserSpecificAttributes(Auth::id())
                     ->paginate(4)
             ),
         ]);

@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Toaster } from '@/Components/ui/sonner'
 import { useWishlist } from '@/hooks/useWishlist'
 import { Course, PageProps } from '@/types'
-import { Link, usePage } from '@inertiajs/react'
-import { loadStripe } from '@stripe/stripe-js'
+import { Head, Link, usePage } from '@inertiajs/react'
 import {
   AudioLines,
   BookAIcon,
@@ -21,15 +20,13 @@ import {
 } from 'lucide-react'
 import React from 'react'
 
-const stripePromise = loadStripe('pk_test_51PY3wiCKzGstGhEeysB3zOfMD1Wuv76IwA2xjkXvj9rZD69KIH0P17d731dvSYm6mxwgmEpU10iM0wbhZaLpo6z800uhwx77KX')
-
 const CoursePreviewPage = ({auth}: PageProps) => {
   const course = usePage().props.course as Course
-  const clientSecret = usePage().props.clientSecret as string
   const hasPurchased = auth.user?.purchased_courses?.some((c: Course) => c.id === course.id)
   const isOwner = auth.user.id === course.user_id
   const {addToWishlist, removeFromWishlist} = useWishlist()
   const isOnWishlist = auth.user?.wishlists?.some((c) => c.course_id === course.id)
+
   const toggleWishlist = async (course: Course) => {
     if (!course || (isOwner && !hasPurchased)) {
       return false
@@ -69,32 +66,28 @@ const CoursePreviewPage = ({auth}: PageProps) => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <Head title={course.title}/>
       <Toaster/>
       <HomePageNavbar auth={auth}/>
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-800 py-12 text-white md:pt-6 pb-20 mt-16">
+      <section
+        className="bg-gradient-to-r from-red-200 via-red-300 to-yellow-900 py-12 text-gray-800 md:pt-6 pb-20 mt-16">
         <div className="container flex flex-col mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
-            <Button
-              size={'sm'}
-              variant={'outline'}
-              className="bg-white/10 hover:bg-white/20 text-white border-white"
-            >
+            <Button size={'sm'} variant={'ghost'}>
               <ChevronLeft size={16} className="mr-2"/>
               Browse All Series
             </Button>
-            <Badge
-              className="border border-blue-900 bg-blue-900 text-white hidden sm:block">
+            <Badge className="bg-gray-800 text-white">
               Frameworks
             </Badge>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{course.title}</h1>
-          <p className="text-xl mb-6">
-            By
-            <span className={'underline ml-2'}>{course.author.name}</span>
+          <p className="text-xl mb-6 font-semibold">
+            By <span className={'underline ml-2'}>{course.author.name}</span>
           </p>
           <div
-            className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-8 space-y-2 md:space-y-0 md:bg-blue-900 w-fit md:rounded-full md:text-blue-100 md:px-3 py-0.5">
+            className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-8 space-y-2 md:space-y-0 md:bg-gray-900 w-fit md:rounded-full md:text-blue-100 md:px-3 py-0.5">
             <div className="flex items-center space-x-2">
               <Star className="w-5 h-5"/>
               <span>{course.rating || 5} (1,200 reviews)</span>
@@ -105,14 +98,14 @@ const CoursePreviewPage = ({auth}: PageProps) => {
             </div>
             <div className="flex items-center space-x-2">
               <User className="w-5 h-5"/>
-              <span>{course.students || 500} students</span>
+              <span>{course.students_count || 500} students</span>
             </div>
           </div>
           {!isOwner && (
             <div className="flex flex-col md:flex-row gap-4">
-              {hasPurchased ? (
+              {course.is_enrolled ? (
                 <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
-                  <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg w-full">
+                  <Button>
                     <VideoIcon size={16} className="mr-2"/>
                     Continue Series
                   </Button>
@@ -133,12 +126,8 @@ const CoursePreviewPage = ({auth}: PageProps) => {
           )}
         </div>
       </section>
-
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Course Details */}
         <div className="lg:col-span-2">
-          {/* Course Description */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="text-2xl">Course Description</CardTitle>
@@ -148,7 +137,6 @@ const CoursePreviewPage = ({auth}: PageProps) => {
             </CardContent>
           </Card>
 
-          {/* Chapters */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="text-2xl">Course Chapters</CardTitle>
@@ -205,7 +193,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="hidden lg:block lg:col-span-1">
           <Card className="bg-white shadow-lg sticky top-20">
             <CardHeader>
               <CardTitle className="text-2xl">Course Details</CardTitle>
@@ -225,25 +213,34 @@ const CoursePreviewPage = ({auth}: PageProps) => {
                   <span className="text-gray-800">Level: Intermediate</span>
                 </div>
               </div>
-              {!hasPurchased ?
-                <div>
-                  {/*<Elements stripe={stripePromise} options={{clientSecret}}>*/}
-                  {/*  */}
-                  {/*</Elements>*/}
-                  <PaymentModal course={course} />
-                </div>
+              {!course.is_enrolled && !isOwner ?
+                <PaymentModal course={course}/>
                 :
                 <div className={'mt-6 space-y-4'}>
                   <p>
                     Purchased on: <span className="text-gray-800">12th July 2021</span>
                   </p>
                   <Button variant={'outline'} className="w-full">
-                    Continue Series
+                    {isOwner ? 'Course Preview' : 'Continue Series'}
                   </Button>
                 </div>
               }
             </CardContent>
           </Card>
+        </div>
+        <div className={'lg:hidden bottom-4 inset-x-0 sticky'}>
+          <Button
+            className="w-full"
+          >
+            <BookAIcon size={16} className="mr-2"/>
+            {course.is_enrolled || isOwner ?
+              <>
+                {isOwner ? 'Course Preview' : 'Continue Series'}
+              </>
+              :
+              <PaymentModal course={course}/>
+            }
+          </Button>
         </div>
       </div>
     </div>

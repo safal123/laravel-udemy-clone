@@ -18,9 +18,11 @@ const companies = [
 
 const TrustedBySlider = () => {
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-gradient-to-r from-red-200 via-red-300 to-yellow-900 border-b">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold text-center mb-8">Trusted By</h2>
+        <h2 className="text-2xl font-bold text-center mb-8 underline tracking-wide text-gray-900">
+          Trusted By
+        </h2>
         <Swiper
           slidesPerView={3} // Show 2 slides on small screens
           spaceBetween={20} // Space between slides

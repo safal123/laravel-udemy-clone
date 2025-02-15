@@ -8,12 +8,12 @@ import { closestCenter, DndContext } from '@dnd-kit/core'
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
-import { GripVertical } from 'lucide-react'
+import { GripVertical, Loader2 } from 'lucide-react'
 import React, { useEffect } from 'react'
 
 type ChaptersTableProps = {
-  chapters: Chapter[],
-}
+  chapters: Chapter[];
+};
 
 const ChaptersTable = ({chapters}: ChaptersTableProps) => {
   const [isDragging, setIsDragging] = React.useState(false)
@@ -36,12 +36,11 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
         over_position: over.id
       },
       preserveScroll: true,
-      // only re-render the chapters table
       preserveState: true
     })
-    const getChapterIndex = (id: string) => localChapters.findIndex(chapter => chapter.id === id)
+    const getChapterIndex = (id: string) => localChapters.findIndex((chapter) => chapter.id === id)
 
-    setLocalChapters(localChapters => {
+    setLocalChapters((localChapters) => {
       const oldIndex = getChapterIndex(active.id)
       const newIndex = getChapterIndex(over.id)
       return arrayMove(localChapters, oldIndex, newIndex)
@@ -50,16 +49,23 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
   }
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      collisionDetection={closestCenter}
-      onDragStart={() => setIsDragging(true)}
-    >
-      {isDragging}
-      <Chapters chapters={localChapters}/>
-    </DndContext>
+    <div className={'relative'}>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        collisionDetection={closestCenter}
+        onDragStart={() => setIsDragging(true)}
+
+      >
+        {isDragging && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10 rounded-md">
+            <Loader2 className="animate-spin h-8 w-8 text-blue-600"/>
+          </div>
+        )}
+        <Chapters chapters={localChapters}/>
+      </DndContext>
+    </div>
   )
-}
+};
 
 export default ChaptersTable
 
@@ -72,16 +78,11 @@ const Chapters = ({chapters}: ChaptersTableProps) => {
     )
   }
   return (
-    <div className={'space-y-1'}>
-      <SortableContext
-        items={chapters}
-        strategy={verticalListSortingStrategy}
-      >
-        {
-          chapters?.map((chapter) => (
-            <SingleChapter key={chapter.id} {...chapter}/>
-          ))
-        }
+    <div className="space-y-1">
+      <SortableContext items={chapters} strategy={verticalListSortingStrategy}>
+        {chapters?.map((chapter) => (
+          <SingleChapter key={chapter.id} {...chapter} />
+        ))}
       </SortableContext>
     </div>
   )
@@ -106,19 +107,23 @@ const SingleChapter = (chapter: Chapter) => {
   return (
     <div
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
       style={style}
       className="flex items-center border p-4 rounded-md bg-gray-50 w-full overflow-y-auto"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full space-y-4 sm:space-y-0">
-        {/* Left Section */}
-        <div className="flex items-center space-x-2 bg-blue-600 p-2 rounded-lg shadow-sm">
-          <GripVertical className="cursor-move text-white"/>
+        {/* Drag Handle */}
+        <div
+          className="flex items-center space-x-2 bg-blue-600 p-2 rounded-lg shadow-sm cursor-move"
+          {...listeners}
+          {...attributes}
+        >
+          <GripVertical className="text-white"/>
           <span className="text-[0.9rem] font-semibold text-white">
-      {chapter.title}
-    </span>
+            {chapter.title}
+          </span>
         </div>
+
+        {/* Buttons and Error Message */}
         <div
           className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
           onPointerDown={(e) => e.stopPropagation()}
@@ -145,5 +150,5 @@ const SingleChapter = (chapter: Chapter) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

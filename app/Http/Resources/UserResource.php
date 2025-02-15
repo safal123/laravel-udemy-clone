@@ -17,14 +17,17 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'purchased_courses' => $this->purchasedCourses,
-            'email_verified_at' => $this->email_verified_at,
+            'email' => $this->whenHas('email'),
+            'created_at' => $this->whenHas('created_at'),
+            'updated_at' => $this->whenHas('updated_at'),
+            'purchased_courses' => $this->whenHas('purchasedCourses'),
+            'email_verified_at' => $this->whenHas('email_verified_at'),
             'wishlists' => WishlistResource::collection($this->whenLoaded('wishlists')),
             'roles' => $this->whenLoaded('roles'),
-            'is_teacher' => $this->isTeacher(),
+            'is_teacher' => $this->whenLoaded('roles', function () {
+                return $this->hasRole('teacher');
+            }),
+            'purchase_details' => $this->purchaseDetails,
         ];
     }
 }

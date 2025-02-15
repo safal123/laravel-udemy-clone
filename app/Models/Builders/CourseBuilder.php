@@ -30,7 +30,20 @@ class CourseBuilder extends Builder
      */
     public function loadAuthor(): self
     {
-        return $this->with('author');
+        return $this->with('author:id,name');
+    }
+
+    /**
+     * Load the passed relations.
+     *
+     */
+    public function loadRelations(array $relations): self
+    {
+        if (empty($relations)) {
+            return $this;
+        }
+
+        return $this->with($relations);
     }
 
     /**
@@ -76,5 +89,22 @@ class CourseBuilder extends Builder
             ->loadPublishedChapters()
             ->countPublishedChapters()
             ->orderByCreatedAtDesc();
+    }
+
+    public function withUserSpecificAttributes($userId): self
+    {
+        return $this->when($userId, function ($query) use ($userId) {
+            $query->withExists([
+                'students as is_enrolled' => function ($query) use ($userId) {
+                    $query->where('course_user.user_id', $userId);
+                },
+                'wishlists as is_wishlisted' => function ($query) use ($userId) {
+                    $query->where('wishlists.user_id', $userId);
+                },
+                'author as is_author' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                },
+            ]);
+        });
     }
 }

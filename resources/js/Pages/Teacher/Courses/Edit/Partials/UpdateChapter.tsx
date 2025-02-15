@@ -14,7 +14,7 @@ const UpdateChapter = ({chapter}: UpdateChapterProps) => {
     <>
       <Edit className={'w-6 h-6 cursor-pointer text-blue-500'} onClick={() => setShow(true)}/>
       <Modal
-        maxWidth={'lg'}
+        maxWidth={'2xl'}
         show={show}
         onClose={() => setShow(false)}
       >

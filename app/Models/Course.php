@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Builders\CourseBuilder;
+use App\Models\Builders\UserBuilder;
 use App\Models\Constants\CourseConstants;
 use App\Models\Traits\HasS3Upload;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Course extends Model implements CourseConstants
 {
     use HasFactory, HasS3Upload, HasUuids;
+
+//    protected $with = ['author'];
 
     protected $fillable = [
         'title',
@@ -31,6 +35,16 @@ class Course extends Model implements CourseConstants
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public static function query(): Builder
+    {
+        return parent::query();
+    }
+
+    public function newEloquentBuilder($query): CourseBuilder
+    {
+        return new CourseBuilder($query);
+    }
 
     public function author(): BelongsTo
     {
@@ -67,11 +81,6 @@ class Course extends Model implements CourseConstants
         return $this
             ->ratings()
             ->avg('rating') ?? 0;
-    }
-
-    public function newEloquentBuilder($query): CourseBuilder
-    {
-        return new CourseBuilder($query);
     }
 
     public static function boot()

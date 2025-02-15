@@ -1,14 +1,14 @@
+import CourseCard from '@/Components/shared/CourseCard'
 import Footer from '@/Components/shared/Footer'
 import HeroSection from '@/Components/shared/HeroSection'
 import HomePageCategories from '@/Components/shared/HomePageCategories'
 import HomePageNavbar from '@/Components/shared/HomePageNavbar'
 import TrustedBySlider from '@/Components/shared/TrustedBySlider'
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
-import { Button } from '@/Components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
+import { Card, CardContent } from '@/Components/ui/card'
 import { useWishlist } from '@/hooks/useWishlist' // shadcn/ui Card
 import { Course, PageProps } from '@/types'
-import { Head, Link, usePage } from '@inertiajs/react' // shadcn/ui Avatar
+import { Head, usePage } from '@inertiajs/react' // shadcn/ui Avatar
 import { motion } from 'framer-motion'
 import { Toaster } from 'sonner' // Framer Motion
 
@@ -55,7 +55,7 @@ export default function LandingPage({auth}: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col">
       <Toaster
         toastOptions={{
           duration: 2000,
@@ -70,8 +70,7 @@ export default function LandingPage({auth}: PageProps) {
       <Head title={'Home'}/>
       <HomePageNavbar auth={auth}/>
       <HeroSection/>
-      {/* Recently Added Courses Section */}
-      <section className="py-16">
+      <section className="py-12 border-b">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">Recently Added Courses</h2>
           <motion.div
@@ -85,49 +84,15 @@ export default function LandingPage({auth}: PageProps) {
                 key={course.id}
                 variants={fadeInUp}
               >
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <Link href={`/courses/${course.slug}`}>
-                      <img src={course.image_url} alt={course.title} className="w-full h-48 object-cover rounded-t-lg"/>
-                    </Link>
-                  </CardHeader>
-                  <CardContent>
-                    <CardTitle>{course.title}</CardTitle>
-                    <CardDescription className={'my-2'}>
-                      {course.description.length > 100 ? course.description.substring(0, 100) + '...' : course.description}
-                    </CardDescription>
-                    <div className="mt-4 flex justify-between items-center">
-                      {!course.is_enrolled &&
-                        <span className="text-lg font-semibold">
-                          ${course.price}
-                        </span>
-                      }
-                      {course.is_enrolled ?
-                        <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
-                          <Button variant={'outline'}>
-                            Continue
-                          </Button>
-                        </Link> :
-                        <button
-                          onClick={() => addToWishlist(course)}
-                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                          Add to Wishlist
-                        </button>
-                      }
-                    </div>
-                  </CardContent>
-                </Card>
+                <CourseCard course={course} addToWishlist={addToWishlist}/>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
-
-      {/* Categories Section */}
       <HomePageCategories categories={categories}/>
       <TrustedBySlider/>
-      {/* Testimonials Section */}
-      <section className="py-16">
+      <section className="bg-gradient-to-r from-red-200 via-red-300 to-yellow-900 py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">What Our Learners Say</h2>
           <motion.div

@@ -22,58 +22,56 @@ type HomePageCategoriesProps = {
 };
 
 const HomePageCategories = ({ categories }: HomePageCategoriesProps) => {
-  // Define seven different gradient colors
+  // Define gradient styles for each category
   const gradientClasses = [
-    "from-blue-700 to-blue-500 hover:from-blue-500 hover:to-blue-700 transition-all", // Blue
-    "from-green-700 to-green-300 hover:from-green-300 hover:to-green-700 transition-all", // Green
-    "from-yellow-200 to-yellow-500 hover:from-yellow-500 hover:to-yellow-200 transition-all", // Yellow
-    "from-pink-700 to-pink-300 hover:from-pink-300 hover:to-pink-700 transition-all", // Pink
-    "from-orange-300 to-orange-500 hover:from-orange-500 hover:to-orange-300 transition-all", // Orange
-    "from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-400 transition-all", // Teal
-    "from-red-400 to-red-500 hover:from-red-500 hover:to-red-400 transition-all", // Red
+    "from-blue-600 to-blue-400 hover:from-blue-400 hover:to-blue-600", // Blue
+    "from-green-600 to-green-400 hover:from-green-400 hover:to-green-600", // Green
+    "from-yellow-400 to-yellow-300 hover:from-yellow-300 hover:to-yellow-400", // Yellow
+    "from-pink-600 to-pink-400 hover:from-pink-400 hover:to-pink-600", // Pink
+    "from-orange-500 to-orange-300 hover:from-orange-300 hover:to-orange-500", // Orange
+    "from-teal-500 to-teal-300 hover:from-teal-300 hover:to-teal-500", // Teal
+    "from-red-500 to-red-400 hover:from-red-400 hover:to-red-500", // Red
   ];
 
-  // Define Lucide icons for each category
+  // Define category icons
   const categoryIcons = [
-    <Cpu key="cpu" className="w-12 h-12" />, // Computer Engineering
-    <UserCircle key="user" className="w-12 h-12" />, // Personal Development
-    <HardHat key="hardhat" className="w-12 h-12" />, // Construction
-    <Leaf key="leaf" className="w-12 h-12" />, // Environmental Engineering
-    <Camera key="camera" className="w-12 h-12" />, // Photography
-    <Paintbrush key="paintbrush" className="w-12 h-12" />, // Design
-    <Hammer key="hammer" className="w-12 h-12" />, // Crafts
-    <Award key="award" className="w-12 h-12" />, // Leadership
+    <Cpu key="cpu" className="w-12 h-12 text-white" />, // Engineering
+    <UserCircle key="user" className="w-12 h-12 text-white" />, // Personal Development
+    <HardHat key="hardhat" className="w-12 h-12 text-white" />, // Construction
+    <Leaf key="leaf" className="w-12 h-12 text-white" />, // Environment
+    <Camera key="camera" className="w-12 h-12 text-white" />, // Photography
+    <Paintbrush key="paintbrush" className="w-12 h-12 text-white" />, // Design
+    <Hammer key="hammer" className="w-12 h-12 text-white" />, // Crafts
+    <Award key="award" className="w-12 h-12 text-white" />, // Leadership
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Explore Categories</h2>
+    <section className="py-16">
+      <div className="container mx-auto px-6">
+        <h2 className="text-4xl font-bold text-center mb-10 text-gray-800">
+          Explore Categories
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((category, index) => (
             <Link
               key={category.id}
               href={category?.href || "#"}
-              className="group block rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+              className="group block rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all"
             >
               <div
-                className={`bg-gradient-to-r ${gradientClasses[index % gradientClasses.length]} p-8 text-white text-center min-h-[200px] flex flex-col justify-center`}
+                className={`bg-gradient-to-r ${gradientClasses[index % gradientClasses.length]} p-8 text-white text-center min-h-[200px] flex flex-col items-center justify-center rounded-t-lg transition-all duration-300`}
               >
-                <div className="flex justify-center">
-                  {categoryIcons[index % categoryIcons.length]}
-                </div>
-                <h3 className="text-2xl font-semibold mt-6">{category.name}</h3>
+                {categoryIcons[index % categoryIcons.length]}
+                <h3 className="text-2xl font-semibold mt-4">{category.name}</h3>
               </div>
-              <div className="bg-white p-6">
-                <div className="mt-4 flex items-center justify-center space-x-2">
-                  <span className="text-blue-600 font-semibold group-hover:text-blue-800">
-                    Explore
-                  </span>
-                  <ChevronRight
-                    size={24}
-                    className="text-gray-600 group-hover:text-blue-600"
-                  />
-                </div>
+              <div className="bg-white p-6 flex items-center justify-center border-t border-gray-200">
+                <span className="text-blue-600 font-semibold group-hover:text-blue-800 transition-all">
+                  Explore
+                </span>
+                <ChevronRight
+                  size={24}
+                  className="text-gray-600 ml-2 group-hover:text-blue-600 transition-all"
+                />
               </div>
             </Link>
           ))}

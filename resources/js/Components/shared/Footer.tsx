@@ -3,17 +3,17 @@ import { Facebook, InstagramIcon, LinkedinIcon, TwitterIcon } from 'lucide-react
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 text-gray-300 py-10">
+    <footer className="text-gray-900 py-10 bg-gradient-to-t from-red-200 via-red-300 to-yellow-900">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
         {/* Company Info */}
         <div>
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="text-xl font-bold">
             Safal Solutions Pvt. Ltd.
           </h2>
-          <p className="mt-2 text-sm text-gray-400">
+          <p className="mt-2 text-sm text-gray-700">
             Building solutions that make a difference.
           </p>
-          <p className="mt-4 text-sm text-gray-400">&copy; 2025 Safal Solutions</p>
+          <p className="mt-4 text-sm text-gray-800">&copy; 2025 Safal Solutions</p>
         </div>
 
         {/* Navigation Links */}
@@ -45,8 +45,8 @@ export default function Footer() {
 
         {/* Social Media */}
         <div>
-          <h3 className="text-lg font-semibold text-white">Follow Us</h3>
-          <p className="mt-4 text-sm text-gray-400">
+          <h3 className="text-lg font-semibold">Follow Us</h3>
+          <p className="mt-4 text-sm text-gray-700">
             Stay connected with us on social media.
           </p>
           <div className="mt-4 flex space-x-4">
