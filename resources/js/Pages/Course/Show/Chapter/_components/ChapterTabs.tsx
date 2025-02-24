@@ -31,10 +31,10 @@ const ChapterTabs = ({ chapter }: ChapterTabsProps) => {
   };
 
   return (
-    <div className="mt-4 rounded-xl shadow-lg p-6 w-full bg-white">
+    <div className="mt-1 rounded-xl shadow-lg p-6 w-full bg-white">
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="flex w-full space-x-2 border-b border-gray-300">
-          {['Overview', 'QA', 'Notes', 'Announcements', 'Reviews', 'Learning Tools'].map((tab, index) => (
+          {['Overview', 'Announcements', 'Reviews', 'Learning Tools'].map((tab, index) => (
             <TabsTrigger
               key={index}
               value={tab.toLowerCase().replace(' ', '-')}
@@ -53,7 +53,7 @@ const ChapterTabs = ({ chapter }: ChapterTabsProps) => {
         <TabsContent value="qa" className="mt-4 text-gray-800">
           <h2 className="text-2xl font-semibold mb-4">Questions & Answers</h2>
           {dummyData.qa.map((item, index) => (
-            <div key={index} className="mb-4 p-4 border rounded-lg bg-gray-50">
+            <div key={index} className="mb-4 p-4 border rounded-lg">
               <p className="font-medium">Q: {item.question}</p>
               <p>A: {item.answer}</p>
             </div>

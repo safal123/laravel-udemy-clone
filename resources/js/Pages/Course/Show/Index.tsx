@@ -213,34 +213,38 @@ const CoursePreviewPage = ({auth}: PageProps) => {
                   <span className="text-gray-800">Level: Intermediate</span>
                 </div>
               </div>
-              {!course.is_enrolled && !isOwner ?
-                <PaymentModal course={course}/>
-                :
-                <div className={'mt-6 space-y-4'}>
-                  <p>
-                    Purchased on: <span className="text-gray-800">12th July 2021</span>
-                  </p>
-                  <Button variant={'outline'} className="w-full">
-                    {isOwner ? 'Course Preview' : 'Continue Series'}
-                  </Button>
-                </div>
-              }
+              <div className={'mt-2'}>
+                {!course.is_enrolled && !isOwner ?
+                  <PaymentModal course={course}/>
+                  :
+                  <div className={'mt-6 flex flex-col space-y-4'}>
+                    <span>
+                      <Badge className={''} variant={'outline'}>
+                        Purchased on: <span className="text-gray-800">12th July 2021</span>
+                      </Badge>
+                    </span>
+                    <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
+                      <Button variant={'outline'} className="w-full">
+                        {isOwner ? 'Course Preview' : 'Continue Series'}
+                      </Button>
+                    </Link>
+                  </div>
+                }
+              </div>
             </CardContent>
           </Card>
         </div>
         <div className={'lg:hidden bottom-4 inset-x-0 sticky'}>
-          <Button
-            className="w-full"
-          >
-            <BookAIcon size={16} className="mr-2"/>
-            {course.is_enrolled || isOwner ?
-              <>
+          {course.is_enrolled || isOwner ?
+            <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
+              <div className={'bg-gray-900 flex items-center justify-center py-2 rounded-md text-white'}>
+                <BookAIcon size={16} className="mr-2"/>
                 {isOwner ? 'Course Preview' : 'Continue Series'}
-              </>
-              :
-              <PaymentModal course={course}/>
-            }
-          </Button>
+              </div>
+            </Link>
+            :
+            <PaymentModal course={course}/>
+          }
         </div>
       </div>
     </div>
