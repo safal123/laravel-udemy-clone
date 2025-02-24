@@ -16,7 +16,8 @@ export default function FlashedMessages() {
   }
 
   return (
-    <>
+    // center
+    <div className={'fixed md:top-2 right-1/2 transform translate-x-1/2 z-50 w-full max-w-xl'}>
       {flash.success && visible && (
         <Alert
           variant="success"
@@ -38,6 +39,6 @@ export default function FlashedMessages() {
           onClose={() => setVisible(false)}
         />
       )}
-    </>
+    </div>
   );
 }

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Builders\CourseBuilder;
-use App\Models\Builders\UserBuilder;
 use App\Models\Constants\CourseConstants;
 use App\Models\Traits\HasS3Upload;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,7 +17,7 @@ class Course extends Model implements CourseConstants
 {
     use HasFactory, HasS3Upload, HasUuids;
 
-//    protected $with = ['author'];
+    //    protected $with = ['author'];
 
     protected $fillable = [
         'title',

@@ -110,3 +110,14 @@
 .text-gradient {
     @apply bg-gradient-to-r from-emerald-900 via-slate-900 bg-clip-text
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+}

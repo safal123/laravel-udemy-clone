@@ -13,7 +13,9 @@ const AddChapter = ({course}: AddNewChapterProps) => {
   const [show, setShow] = React.useState(false);
   return (
     <div>
-      <Button onClick={() => setShow(true)}>
+      <Button
+        size={'sm'}
+        onClick={() => setShow(true)}>
         <PlusIcon size={20} />
       </Button>
       <Modal show={show} onClose={() => setShow(false)}>

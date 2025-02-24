@@ -35,7 +35,6 @@ class CourseBuilder extends Builder
 
     /**
      * Load the passed relations.
-     *
      */
     public function loadRelations(array $relations): self
     {

@@ -113,7 +113,7 @@ const SingleChapter = (chapter: Chapter) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full space-y-4 sm:space-y-0">
         {/* Drag Handle */}
         <div
-          className="flex items-center space-x-2 bg-blue-600 p-2 rounded-lg shadow-sm cursor-move"
+          className="flex items-center space-x-2 bg-primary py-2 px-4 rounded-lg shadow-sm cursor-move"
           {...listeners}
           {...attributes}
         >
@@ -121,8 +121,8 @@ const SingleChapter = (chapter: Chapter) => {
           <span className="text-[0.9rem] font-semibold text-white">
             {chapter.title}
           </span>
+          <br/>
         </div>
-
         {/* Buttons and Error Message */}
         <div
           className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"

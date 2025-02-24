@@ -8,6 +8,13 @@ use Illuminate\Auth\Access\Response;
 
 class CoursePolicy
 {
+    public function viewAny(User $user): Response
+    {
+        return $user->isTeacher()
+            ? Response::allow()
+            : Response::deny('You are not authorized to view courses.');
+    }
+
     public function create(User $user): Response
     {
         return $user->isTeacher()
@@ -44,7 +51,7 @@ class CoursePolicy
 
         return $user->isTeacherOfCourse($course)
             ? Response::allow()
-            : Response::deny('You do not own this course.');
+            : Response::denyAsNotFound('You are not authorized to publish this course.');
     }
 
     public function enroll(User $user, Course $course): Response

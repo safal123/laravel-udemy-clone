@@ -23,7 +23,7 @@ class ChapterResource extends JsonResource
             'video_storage_id' => $this->whenHas('video_storage_id'),
             'is_published' => $this->whenHas('is_published'),
             'duration' => $this->whenHas('duration'),
-            'video_url' => $this->whenHas('video_url'),
+            'video_url' => $this->video_url,
             'created_at' => $this->whenHas('created_at'),
             'updated_at' => $this->whenHas('updated_at'),
             'course' => $this->whenLoaded('course'),

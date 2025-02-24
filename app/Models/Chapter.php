@@ -44,7 +44,7 @@ class Chapter extends Model
     public function getVideoUrlAttribute(): string
     {
         return $this->video_storage_id
-            ? $this->getObjectUrl('courses/chapters/videos/')
+            ? "https://laravel-udemy-clone-converted.s3.amazonaws.com/courses/chapters/videos/{$this->id}/master.m3u8"
             : '';
     }
 }

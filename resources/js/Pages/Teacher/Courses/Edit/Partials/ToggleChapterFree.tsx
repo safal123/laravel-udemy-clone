@@ -1,43 +1,45 @@
-import { Label } from '@/Components/ui/label'
+import { AppTooltip } from '@/Components/shared/AppTooltip'
 import { Switch } from '@/Components/ui/switch'
 import { Chapter } from '@/types'
-import { useForm } from '@inertiajs/react'
-import { Loader2 } from 'lucide-react'
+import { router } from '@inertiajs/react'
 import React from 'react'
+import { toast } from 'sonner'
 
 type ToggleChapterIsFreeProps = {
   chapter: Chapter
 }
 
 const ToggleChapterIsFree = ({chapter}: ToggleChapterIsFreeProps) => {
-  const {put, processing, reset} = useForm()
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    put(route('teachers.courses.chapters.toggle-is-free', {
+    router.visit(route('teachers.courses.chapters.update', {
       course: chapter.course_id,
       chapter: chapter.id
     }), {
+      method: 'put',
+      data: {
+        is_free: !chapter.is_free
+      },
       preserveScroll: true,
-      onSuccess: () => reset(),
-      onError: () => reset()
+      preserveState: true,
+      onSuccess: () => {
+        toast.success('Chapter updated')
+      },
+      onError: () => {
+        toast.error('Failed to update chapter')
+      }
     })
-  }
-
-  if (processing) {
-    return <Loader2 className="w-6 h-6 animate-spin"/>
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-      <Switch
-        checked={chapter.is_free}
-        type={'submit'}
-        id="toggle-is-free"
-      />
-      <Label htmlFor="toggle-is-free">
-        {chapter.is_free ? 'Free' : 'Free'}
-      </Label>
+      <AppTooltip message={chapter.is_free ? 'Mark as paid' : 'Mark as free'}>
+        <Switch
+          checked={chapter.is_free}
+          type={'submit'}
+          id="toggle-is-free"
+        />
+      </AppTooltip>
     </form>
   )
 }

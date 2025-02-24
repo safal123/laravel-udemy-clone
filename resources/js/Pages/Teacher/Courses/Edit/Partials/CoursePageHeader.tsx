@@ -2,11 +2,12 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbList, BreadcrumbPage,
+  BreadcrumbList,
+  BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/Components/ui/breadcrumb'
 import { Button } from '@/Components/ui/button'
-import { Link, useForm } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import { Loader2 } from 'lucide-react'
 import React from 'react'
 import { toast } from 'sonner'
@@ -20,16 +21,18 @@ interface CoursePageHeaderProps {
 }
 
 export const CoursePageHeader = ({course}: CoursePageHeaderProps) => {
-  const {put, processing, errors} = useForm()
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    put(route('teachers.courses.toggle-publish', {
-      course: course.id
-    }), {
+    router.visit(route('teachers.courses.update', {
+      course: course.id}), {
+      method: 'put',
+      data: {
+        is_published: !course.is_published
+      },
       preserveScroll: true,
+      preserveState: true,
       onError: () => {
-        toast.error('Failed to publish course')
+        toast.error('Failed to update course')
       }
     })
   }
@@ -60,7 +63,7 @@ export const CoursePageHeader = ({course}: CoursePageHeaderProps) => {
             type={'submit'}
             variant={course.is_published ? 'default' : 'outline'}
           >
-            {processing && <Loader2 className={'animate-spin mr-2'} size={20}/>}
+            {/*{processing && <Loader2 className={'animate-spin mr-2'} size={20}/>}*/}
             {course.is_published ? 'Unpublish' : 'Publish'}
           </Button>
         </form>

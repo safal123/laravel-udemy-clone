@@ -1,43 +1,33 @@
-import React from "react";
-import ChapterLayout from "@/Layouts/ChapterLayout";
-import { Head, usePage } from "@inertiajs/react";
-import { Chapter } from "@/types";
-import ReactPlayer from "react-player";
+import ChapterLayout from '@/Layouts/ChapterLayout'
+import ChapterTabs from '@/Pages/Course/Show/Chapter/_components/ChapterTabs'
+import VideoPlayer from '@/Pages/Course/Show/Chapter/_components/Videoplayer'
+import { Chapter } from '@/types'
+import { Head, usePage } from '@inertiajs/react'
+import React from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs'
 
 const CourseChapter = () => {
-  const { chapter } = usePage<{ chapter: Chapter[] }>().props;
+  const { chapter } = usePage<{ chapter: Chapter }>().props
 
   if (!chapter) {
-    return null;
+    return null
   }
 
   return (
     <div className="text-gray-50 w-full flex flex-col items-center">
-      <Head title={`Course Chapter: ${chapter[0].title}`} />
-      {/* Centered Video Player Container */}
-      <div className="relative bg-gray-800 rounded-3xl shadow-lg overflow-hidden mx-auto w-full max-w-9xl flex justify-center items-center">
-        <ReactPlayer
-          url={chapter[0]?.video_url}
-          controls
-          width="100%"
-          height="100%"
-          className="aspect-video"
-        />
+      <Head title={`Course Chapter: ${chapter.title}`} />
+      <div className="relative rounded-md shadow-lg overflow-hidden mx-auto w-full object-cover aspect-video-16/9">
+        <VideoPlayer src={chapter.video_url} />
       </div>
 
-      {/* Chapter Details */}
-      <div className="mt-8 bg-gray-700 rounded-lg shadow-lg p-6 w-full max-w-7xl">
-        <h2 className="text-xl font-semibold mb-4">Chapter Overview</h2>
-        <p className="text-gray-300">
-          {chapter[0]?.description || "No description available for this chapter."}
-        </p>
-      </div>
+      {/* Tabs for Overview, QA, Notes, Announcements, Reviews, and Learning Tools */}
+      <ChapterTabs chapter={chapter} />
     </div>
-  );
-};
+  )
+}
 
 CourseChapter.layout = (page: React.ReactNode) => (
   <ChapterLayout>{page}</ChapterLayout>
-);
+)
 
-export default CourseChapter;
+export default CourseChapter

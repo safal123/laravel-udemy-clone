@@ -46,8 +46,6 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'teachers'], function () {
         Route::resource('courses', CourseController::class)
             ->names('teachers.courses');
-        Route::put('{course}/toggle-publish', [CourseController::class, 'togglePublish'])
-            ->name('teachers.courses.toggle-publish');
     });
 
     /*
@@ -70,6 +68,9 @@ Route::middleware('auth')->group(function () {
             ->name('teachers.courses.chapters.toggle-is-free');
     });
 
+    /*
+     * Courses Routes
+     */
     Route::group(['prefix' => 'courses'], function () {
         Route::get('/', [\App\Http\Controllers\CourseController::class, 'index'])
             ->name('courses.index');

@@ -15,7 +15,7 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
     return null
   }
   return (
-    <SidebarProvider className="bg-gray-900 flex h-screen">
+    <SidebarProvider className="flex h-screen">
       <AppSidebar
         variant="dark"
       >
@@ -24,14 +24,14 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
             <Link href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
               <div
                 className={cn(
-                  'flex items-center hover:bg-gray-600 p-3 rounded-xl',
-                  chapterId === String(chapterItem.id) ? 'bg-gray-800' : ''
+                  'flex items-center hover:bg-gray-200 p-3 rounded-md',
+                  chapterId === String(chapterItem.id) ? 'bg-gray-200 border border-gray-300' : ''
                 )}
               >
                 <span className={'h-6 w-6 rounded-full bg-gray-700 flex items-center justify-center mr-1'}>
                   {index + 1}
                 </span>
-                <span className="text-gray-100 font-semibold">
+                <span className="text-gray-700 font-semibold">
                   {chapterItem.title.substring(0, 20)}
                 </span>
               </div>
@@ -40,7 +40,7 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
         ))}
       </AppSidebar>
       <main className="flex-1 flex flex-col overflow-auto">
-        <SidebarTrigger className="bg-gray-900 m-2"/>
+        <SidebarTrigger className="m-2"/>
         <div className="flex-1 p-4">
           {children}
         </div>

@@ -8,6 +8,7 @@ use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class ChapterController extends Controller
 {
@@ -29,11 +30,14 @@ class ChapterController extends Controller
 
     public function update(Course $course, Chapter $chapter, Request $request): RedirectResponse
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|nullable|string',
+            'is_free' => 'sometimes|required|boolean',
+            'is_published' => 'sometimes|required|boolean',
         ]);
-        $chapter->update($request->all());
+
+        $chapter->update($validated);
 
         return redirect()
             ->route('teachers.courses.edit', $course)
@@ -42,7 +46,12 @@ class ChapterController extends Controller
 
     public function addChapterVideo(Course $course, Chapter $chapter): \Illuminate\Http\JsonResponse
     {
-        $chapter->update(['video_storage_id' => $chapter->id]);
+        $newChapter = $chapter->update(['video_storage_id' => $chapter->id]);
+
+        // TODO: This is only a test
+        $response = Http::get(config('services.video_processor.url').'/objects', [
+            'objectId' => $chapter->video_storage_id,
+        ]);
 
         return response()->json([
             'message' => 'Chapter video added successfully.',

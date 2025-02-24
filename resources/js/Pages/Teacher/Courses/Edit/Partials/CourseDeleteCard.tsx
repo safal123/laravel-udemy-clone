@@ -9,7 +9,7 @@ export const CourseDeleteCard = () => {
         <h2 className={'text-xl font-semibold text-gray-700'}>Danger Zone</h2>
       </CardHeader>
       <CardContent className={'flex flex-col space-y-4'}>
-        <p>
+        <p className={'text-red-500'}>
           Deleting a course is irreversible. Are you sure you want to delete this course?
         </p>
         <Button variant={'destructive'} className={'w-fit'}>Delete Course</Button>

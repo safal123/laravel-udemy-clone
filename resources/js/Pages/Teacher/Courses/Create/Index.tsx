@@ -1,12 +1,20 @@
-import TeacherDashboardLayout from "@/Layouts/TeacherDashboardLayout";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/Components/ui/breadcrumb'
+import { Card, CardContent, CardHeader } from '@/Components/ui/card'
+import TeacherDashboardLayout from '@/Layouts/TeacherDashboardLayout'
 import CourseForm from '@/Pages/Teacher/Courses/Edit/Partials/CourseForm'
-import React, {useEffect} from "react";
 import { Head, Link, useForm, usePage } from '@inertiajs/react'
-import slugify from "slugify";
+import React from 'react'
 
 
 const Index = () => {
-  const { categories } = usePage<any>().props
+  const {categories} = usePage<any>().props
   const {data, setData, errors, post, processing} = useForm({
     title: '',
     price: 0,
@@ -23,20 +31,35 @@ const Index = () => {
 
   return (
     <div className={'w-full overflow-hidden'}>
-      <Head title="Create Course" />
-      <div className="flex items-center px-8 py-4 bg-white border-b border-gray-200 mb-2 rounded-md">
-        <h1 className="text-xl lg:text-3xl font-bold">
-          <Link
-            href={route('teachers.courses.index')}
-            className="text-indigo-600 hover:text-indigo-700"
-          >
-            Courses
-          </Link>
-          <span className="font-medium text-indigo-600"> /</span> Create
-        </h1>
-      </div>
-      <div className="bg-white rounded shadow">
-        <CourseForm mode={'create'}/>
+      <Head title="Create Course"/>
+      <div className="bg-white rounded shadow p-4">
+        <div className="flex items-center border px-8 py-4 border-gray-200 rounded-md mb-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href={route('teachers.courses.index')}>
+                    Courses
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator/>
+              <BreadcrumbItem>
+                <BreadcrumbPage>
+                  Create Course
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+        <Card>
+          <CardHeader>
+            <h2 className="text-xl font-bold">Create Course</h2>
+          </CardHeader>
+          <CardContent>
+            <CourseForm mode="create"/>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

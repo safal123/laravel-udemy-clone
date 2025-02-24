@@ -34,5 +34,7 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'video_processor' => [
+        'url' => env('VIDEO_PROCESSOR_URL'),
+    ],
 ];

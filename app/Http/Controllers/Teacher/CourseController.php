@@ -9,38 +9,50 @@ use App\Http\Resources\CourseCollection;
 use App\Http\Resources\CourseResource;
 use App\Models\Category;
 use App\Models\Course;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class CourseController extends Controller
 {
+    /**
+     * @throws AuthorizationException
+     */
     public function index(): Response
     {
+        $this->authorize('viewAny', Course::class);
+
         return Inertia::render('Teacher/Courses/Index', [
             'courses' => new CourseCollection(
                 auth()
                     ->user()
                     ->courses()
-                    ->orderBy('created_at', 'desc')
+                    ->latest()
                     ->paginate(8)
             ),
         ]);
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function create(): Response
     {
-        Gate::authorize('create', Course::class);
+        $this->authorize('create', Course::class);
 
         return Inertia::render('Teacher/Courses/Create/Index', [
             'categories' => Category::orderBy('name')->get(),
         ]);
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function store(StoreCourseRequest $request): RedirectResponse
     {
-        Gate::authorize('create', Course::class);
+        $this->authorize('create', Course::class);
+
         $request
             ->user()
             ->courses()
@@ -51,45 +63,41 @@ class CourseController extends Controller
             ->with('success', 'Course created successfully');
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function edit(Course $course): Response
     {
-        Gate::authorize('view', $course);
+        $this->authorize('view', $course);
 
         return Inertia::render('Teacher/Courses/Edit/Index', [
             'course' => new CourseResource($course->load('chapters')),
         ]);
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
-        Gate::authorize('update', $course);
+        $this->authorize($request->has('is_published') ? 'publish' : 'update', $course);
 
         $course->update($request->validated());
 
-        return redirect()
-            ->back()
-            ->with('success', 'Course updated successfully');
+        return back()->with('success', 'Course updated successfully');
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function destroy(Course $course): RedirectResponse
     {
-        Gate::authorize('delete', $course);
+        $this->authorize('delete', $course);
 
         $course->delete();
 
         return redirect()
             ->route('teachers.courses.index')
             ->with('success', 'Course deleted successfully');
-    }
-
-    public function togglePublish(Course $course): RedirectResponse
-    {
-        Gate::authorize('publish', $course);
-
-        $course->update(['is_published' => ! $course->is_published]);
-
-        return redirect()
-            ->back()
-            ->with('success', 'Course updated successfully');
     }
 }

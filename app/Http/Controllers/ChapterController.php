@@ -15,20 +15,21 @@ class ChapterController extends Controller
         $chapterId = request()->route('chapter');
         $course = Course::query()
             ->where('slug', $courseSlug)
-            ->with('chapters')
+            // only show published chapters
+            ->with(['chapters' => function ($query) {
+                $query->where('is_published', true);
+            }])
             ->firstOrFail();
         $chapter = Chapter::query()
             ->where('id', $chapterId)
-            ->with(['course.chapters' => function ($query) {
-                $query
-                    ->select('id', 'course_id', 'title', 'order')
-                    ->orderBy('order');
-            }])
-            ->get();
+            ->where('is_published', true)
+            ->where('course_id', $course->id)
+            ->with(['course'])
+            ->firstOrFail();
 
         return Inertia::render('Course/Show/Chapter/Index', [
             'course' => $course,
-            'chapter' => ChapterResource::collection($chapter),
+            'chapter' => new ChapterResource($chapter),
         ]);
     }
 }
