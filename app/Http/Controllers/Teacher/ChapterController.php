@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Teacher;
 
+use App\Events\ChapterVideoUploaded;
 use App\Http\Controllers\Controller;
 use App\Models\Chapter;
 use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class ChapterController extends Controller
 {
@@ -46,12 +46,9 @@ class ChapterController extends Controller
 
     public function addChapterVideo(Course $course, Chapter $chapter): \Illuminate\Http\JsonResponse
     {
-        $newChapter = $chapter->update(['video_storage_id' => $chapter->id]);
-
-        // TODO: This is only a test
-        $response = Http::get(config('services.video_processor.url').'/objects', [
-            'objectId' => $chapter->video_storage_id,
-        ]);
+        $chapter->update(['video_storage_id' => $chapter->id]);
+        $chapter->refresh();
+        event(new ChapterVideoUploaded($chapter));
 
         return response()->json([
             'message' => 'Chapter video added successfully.',
