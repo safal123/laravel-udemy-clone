@@ -31,9 +31,9 @@ const ChapterTabs = ({ chapter }: ChapterTabsProps) => {
   };
 
   return (
-    <div className="mt-1 rounded-xl shadow-lg p-6 w-full bg-white">
+    <div className="mt-1 rounded-xl shadow-lg p-6 w-full">
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="flex w-full space-x-2 border-b border-gray-300">
+        <TabsList className="flex w-full space-x-2 bg-white border-b border-gray-300 justify-start rounded-none p-0">
           {['Overview', 'Announcements', 'Reviews', 'Learning Tools'].map((tab, index) => (
             <TabsTrigger
               key={index}

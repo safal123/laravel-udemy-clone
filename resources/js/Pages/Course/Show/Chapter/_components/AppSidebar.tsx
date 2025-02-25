@@ -21,7 +21,7 @@ interface MainMenuItemProps {
 
 export function AppSidebar({ children, variant = 'light' }: MainMenuItemProps) {
   return (
-    <Sidebar>
+    <Sidebar variant={'floating'}>
       <SidebarHeader className='bg-gray-100'>
         <Link href="/">
           <div className="flex items-center justify-center p-4 rounded-md">
