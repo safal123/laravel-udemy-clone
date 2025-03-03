@@ -1,3 +1,4 @@
+import { AppTooltip } from '@/Components/shared/AppTooltip'
 import FileInput from '@/Components/shared/form/FileInput'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/Components/ui/dialog'
 import { Chapter } from '@/types'
@@ -63,32 +64,31 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Video
-          onClick={() => setShow(true)}
-          className={'w-6 h-6 cursor-pointer text-green-600'}
-        />
-      </DialogTrigger>
-      <DialogContent className={'max-w-7xl'}>
-        <DialogHeader>
-          <DialogTitle>
-            Chapter Video
-          </DialogTitle>
-        </DialogHeader>
-        <div className={'rounded-md'}>
-          <FileInput
-            accept={'video/*'}
-            previewUrl={previewUrl}
-            objectUrl={chapter.video_url}
-            loading={isUploading}
-            uploadToS3={handleVideoUpload}
-            onChange={handleVideoFileChange}
-            name={'video'}
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
+    <AppTooltip message={'Upload video'}>
+      <Dialog>
+        <DialogTrigger>
+          <Video className={'w-7 h-7 cursor-pointer text-green-600 mt-2'}/>
+        </DialogTrigger>
+        <DialogContent className={'max-w-4xl min-h-[calc(100vh-40%)]'}>
+          <DialogHeader>
+            <DialogTitle>
+              Chapter Video
+            </DialogTitle>
+          </DialogHeader>
+          <div className={'rounded-md'}>
+            <FileInput
+              accept={'video/*'}
+              previewUrl={previewUrl}
+              objectUrl={chapter.video_url}
+              loading={isUploading}
+              uploadToS3={handleVideoUpload}
+              onChange={handleVideoFileChange}
+              name={'video'}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </AppTooltip>
   )
 }
 export default ChapterVideo

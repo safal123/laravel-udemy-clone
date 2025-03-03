@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Builders\ChapterBuilder;
 use App\Models\Traits\HasS3Upload;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +29,16 @@ class Chapter extends Model
         'is_published' => 'boolean',
     ];
 
+//    public static function query(): Builder
+//    {
+//        return parent::query();
+//    }
+//
+//    public function newEloquentBuilder($query): ChapterBuilder
+//    {
+//        return new ChapterBuilder($query);
+//    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
@@ -46,5 +58,19 @@ class Chapter extends Model
         return $this->video_storage_id
             ? "https://laravel-udemy-clone-converted.s3.amazonaws.com/courses/chapters/videos/{$this->id}/master.m3u8"
             : '';
+    }
+
+    public function next()
+    {
+        return self::where('id', '>', $this->id) // Get records with UUID greater than current
+        ->orderBy('id', 'asc') // Order by ascending UUID
+        ->first();
+    }
+
+    public function previous()
+    {
+        return self::where('id', '<', $this->id) // Get records with UUID smaller than current
+        ->orderBy('id', 'desc') // Order by descending UUID
+        ->first();
     }
 }

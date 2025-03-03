@@ -60,6 +60,7 @@ export interface Chapter {
   is_published: boolean;
   is_free: boolean;
   video_url: string;
+  course: Course;
 }
 
 export type PaginatedData<T> = {

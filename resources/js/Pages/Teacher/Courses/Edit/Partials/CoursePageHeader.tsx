@@ -8,7 +8,7 @@ import {
 } from '@/Components/ui/breadcrumb'
 import { Button } from '@/Components/ui/button'
 import { Link, router } from '@inertiajs/react'
-import { Loader2 } from 'lucide-react'
+import { BookCheck, BookPlusIcon, Loader2 } from 'lucide-react'
 import React from 'react'
 import { toast } from 'sonner'
 
@@ -63,6 +63,7 @@ export const CoursePageHeader = ({course}: CoursePageHeaderProps) => {
             type={'submit'}
             variant={course.is_published ? 'default' : 'outline'}
           >
+            {course.is_published ? <BookCheck className={'mr-2 w-4 h-4'}/> : <BookPlusIcon className={'mr-2 w-4 h-4'}/>}
             {/*{processing && <Loader2 className={'animate-spin mr-2'} size={20}/>}*/}
             {course.is_published ? 'Unpublish' : 'Publish'}
           </Button>

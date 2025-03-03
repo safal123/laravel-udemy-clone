@@ -43,10 +43,10 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withSchedule(function ($schedule) {
-        $schedule
-            ->command(RunQueueCommand::class)
-            ->everySecond()
-            ->withoutOverlapping();
+//        $schedule
+//            ->command(RunQueueCommand::class)
+//            ->everySecond()
+//            ->withoutOverlapping();
     })
 
     ->create();

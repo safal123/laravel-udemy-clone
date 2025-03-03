@@ -30,6 +30,8 @@ class ChapterController extends Controller
         return Inertia::render('Course/Show/Chapter/Index', [
             'course' => $course,
             'chapter' => new ChapterResource($chapter),
+            'nextChapter' => $chapter->next(),
+            'previousChapter' => $chapter->previous(),
         ]);
     }
 }

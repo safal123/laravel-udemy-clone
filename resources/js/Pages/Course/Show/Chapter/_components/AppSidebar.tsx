@@ -30,7 +30,7 @@ export function AppSidebar({ children, variant = 'light' }: MainMenuItemProps) {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className={cn('text-gray-200 pt-6', variant === 'light' ? '' : '')}>
+      <SidebarContent className={cn('text-gray-200', variant === 'light' ? '' : '')}>
         <SidebarGroupContent>
           <SidebarMenu>
             {children}

@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { AppSidebar } from '@/Pages/Course/Show/Chapter/_components/AppSidebar'
 import { Chapter } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
+import { useEffect } from 'react'
 
 export default function ChapterLayout({children}: { children: React.ReactNode }) {
   const {course} = usePage<{ course: { slug: string; chapters: Chapter[] } }>().props
@@ -14,6 +15,19 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
   if (!course || !course.chapters || !chapter) {
     return null
   }
+  const scrollToTop = () => {
+    const element = document.getElementById('main-content')
+    if (element) {
+      element.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    }
+  }
+  useEffect(() => {
+    scrollToTop()
+  }, [url])
+
   return (
     <SidebarProvider className="flex h-screen">
       <AppSidebar
@@ -21,7 +35,8 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
       >
         {course.chapters.map((chapterItem, index) => (
           <SidebarMenuItem key={chapterItem.id} className="p-1">
-            <Link href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
+            <Link
+              href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
               <div
                 className={cn(
                   'flex items-center hover:bg-gray-200 p-3 rounded-md',
@@ -39,7 +54,7 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
           </SidebarMenuItem>
         ))}
       </AppSidebar>
-      <main className="flex-1 flex flex-col overflow-auto">
+      <main className="flex-1 flex flex-col overflow-auto" id={'main-content'}>
         <SidebarTrigger className="m-2"/>
         <div className="flex-1 p-4">
           {children}

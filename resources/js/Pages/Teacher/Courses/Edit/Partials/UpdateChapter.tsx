@@ -1,4 +1,5 @@
 import Modal from "@/Components/Modal";
+import { AppTooltip } from '@/Components/shared/AppTooltip'
 import React from "react";
 import {Chapter} from "@/types";
 import ChapterForm from "@/Pages/Teacher/Courses/Edit/Partials/ChapterForm";
@@ -11,7 +12,7 @@ type UpdateChapterProps = {
 const UpdateChapter = ({chapter}: UpdateChapterProps) => {
   const [show, setShow] = React.useState(false);
   return (
-    <>
+    <AppTooltip message={'Edit chapter'}>
       <Edit className={'w-6 h-6 cursor-pointer text-blue-500'} onClick={() => setShow(true)}/>
       <Modal
         maxWidth={'2xl'}
@@ -24,7 +25,7 @@ const UpdateChapter = ({chapter}: UpdateChapterProps) => {
           action={'update'}
         />
       </Modal>
-    </>
+    </AppTooltip>
   )
 }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CourseRatingController;
 use App\Http\Controllers\DashboardController as StudentDashboardController;
 use App\Http\Controllers\HomePageController;
@@ -20,6 +21,8 @@ Route::get('/', [HomePageController::class, 'index'])
 Route::stripeWebhooks('stripe/webhook');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/activity', [ActivityController::class, 'store'])
+        ->name('activity.store');
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])
         ->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

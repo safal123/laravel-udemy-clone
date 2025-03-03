@@ -1,6 +1,7 @@
 import DangerButton from '@/Components/DangerButton'
 import Modal from '@/Components/Modal'
 import SecondaryButton from '@/Components/SecondaryButton'
+import { AppTooltip } from '@/Components/shared/AppTooltip'
 import { Chapter } from '@/types'
 import { useForm } from '@inertiajs/react'
 import { CircleX, Trash2 } from 'lucide-react'
@@ -25,11 +26,13 @@ const DeleteChapter = ({chapter}: DeleteChapterProps) => {
   }
 
   return (
-    <div>
-      <Trash2
-        onClick={() => setShow(true)}
-        className={'w-6 h-6 cursor-pointer text-red-600'}
-      />
+    <>
+      <AppTooltip message={'Delete chapter'}>
+        <Trash2
+          onClick={() => setShow(true)}
+          className={'w-6 h-6 cursor-pointer text-red-600'}
+        />
+      </AppTooltip>
       <Modal show={show} onClose={() => setShow(false)}>
         <form onSubmit={handleSubmit}>
           <div className="px-6 py-8">
@@ -52,16 +55,16 @@ const DeleteChapter = ({chapter}: DeleteChapterProps) => {
               This action is irreversible.
             </p>
           </div>
-  <div className="m-4 flex justify-end">
-    <SecondaryButton onClick={() => setShow(false)}>Cancel</SecondaryButton>
+          <div className="m-4 flex justify-end">
+            <SecondaryButton onClick={() => setShow(false)}>Cancel</SecondaryButton>
 
-    <DangerButton className="ms-3" disabled={processing}>
-      Delete Chapter
-    </DangerButton>
-  </div>
+            <DangerButton className="ms-3" disabled={processing}>
+              Delete Chapter
+            </DangerButton>
+          </div>
         </form>
       </Modal>
-    </div>
+    </>
   )
 }
 

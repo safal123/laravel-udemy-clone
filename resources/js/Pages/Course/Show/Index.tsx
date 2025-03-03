@@ -1,3 +1,4 @@
+import EditorPreview from '@/Components/shared/EditorPreview'
 import HomePageNavbar from '@/Components/shared/HomePageNavbar'
 import PaymentModal from '@/Components/shared/PaymentModal'
 import { Badge } from '@/Components/ui/badge'
@@ -7,6 +8,8 @@ import { Toaster } from '@/Components/ui/sonner'
 import { useWishlist } from '@/hooks/useWishlist'
 import { Course, PageProps } from '@/types'
 import { Head, Link, usePage } from '@inertiajs/react'
+import "react-quill/dist/quill.bubble.css";
+
 import {
   AudioLines,
   BookAIcon,
@@ -133,7 +136,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
               <CardTitle className="text-2xl">Course Description</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">{course.description}</p>
+              <EditorPreview value={course.description} />
             </CardContent>
           </Card>
 

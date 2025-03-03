@@ -16,7 +16,7 @@ type ChaptersTableProps = {
 };
 
 const ChaptersTable = ({chapters}: ChaptersTableProps) => {
-  const [isDragging, setIsDragging] = React.useState(false)
+  const [isDragging, setIsDragging] = React.useState<boolean>(false)
   const [localChapters, setLocalChapters] = React.useState(chapters)
 
   useEffect(() => {
@@ -25,8 +25,9 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
 
   const handleDragEnd = (event: any) => {
     const {active, over} = event
-    if (chapters.length < 2 || !active || !over) {
-      return
+    if (chapters.length < 2 || !active || !over || (active.id === over.id)) {
+      setIsDragging(false)
+      return false
     }
     setIsDragging(true)
     router.visit(route('teachers.courses.chapters.order', {course: chapters[0].course_id}), {
@@ -52,9 +53,10 @@ const ChaptersTable = ({chapters}: ChaptersTableProps) => {
     <div className={'relative'}>
       <DndContext
         onDragEnd={handleDragEnd}
+        onDragMove={() => setIsDragging(true)}
         collisionDetection={closestCenter}
-        onDragStart={() => setIsDragging(true)}
-
+        onDragCancel={() => setIsDragging(false)}
+        onDragAbort={() => setIsDragging(false)}
       >
         {isDragging && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10 rounded-md">
@@ -123,13 +125,17 @@ const SingleChapter = (chapter: Chapter) => {
           </span>
           <br/>
         </div>
-        {/* Buttons and Error Message */}
+        {!chapter?.video_storage_id && (
+          <p className="text-red-600 bg-red-50 px-4 py-1 text-xs rounded-full tracking-wide border border-red-200">
+            Cannot publish without video.
+          </p>
+        )}
         <div
           className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
           onPointerDown={(e) => e.stopPropagation()}
         >
           {/* Buttons Container */}
-          <div className="flex flex-wrap gap-2 bg-gray-50 p-2 rounded-lg shadow-sm">
+          <div className="flex items-center flex-wrap gap-2 bg-gray-100 px-2 border rounded-lg shadow-sm">
             {chapter?.video_storage_id && (
               <>
                 <ChapterTogglePublish chapter={chapter}/>
@@ -137,16 +143,9 @@ const SingleChapter = (chapter: Chapter) => {
               </>
             )}
             <UpdateChapter chapter={chapter}/>
-            <DeleteChapter chapter={chapter}/>
             <ChapterVideo chapter={chapter}/>
+            <DeleteChapter chapter={chapter}/>
           </div>
-
-          {/* Error Message */}
-          {!chapter?.video_storage_id && (
-            <p className="text-red-600 bg-red-50 px-4 py-1 text-xs rounded-full tracking-wide border border-red-200">
-              Cannot publish without video.
-            </p>
-          )}
         </div>
       </div>
     </div>

@@ -16,7 +16,6 @@ const useS3Upload = ({ fileStorageId, path }: {
         return
       }
       const objectUrl = await axios.post('/s3/get-object-url', {
-        // @ts-ignore
         fileName: fileStorageId,
         path: path
       })

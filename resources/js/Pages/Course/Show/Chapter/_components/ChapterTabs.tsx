@@ -1,16 +1,18 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
-import { Chapter } from '@/types';
-import React from 'react';
-import { StarIcon } from 'lucide-react';
+import EditorPreview from '@/Components/shared/EditorPreview'
+import { ScrollArea, ScrollBar } from '@/Components/ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs'
+import { Chapter } from '@/types'
+import { StarIcon } from 'lucide-react'
+import React from 'react'
 
 interface ChapterTabsProps {
   chapter: Chapter;
 }
 
-const ChapterTabs = ({ chapter }: ChapterTabsProps) => {
+const ChapterTabs = ({chapter}: ChapterTabsProps) => {
   const dummyData = {
-    description: chapter?.description || "Dive deep into React's fundamentals, including component structure, state management, and props. This chapter provides hands-on examples and best practices to build scalable applications.",
-    qa: Array.from({ length: 20 }, (_, i) => ({
+    description: chapter?.description || 'Dive deep into React\'s fundamentals, including component structure, state management, and props. This chapter provides hands-on examples and best practices to build scalable applications.',
+    qa: Array.from({length: 20}, (_, i) => ({
       question: `What is React feature #${i + 1}?`,
       answer: `React feature #${i + 1} provides an in-depth look into advanced concepts like reconciliation, virtual DOM, and more.`
     })),
@@ -31,23 +33,27 @@ const ChapterTabs = ({ chapter }: ChapterTabsProps) => {
   };
 
   return (
-    <div className="mt-1 rounded-xl shadow-lg p-6 w-full">
+    <div className="mt-4 rounded-xl w-full min-h-screen">
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="flex w-full space-x-2 bg-white border-b border-gray-300 justify-start rounded-none p-0">
-          {['Overview', 'Announcements', 'Reviews', 'Learning Tools'].map((tab, index) => (
-            <TabsTrigger
-              key={index}
-              value={tab.toLowerCase().replace(' ', '-')}
-              className="py-1 px-5 relative font-medium text-gray-700 hover:text-blue-500"
-            >
-              {tab}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <ScrollArea className="w-full whitespace-nowrap">
+          <TabsList
+            className="flex w-full space-x-2 bg-white justify-start border-b rounded-none border-gray-500 px-4">
+            {['Overview', 'Announcements', 'Reviews', 'Learning Tools'].map((tab, index) => (
+              <TabsTrigger
+                key={index}
+                value={tab.toLowerCase().replace(' ', '-')}
+                className="pt-1 pb-4 relative font-medium bg-none text-gray-700 rounded-none hover:text-blue-500 data-[state=active]:border-b-4 data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 data-[state=active]:shadow-none"
+              >
+                {tab}
+              </TabsTrigger>
+            ))}
+            <ScrollBar orientation="horizontal" />
+          </TabsList>
+        </ScrollArea>
 
         <TabsContent value="overview" className="mt-4 text-gray-800">
           <h2 className="text-2xl font-semibold mb-4">Chapter Overview</h2>
-          <p>{dummyData.description}</p>
+          <EditorPreview value={chapter.course.description} />
         </TabsContent>
 
         <TabsContent value="qa" className="mt-4 text-gray-800">

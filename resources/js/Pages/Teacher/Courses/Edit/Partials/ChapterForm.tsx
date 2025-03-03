@@ -1,9 +1,7 @@
+import Editor from '@/Components/shared/Editor'
 import FieldGroup from '@/Components/shared/form/FieldGroup'
-import TextareaInput from '@/Components/shared/form/TextareaInput'
-import TextInput from '@/Components/shared/form/TextInput'
 import { Button } from '@/Components/ui/button'
 import { Input } from '@/Components/ui/input'
-import { Textarea } from '@/Components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { Chapter, Course } from '@/types'
 import { useForm } from '@inertiajs/react'
@@ -51,15 +49,15 @@ const ChapterForm = ({course, setShow, chapter, action = 'create'}: ChapterFormP
         {action === 'update' ? 'Update Chapter' : 'Add New Chapter'}
       </h2>
       <p className="mt-6 text-gray-700 dark:text-gray-400 bg-yellow-50 px-6 py-4 text-sm rounded-md">
-        {action === 'update' ? 'Update the chapter details.' : 'Add a new chapter to the course.'}
+        {action === 'update' ? 'Update the chapter details.' : 'Add a new chapter to the course.'}{' '}
         You can add video and other resources to the chapter after creating it.
         You can also update the chapter details later.
       </p>
 
       {Object.keys(errors).length > 0 &&
         <p className={cn('text-red-500 text-sm mt-6 bg-red-100 px-6 py-4 rounded-md', errors && 'block')}>
-        Oops! There are errors in the form. Please fix them and try again.
-      </p>}
+          Oops! There are errors in the form. Please fix them and try again.
+        </p>}
       <div className={'w-full flex flex-col gap-6 mt-6'}>
         <FieldGroup label="Chapter Title" name="title" error={errors.title}>
           <Input
@@ -70,10 +68,9 @@ const ChapterForm = ({course, setShow, chapter, action = 'create'}: ChapterFormP
           />
         </FieldGroup>
         <FieldGroup label="Chapter Description" name="description" error={errors.description}>
-          <Textarea
-            name="description"
+          <Editor
             value={data.description}
-            onChange={e => setData('description', e.target.value)}
+            onChange={(value) => setData('description', value)}
           />
         </FieldGroup>
       </div>

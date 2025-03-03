@@ -1,19 +1,26 @@
 import { Button } from '@/Components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/Components/ui/dropdown-menu'
+import useActivityLogger from '@/hooks/useActivityLog'
+import { Chapter } from '@/types'
+import { router } from '@inertiajs/react'
 import Hls from 'hls.js'
-import { SettingsIcon } from 'lucide-react'
+import { CheckCircle2Icon, ChevronLeft, ChevronRight, SettingsIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 interface VideoPlayerProps {
   src: string; // URL of the master playlist (e.g., master.m3u8)
+  chapter: Chapter & { course: { slug: string } }
+  nextChapter: Chapter
+  previousChapter: Chapter
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapter, previousChapter}) => {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [hlsInstance, setHlsInstance] = useState<Hls | null>(null)
   const [qualities, setQualities] = useState<{ label: string; index: number; width: number; height: number }[]>([])
   const [selectedQuality, setSelectedQuality] = useState<number | 'auto'>('auto')
+  const {logActivity} = useActivityLogger()
 
   // Initialize HLS and load qualities from master.m3u8
   useEffect(() => {
@@ -126,15 +133,68 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
     }
   }
 
+
+  const navigateToNextChapter = () => {
+    // courses/new-course-laravel/chapters/9e40da81-4a6c-4684-885a-2f63ad06ceef
+    console.log('Next Chapter')
+    router.visit(`/courses/${chapter?.course.slug}/chapters/${nextChapter.id}`)
+  }
+
   return (
-    <div ref={containerRef} className="relative w-full max-w-full">
+    <div onDoubleClick={enterFullScreen} ref={containerRef} className="relative w-full max-w-full bg-red-600">
       <video
+        onMouseDown={(e) => logActivity({
+          activityType: 'video_mouse_down',
+          metadata: JSON.stringify({x: e.clientX, y: e.clientY})
+        })}
+        onCanPlay={() => console.log('Video can play')}
+        onPlay={() => logActivity({
+          activityType: 'video_play',
+          metadata: JSON.stringify({
+            currentTime: videoRef.current?.currentTime,
+            videoDuration: videoRef.current?.duration,
+            videoSrc: videoRef.current?.src,
+            chapterId: 1
+          })
+        })}
+        onPause={() => logActivity({
+          activityType: 'video_pause',
+          metadata: JSON.stringify({
+            currentTime: videoRef.current?.currentTime,
+            videoDuration: videoRef.current?.duration,
+            videoSrc: videoRef.current?.src,
+            chapterId: 1
+          })
+        })}
+        onEnded={() => console.log('Video ended')}
+        onSeeking={() => console.log('Video seeking')}
+        onSeeked={() => console.log('Video seeked')}
+        onLoadedMetadata={() => logActivity({
+          activityType: 'video_loaded_metadata',
+          metadata: JSON.stringify({
+            currentTime: videoRef.current?.currentTime,
+            videoDuration: videoRef.current?.duration,
+            videoSrc: videoRef.current?.src,
+            chapterId: 1
+          })
+        })}
+        onError={(e) => console.error('Video error:', e)}
         ref={videoRef}
         controls
-        className="w-full h-auto max-h-[calc(100vh-100px)] object-cover bg-black"
-        onDoubleClick={enterFullScreen} // Allow double-click to enter full-screen
+        className="relative w-full h-auto max-h-[calc(100vh-100px)] rounded-md aspect-video object-cover bg-black p-0.5"
       />
-
+      <Button className="absolute top-2 left-2 z-10">
+        <CheckCircle2Icon className="h-5 w-5"/>
+      </Button>
+      {/*Previous Icon on Left middle*/}
+      <Button size={'sm'} className="absolute top-1/2 transform -translate-y-1/2 z-10 rounded-none">
+        <ChevronLeft className="h-5 w-5"/>
+      </Button>
+      <Button
+        onClick={navigateToNextChapter}
+        size={'sm'} className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-none">
+        <ChevronRight className="h-5 w-5"/>
+      </Button>
       {/* Gear Icon and Quality Selector */}
       <div className="absolute top-2 right-2">
         <DropdownMenu>

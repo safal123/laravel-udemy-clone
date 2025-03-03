@@ -38,6 +38,7 @@ class CourseResource extends JsonResource
             'students' => UserResource::collection($this->whenLoaded('students')),
             'is_enrolled' => $this->is_enrolled ?? false,
             'is_wishlisted' => $this->is_wishlisted ?? false,
+            'is_author' => $this->is_author ?? false,
         ];
     }
 }

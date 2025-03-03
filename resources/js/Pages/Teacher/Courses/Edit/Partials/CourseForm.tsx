@@ -1,4 +1,5 @@
 import LoadingButton from '@/Components/shared/button/LoadingButton'
+import Editor from '@/Components/shared/Editor'
 import FieldGroup from '@/Components/shared/form/FieldGroup'
 import { Card, CardContent, CardHeader } from '@/Components/ui/card'
 import { Input } from '@/Components/ui/input'
@@ -87,11 +88,12 @@ const CourseForm = ({course, mode}: CourseFormProps) => {
           </div>
           <div className={'pt-6'}>
             <FieldGroup label="Course Description" name="description" error={errors.description}>
-              <Textarea
-                name="description"
-                value={data.description}
-                onChange={(e: any) => setData('description', e.target.value)}
-              />
+              <div className={'max-w-2xl'}>
+                <Editor
+                  value={data.description}
+                  onChange={(value) => setData('description', value)}
+                />
+              </div>
             </FieldGroup>
           </div>
           <div className="flex items-center pt-6">

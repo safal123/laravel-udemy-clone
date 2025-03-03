@@ -33,7 +33,7 @@ export default function FileInput({
   const renderPreviewContent = () => {
     if (accept === 'video/*') {
       return (
-        <div className="w-full min-h-[300px] h-full">
+        <div className="w-full h-full relative rounded-md">
           {previewUrl || objectUrl ? (
             <ReactPlayer
               url={previewUrl || objectUrl}
@@ -46,14 +46,27 @@ export default function FileInput({
             <div className="flex items-center min-h-[300px] h-full justify-center border-2 border-dashed border-red-900 rounded-md p-2"/>
           )}
           {previewUrl && (
-            <div className="p-4">
+            <div className="p-4 flex items-center gap-2">
               <Button
                 type="button"
                 disabled={loading || !previewUrl}
                 onClick={uploadToS3}
               >
                 {loading && <Loader className="animate-spin w-6 h-6 mr-2"/>}
-                Upload
+                Upload Video
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={'destructive'}
+                disabled={loading}
+                onClick={() => {
+                  objectUrl = ''
+                  previewUrl = ''
+                }}
+                className={cn( !previewUrl && 'hidden')}
+              >
+                Remove
               </Button>
             </div>
           )}

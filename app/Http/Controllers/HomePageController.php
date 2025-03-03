@@ -17,7 +17,7 @@ class HomePageController extends Controller
                 Course::query()
                     ->allPublishedCourses()
                     ->withUserSpecificAttributes(Auth::id())
-                    ->paginate(4)
+                    ->paginate(3)
             ),
         ]);
     }

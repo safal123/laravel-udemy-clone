@@ -48,6 +48,7 @@ class ChapterController extends Controller
     {
         $chapter->update(['video_storage_id' => $chapter->id]);
         $chapter->refresh();
+
         event(new ChapterVideoUploaded($chapter));
 
         return response()->json([

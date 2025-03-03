@@ -1,8 +1,7 @@
 import { AppTooltip } from '@/Components/shared/AppTooltip'
 import { Switch } from '@/Components/ui/switch'
 import { Chapter } from '@/types'
-import { router, useForm } from '@inertiajs/react'
-import { Loader2 } from 'lucide-react'
+import { router } from '@inertiajs/react'
 import React from 'react'
 import { toast } from 'sonner'
 
