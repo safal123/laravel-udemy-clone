@@ -17,7 +17,7 @@ const HomePageNavbar = ({ auth }: HomePageNavbarProps) => {
   return (
     <nav className="fixed top-0 left-0 w-full border-b border-gray-100 z-50 bg-white">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        {/* Mobile Menu Button */}
+        {/* Left Section - Logo */}
         <div className="flex items-center space-x-4">
           <button
             className="md:hidden text-gray-600 hover:text-gray-700 focus:outline-none border
@@ -30,18 +30,37 @@ const HomePageNavbar = ({ auth }: HomePageNavbarProps) => {
               <MenuIcon size={24} />
             )}
           </button>
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/">
-              <Logo />
-            </Link>
-            <div className="items-center space-x-6">
-            {/*  Search Input */}
-              <Input
-                placeholder="Search for courses"
-                className="outline-none ring-0 focus:ring-0 focus:outline-none"
-              />
+          <Link href="/" className="hidden md:block">
+            <Logo />
+          </Link>
+        </div>
+
+        {/* Center Section - Search Bar */}
+        <div className="flex-1 flex justify-center mx-4">
+          <Input
+            placeholder="Search for courses"
+            className="w-full max-w-md outline-none ring-0 focus:ring-0 focus:outline-none"
+          />
+        </div>
+
+        {/* Right Section - User Menu or Auth Buttons */}
+        <div className="flex items-center space-x-4">
+          {auth?.user ? (
+            <div className="flex items-center space-x-4">
+              <UserMenu />
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <Link href="/login">
+                <Button className="text-sm font-medium">Login</Button>
+              </Link>
+              <Link href="/register">
+                <Button variant="outline" className="text-sm font-medium">
+                  Register
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu */}
@@ -66,26 +85,6 @@ const HomePageNavbar = ({ auth }: HomePageNavbarProps) => {
             </div>
           </div>
         )}
-
-        {/* Right Section */}
-        <div className="flex items-center space-x-4">
-          {auth?.user ? (
-            <div className="flex items-center space-x-4">
-              <UserMenu />
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <Link href="/login">
-                <Button className="text-sm font-medium">Login</Button>
-              </Link>
-              <Link href="/register">
-                <Button variant="outline" className="text-sm font-medium">
-                  Register
-                </Button>
-              </Link>
-            </div>
-          )}
-        </div>
       </div>
     </nav>
   );

@@ -72,10 +72,6 @@ const CourseCard = ({course, addToWishlist}: CourseCardProps) => {
             <LifeBuoyIcon size={16}/>
             <span className="ml-2">Full lifetime access</span>
           </li>
-          <li className="flex items-center">
-            <Tv2Icon size={16}/>
-            <span className="ml-2">Access on mobile and TV</span>
-          </li>
         </ul>
 
         <div className="mt-4 flex items-center">
@@ -90,7 +86,7 @@ const CourseCard = ({course, addToWishlist}: CourseCardProps) => {
             <>
               {course.is_author ?
                 <Link href={`/courses/${course.slug}/edit`} className={'w-full'}>
-                  <Button variant="outline" className={'w-full'}>
+                  <Button variant="ghost" className={'w-full'}>
                     <Edit2Icon size={16} className={'mr-2'}/>
                     Edit Course
                   </Button>

@@ -18,7 +18,7 @@ const companies = [
 
 const TrustedBySlider = () => {
   return (
-    <section className="py-12 bg-gradient-to-r from-red-200 via-red-300 to-yellow-900 border-b">
+    <section className="py-12 border-b">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold text-center mb-8 underline tracking-wide text-gray-900">
           Trusted By

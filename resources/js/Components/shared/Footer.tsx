@@ -3,7 +3,7 @@ import { Facebook, InstagramIcon, LinkedinIcon, TwitterIcon } from 'lucide-react
 
 export default function Footer() {
   return (
-    <footer className="text-gray-900 py-10 bg-gradient-to-t from-red-200 via-red-300 to-yellow-900">
+    <footer className="text-gray-900 py-10 bg-gray-50">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
         {/* Company Info */}
         <div>

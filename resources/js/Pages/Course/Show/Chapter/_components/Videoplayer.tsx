@@ -205,18 +205,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
         {isCompleted ? 'Completed' : 'Mark as Completed'}
         {isCompleted ? <CheckCircle2Icon className="h-5 w-5 ml-2"/> : null}
       </Button>
-      <Button
+      {previousChapterId && <Button
         disabled={!previousChapterId}
         onClick={() => navigateToChapter(previousChapterId)}
         size={'sm'} className="absolute top-1/2 transform -translate-y-1/2 z-10 rounded-none">
         <ChevronLeft className="h-5 w-5"/>
-      </Button>
-      <Button
-        disabled={!nextChapterId}
-        onClick={() => navigateToChapter(nextChapterId)}
-        size={'sm'} className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-none">
-        <ChevronRight className="h-5 w-5"/>
-      </Button>
+      </Button>}
+      {nextChapterId &&
+        <Button
+          disabled={!nextChapterId}
+          onClick={() => navigateToChapter(nextChapterId)}
+          size={'sm'} className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-none">
+          <ChevronRight className="h-5 w-5"/>
+        </Button>}
       <div className="absolute top-2 right-2">
         <VideoQualitySwitcher
           qualities={qualities}
