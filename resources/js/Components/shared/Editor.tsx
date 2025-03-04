@@ -22,7 +22,6 @@ const Editor: React.FC<EditorProps> = ({ value, onChange }) => {
   }, []);
 
   const modules = {
-    syntax: true, // Enable syntax highlighting
     toolbar: [
       // font size
       [{ header: [1, 2, 3, 4, 5, 6] }],
