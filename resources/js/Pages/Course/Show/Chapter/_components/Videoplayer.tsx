@@ -1,20 +1,23 @@
 import { Button } from '@/Components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/Components/ui/dropdown-menu'
 import useActivityLogger from '@/hooks/useActivityLog'
+import { cn } from '@/lib/utils'
+import VideoQualitySwitcher from '@/Pages/Course/Show/Chapter/_components/VideoQualitySwitcher'
 import { Chapter } from '@/types'
 import { router } from '@inertiajs/react'
 import Hls from 'hls.js'
-import { CheckCircle2Icon, ChevronLeft, ChevronRight, SettingsIcon } from 'lucide-react'
+import { CheckCircle2Icon, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 interface VideoPlayerProps {
   src: string; // URL of the master playlist (e.g., master.m3u8)
   chapter: Chapter & { course: { slug: string } }
-  nextChapter: Chapter
-  previousChapter: Chapter
+  nextChapterId: string
+  previousChapterId: string
+  isCompleted: boolean
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapter, previousChapter}) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, previousChapterId, isCompleted}) => {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [hlsInstance, setHlsInstance] = useState<Hls | null>(null)
@@ -27,7 +30,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapter, pre
     const videoElement = videoRef.current
     if (!videoElement) return
 
-    let hls: Hls | null = null
+    let hls: Hls | null
 
     if (Hls.isSupported()) {
       hls = new Hls({
@@ -109,14 +112,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapter, pre
     }
   }
 
-  // Render quality label with resolution
   const renderLabel = (label: string, width: number, height: number) => {
     if (label === 'Auto') return 'Auto'
-
-    // Use height to determine the "p" label (common video quality notation)
     const heightLabel = `${height}p`
-
-    // Return the label with full resolution in parentheses
     return `${heightLabel} (${width}x${height})`
   }
 
@@ -134,10 +132,31 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapter, pre
   }
 
 
-  const navigateToNextChapter = () => {
-    // courses/new-course-laravel/chapters/9e40da81-4a6c-4684-885a-2f63ad06ceef
-    console.log('Next Chapter')
-    router.visit(`/courses/${chapter?.course.slug}/chapters/${nextChapter.id}`)
+  const navigateToChapter = (chapterId: string) => {
+    router.visit(`/courses/${chapter?.course.slug}/chapters/${chapterId}`)
+  }
+
+  const markAsCompleted = (chapterId: string, courseId: string) => {
+    if (isCompleted) return
+    router.post(route('progress.store'), {
+        chapter_id: chapterId,
+        course_id: courseId
+      },
+      {
+        onSuccess: () => {
+          console.log('Marked as completed')
+          if (nextChapterId) {
+            navigateToChapter(nextChapterId)
+          }
+
+          return toast.success('Chapter marked as completed')
+        },
+        onError: (error) => {
+          console.error('Mark as completed error:', error)
+          return toast.error('Failed to mark chapter as completed')
+        }
+      }
+    )
   }
 
   return (
@@ -166,7 +185,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapter, pre
             chapterId: 1
           })
         })}
-        onEnded={() => console.log('Video ended')}
+        onEnded={() => markAsCompleted(chapter.id, chapter.course_id)}
         onSeeking={() => console.log('Video seeking')}
         onSeeked={() => console.log('Video seeked')}
         onLoadedMetadata={() => logActivity({
@@ -183,56 +202,33 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapter, pre
         controls
         className="relative w-full h-auto max-h-[calc(100vh-100px)] rounded-md aspect-video object-cover bg-black p-0.5"
       />
-      <Button className="absolute top-2 left-2 z-10">
-        <CheckCircle2Icon className="h-5 w-5"/>
+      <Button
+        size={'sm'}
+        onClick={() => markAsCompleted(chapter.id, chapter.course_id)}
+        className={cn('absolute top-2 left-2 z-10', isCompleted ? 'bg-green-500 hover:bg-green-400' : 'bg-black bg-opacity-70 border hover:bg-opacity-10 transition-opacity')}
+      >
+        {isCompleted ? 'Completed' : 'Mark as Completed'}
+        {isCompleted ? <CheckCircle2Icon className="h-5 w-5 ml-2"/> : null}
       </Button>
-      {/*Previous Icon on Left middle*/}
-      <Button size={'sm'} className="absolute top-1/2 transform -translate-y-1/2 z-10 rounded-none">
+      <Button
+        disabled={!previousChapterId}
+        onClick={() => navigateToChapter(previousChapterId)}
+        size={'sm'} className="absolute top-1/2 transform -translate-y-1/2 z-10 rounded-none">
         <ChevronLeft className="h-5 w-5"/>
       </Button>
       <Button
-        onClick={navigateToNextChapter}
+        disabled={!nextChapterId}
+        onClick={() => navigateToChapter(nextChapterId)}
         size={'sm'} className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 rounded-none">
         <ChevronRight className="h-5 w-5"/>
       </Button>
-      {/* Gear Icon and Quality Selector */}
       <div className="absolute top-2 right-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white bg-black bg-opacity-70 rounded-full hover:bg-opacity-90 transition-opacity"
-            >
-              <SettingsIcon className="h-5 w-5"/>
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="bg-black bg-opacity-90 border-none text-white mr-2">
-            <DropdownMenuItem
-              className="flex items-center justify-between"
-              onClick={() => handleQualityChange('auto')}
-            >
-              <span>Auto</span>
-              {selectedQuality === 'auto' && (
-                <span className="h-2 w-2 bg-green-500 rounded-full animate-pulse"/>
-              )}
-            </DropdownMenuItem>
-
-            {qualities.map((q) => (
-              <DropdownMenuItem
-                key={q.index}
-                className="flex items-center justify-between px-4"
-                onClick={() => handleQualityChange(q.index)}
-              >
-                <span>{renderLabel(q.label, q.width, q.height)}</span>
-                {selectedQuality === q.index && (
-                  <span className="ml-2 h-2 w-2 bg-green-500 rounded-full animate-pulse"/>
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <VideoQualitySwitcher
+          qualities={qualities}
+          selectedQuality={selectedQuality}
+          handleQualityChange={handleQualityChange}
+          renderLabel={renderLabel}
+        />
       </div>
     </div>
   )

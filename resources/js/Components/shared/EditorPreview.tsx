@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css"; // Bubble theme for preview
-import "highlight.js/styles/github.css"; // Syntax highlighting theme
+import "react-quill/dist/quill.bubble.css";
+import "highlight.js/styles/github.css";
 import hljs from "highlight.js";
 
 interface PreviewProps {

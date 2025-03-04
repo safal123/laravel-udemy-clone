@@ -20,7 +20,7 @@ class ActivityController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-//        dd(auth()->user()->id);
+        //        dd(auth()->user()->id);
 
         // Save the activity
         Activity::create([
@@ -30,6 +30,7 @@ class ActivityController extends Controller
         ]);
         // remove video_
         $type = str_replace('video_', '', $request->activity_type);
+
         return response()->json(['message' => "Video is {$type}"]);
     }
 }

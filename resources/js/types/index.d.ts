@@ -38,6 +38,9 @@ export interface Course {
   students: number;
   is_enrolled: boolean;
   students_count: number;
+  is_author: boolean;
+  is_purchased: boolean;
+  is_wishlisted: boolean;
 }
 
 export interface Wishlist {
@@ -61,6 +64,9 @@ export interface Chapter {
   is_free: boolean;
   video_url: string;
   course: Course;
+  is_completed: boolean;
+  next_chapter_id: string;
+  previous_chapter_id: string;
 }
 
 export type PaginatedData<T> = {

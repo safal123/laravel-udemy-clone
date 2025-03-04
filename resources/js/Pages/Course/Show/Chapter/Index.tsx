@@ -18,17 +18,20 @@ const CourseChapter = () => {
   }
 
   return (
-    <div className="text-gray-50 w-full flex flex-col items-center">
+    <div className="text-gray-900 w-full flex flex-col items-center">
       <Head title={`Course Chapter: ${chapter.title}`} />
       <div className="relative rounded-md shadow-lg overflow-hidden mx-auto w-full object-cover aspect-video-16/9">
         <VideoPlayer
           src={chapter.video_url}
           chapter={chapter}
-          nextChapter={nextChapter}
-          previousChapter={previousChapter}
+          nextChapterId={chapter.next_chapter_id}
+          previousChapterId={chapter.previous_chapter_id}
+          // TODO: Implement this
+          isCompleted={chapter.is_completed}
         />
       </div>
       <ChapterTabs chapter={chapter}/>
+      {chapter.is_completed}
     </div>
   )
 }

@@ -88,4 +88,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Wishlist::class);
     }
+
+    public function progress()
+    {
+        return $this->hasMany(UserProgress::class);
+    }
 }

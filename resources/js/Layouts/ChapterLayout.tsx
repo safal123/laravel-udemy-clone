@@ -4,6 +4,7 @@ import { AppSidebar } from '@/Pages/Course/Show/Chapter/_components/AppSidebar'
 import { Chapter } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { useEffect } from 'react'
+import { Toaster } from 'sonner'
 
 export default function ChapterLayout({children}: { children: React.ReactNode }) {
   const {course} = usePage<{ course: { slug: string; chapters: Chapter[] } }>().props
@@ -30,6 +31,17 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
 
   return (
     <SidebarProvider className="flex h-screen">
+      <Toaster
+        toastOptions={{
+          duration: 2000,
+          classNames: {
+            toast: 'bg-gray-800 text-white',
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            warning: 'bg-yellow-500',
+          }
+        }}
+      />
       <AppSidebar
         variant="dark"
       >

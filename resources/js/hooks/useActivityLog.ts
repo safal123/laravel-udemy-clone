@@ -9,7 +9,7 @@ interface ActivityData {
 
 const useActivityLogger = () => {
   const logActivity = useCallback(async ({ activityType, metadata }: ActivityData) => {
-    await axios.post('/activity', {
+    await axios.post(route('activities.store'), {
       activity_type: activityType,
       metadata,
     }).then(() => {

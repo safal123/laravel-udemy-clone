@@ -37,7 +37,7 @@ const ChapterTabs = ({chapter}: ChapterTabsProps) => {
       <Tabs defaultValue="overview" className="w-full">
         <ScrollArea className="w-full whitespace-nowrap">
           <TabsList
-            className="flex w-full space-x-2 bg-white justify-start border-b rounded-none border-gray-500 px-4">
+            className="flex w-full space-x-2 bg-white justify-start rounded-none border-gray-500 px-4">
             {['Overview', 'Announcements', 'Reviews', 'Learning Tools'].map((tab, index) => (
               <TabsTrigger
                 key={index}
@@ -52,8 +52,10 @@ const ChapterTabs = ({chapter}: ChapterTabsProps) => {
         </ScrollArea>
 
         <TabsContent value="overview" className="mt-4 text-gray-800">
-          <h2 className="text-2xl font-semibold mb-4">Chapter Overview</h2>
-          <EditorPreview value={chapter.course.description} />
+          <div className="border rounded-md p-2">
+            <h2 className="text-2xl font-semibold mb-4">Chapter Overview</h2>
+            <EditorPreview value={chapter.description} />
+          </div>
         </TabsContent>
 
         <TabsContent value="qa" className="mt-4 text-gray-800">

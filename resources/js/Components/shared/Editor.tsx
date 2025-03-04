@@ -15,16 +15,23 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ value, onChange }) => {
+  const [mounted, setMounted] = React.useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const modules = {
     syntax: true, // Enable syntax highlighting
     toolbar: [
-      [{ size: ['normal', 'large', 'huge'] }],
+      // font size
+      [{ header: [1, 2, 3, 4, 5, 6] }],
       ["bold", "italic"],
       [{ list: "ordered" }, { list: "bullet" }],
-      // ["link"],
-      [{ color: [] }],
     ],
   };
+
+  if (!mounted) return null;
 
   return (
     <ReactQuill

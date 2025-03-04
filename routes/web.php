@@ -11,6 +11,7 @@ use App\Http\Controllers\StripeClientSecretController;
 use App\Http\Controllers\Teacher\ChapterController;
 use App\Http\Controllers\Teacher\CourseController;
 use App\Http\Controllers\Teacher\DashboardController;
+use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,8 +22,12 @@ Route::get('/', [HomePageController::class, 'index'])
 Route::stripeWebhooks('stripe/webhook');
 
 Route::middleware('auth')->group(function () {
-    Route::post('/activity', [ActivityController::class, 'store'])
-        ->name('activity.store');
+    Route::resource('activities', ActivityController::class)
+        ->only(['store'])
+        ->names('activities');
+    Route::resource('user-progress', UserProgressController::class)
+        ->only(['store'])
+        ->names('progress');
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])
         ->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

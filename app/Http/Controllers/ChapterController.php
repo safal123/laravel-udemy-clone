@@ -15,7 +15,6 @@ class ChapterController extends Controller
         $chapterId = request()->route('chapter');
         $course = Course::query()
             ->where('slug', $courseSlug)
-            // only show published chapters
             ->with(['chapters' => function ($query) {
                 $query->where('is_published', true);
             }])
@@ -25,13 +24,41 @@ class ChapterController extends Controller
             ->where('is_published', true)
             ->where('course_id', $course->id)
             ->with(['course'])
+            ->addSelect([
+                'is_completed' => function ($query) {
+                    $query->selectRaw('count(*)')
+                        ->from('user_progress')
+                        ->whereColumn('user_progress.chapter_id', 'chapters.id')
+                        ->where('user_progress.user_id', auth()->id());
+                },
+            ])
+            ->addSelect([
+                'next_chapter_id' => function ($query) use ($course) {
+                    $query->select('id')
+                        ->from('chapters as next_chapters')
+                        ->whereColumn('next_chapters.course_id', 'chapters.course_id')
+                        ->where('next_chapters.course_id', $course->id)
+                        ->where('next_chapters.is_published', true)
+                        ->whereColumn('next_chapters.order', '>', 'chapters.order')
+                        ->orderBy('next_chapters.order')
+                        ->limit(1);
+                },
+                'previous_chapter_id' => function ($query) use ($course) {
+                    $query->select('id')
+                        ->from('chapters as prev_chapters')
+                        ->whereColumn('prev_chapters.course_id', 'chapters.course_id')
+                        ->where('prev_chapters.course_id', $course->id)
+                        ->where('prev_chapters.is_published', true)
+                        ->whereColumn('prev_chapters.order', '<', 'chapters.order')
+                        ->orderByDesc('prev_chapters.order')
+                        ->limit(1);
+                },
+            ])
             ->firstOrFail();
 
         return Inertia::render('Course/Show/Chapter/Index', [
             'course' => $course,
             'chapter' => new ChapterResource($chapter),
-            'nextChapter' => $chapter->next(),
-            'previousChapter' => $chapter->previous(),
         ]);
     }
 }

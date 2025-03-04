@@ -1,21 +1,11 @@
 import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
+import { Course } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BookAIcon, HeartIcon, LifeBuoyIcon, Star, Tv2Icon, Videotape } from 'lucide-react'
 
 type CourseCardProps = {
-  course: {
-    id: string;
-    slug: string;
-    title: string;
-    image_url: string;
-    price: number;
-    rating: number;
-    is_wishlisted: boolean;
-    is_purchased: boolean;
-    chapters: { id: string }[];
-    is_author: boolean;
-  };
+  course: Course
   addToWishlist: (course: any) => void;
 };
 

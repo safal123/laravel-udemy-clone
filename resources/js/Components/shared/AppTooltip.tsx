@@ -8,6 +8,7 @@ interface AppTooltipProps {
   variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'link' // Optional button variant
   delayDuration?: number // Optional delay in milliseconds
   side?: 'top' | 'right' | 'bottom' | 'left' // Optional tooltip position
+  className?: string // Optional class name
 }
 
 export function AppTooltip({

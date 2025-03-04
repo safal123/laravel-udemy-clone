@@ -29,19 +29,24 @@ class Chapter extends Model
         'is_published' => 'boolean',
     ];
 
-//    public static function query(): Builder
-//    {
-//        return parent::query();
-//    }
-//
-//    public function newEloquentBuilder($query): ChapterBuilder
-//    {
-//        return new ChapterBuilder($query);
-//    }
+    public static function query(): Builder
+    {
+        return parent::query();
+    }
+
+    public function newEloquentBuilder($query): ChapterBuilder
+    {
+        return new ChapterBuilder($query);
+    }
 
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function progress(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserProgress::class);
     }
 
     public static function boot()
@@ -63,14 +68,14 @@ class Chapter extends Model
     public function next()
     {
         return self::where('id', '>', $this->id) // Get records with UUID greater than current
-        ->orderBy('id', 'asc') // Order by ascending UUID
-        ->first();
+            ->orderBy('id', 'asc') // Order by ascending UUID
+            ->first();
     }
 
     public function previous()
     {
         return self::where('id', '<', $this->id) // Get records with UUID smaller than current
-        ->orderBy('id', 'desc') // Order by descending UUID
-        ->first();
+            ->orderBy('id', 'desc') // Order by descending UUID
+            ->first();
     }
 }

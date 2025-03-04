@@ -63,6 +63,11 @@ class Course extends Model implements CourseConstants
         return $this->hasMany(Wishlist::class);
     }
 
+    public function progress(): HasMany
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
     public function chapters(): HasMany
     {
         return $this
