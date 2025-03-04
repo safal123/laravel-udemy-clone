@@ -44,6 +44,7 @@ const PaymentModal = ({course}: PaymentModalProps) => {
           onClick={() => fetchClientSecret()}>
           Pay now
         </Button>
+        {/*vite get the env stripe*/}
       </DialogTrigger>
       <DialogContent className="w-full sm:max-w-3xl overflow-y-auto">
         <DialogHeader>
