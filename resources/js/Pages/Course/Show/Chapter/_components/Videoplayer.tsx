@@ -144,11 +144,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
       },
       {
         onSuccess: () => {
-          console.log('Marked as completed')
-          if (nextChapterId) {
-            navigateToChapter(nextChapterId)
-          }
-
           return toast.success('Chapter marked as completed')
         },
         onError: (error) => {
