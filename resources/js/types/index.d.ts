@@ -51,6 +51,15 @@ export interface Wishlist {
   course: Course;
 }
 
+export interface UserProgress {
+  id: string;
+  user_id: string;
+  chapter_id: string;
+  completed_at: string;
+  created_at: string;
+  course_id: string;
+}
+
 export interface Chapter {
   id: string;
   title: string;
@@ -67,6 +76,7 @@ export interface Chapter {
   is_completed: boolean;
   next_chapter_id: string;
   previous_chapter_id: string;
+  progress: UserProgress[]
 }
 
 export type PaginatedData<T> = {

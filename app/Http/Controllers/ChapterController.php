@@ -29,7 +29,9 @@ class ChapterController extends Controller
                     $query->selectRaw('count(*)')
                         ->from('user_progress')
                         ->whereColumn('user_progress.chapter_id', 'chapters.id')
-                        ->where('user_progress.user_id', auth()->id());
+                        ->where('user_progress.user_id', auth()->id())
+                        ->where('user_progress.is_completed', true)
+                        ->limit(1);
                 },
             ])
             ->addSelect([
@@ -54,7 +56,18 @@ class ChapterController extends Controller
                         ->limit(1);
                 },
             ])
+            ->with('progress', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
             ->firstOrFail();
+
+        $chapter->progress()->updateOrCreate([
+            'user_id' => auth()->id(),
+            'course_id' => $course->id,
+        ], [
+            'last_accessed_at' => now(),
+            'started_at' => now(),
+        ]);
 
         return Inertia::render('Course/Show/Chapter/Index', [
             'course' => $course,

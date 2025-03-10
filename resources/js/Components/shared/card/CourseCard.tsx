@@ -36,13 +36,6 @@ const CourseCard = ({ course }: { course: Course }) => {
       </CardHeader>
       <CardContent className={'p-0'}>
         <div className={'px-4 py-4'}>
-          {/*<div className={'flex items-center'}>*/}
-          {/*  {[...Array(4)].map((_, i) => <StarIcon size={16} fill={'green'} className={'text-green-500'}/>)}*/}
-          {/*  <StarHalfIcon size={16} fill={'green'} className={'text-gray-500'}/>*/}
-          {/*  <span className={'text-green-100 text-xs bg-green-500 rounded-xl px-2 py-0.5 font-semibold'}>*/}
-          {/*    {4.5}*/}
-          {/*  </span>*/}
-          {/*</div>*/}
           <div className={'flex items-center justify-between'}>
             <p className={'text-gray-100 text-medium font-semibold truncate'}>
               {course.title.substring(0, 20)}...
@@ -61,20 +54,6 @@ const CourseCard = ({ course }: { course: Course }) => {
               </Link>
             </div>
           </div>
-          {/*<div className={'flex flex-col gap-1 mb-4'}>*/}
-          {/*  <div className={'flex items-center gap-2'}>*/}
-          {/*    <VideoIcon size={20} className={'text-gray-100'}/>*/}
-          {/*    <span className={'text-gray-100 text-xs'}>*/}
-          {/*      {course.chapters_count} Videos*/}
-          {/*    </span>*/}
-          {/*  </div>*/}
-          {/*  <div className={'flex items-center gap-2'}>*/}
-          {/*    <Users2Icon size={20} className={'text-gray-100'}/>*/}
-          {/*    <span className={'text-gray-100 text-xs'}>*/}
-          {/*      {course.enrollments_count} Enrollments*/}
-          {/*    </span>*/}
-          {/*  </div>*/}
-          {/*</div>*/}
           <div className={'mt-1'}>
             {canEnroll ?
               <div className={'flex items-center justify-between'}>

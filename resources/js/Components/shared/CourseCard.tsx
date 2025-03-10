@@ -85,7 +85,7 @@ const CourseCard = ({course, addToWishlist}: CourseCardProps) => {
           ) : (
             <>
               {course.is_author ?
-                <Link href={`/courses/${course.slug}/edit`} className={'w-full'}>
+                <Link href={`/teachers/courses/${course.id}/edit`} className={'w-full'}>
                   <Button variant="ghost" className={'w-full'}>
                     <Edit2Icon size={16} className={'mr-2'}/>
                     Edit Course

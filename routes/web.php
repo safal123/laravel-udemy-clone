@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
         ->only(['store'])
         ->names('activities');
     Route::resource('user-progress', UserProgressController::class)
-        ->only(['store'])
+        ->only(['store', 'update'])
         ->names('progress');
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])
         ->name('dashboard');

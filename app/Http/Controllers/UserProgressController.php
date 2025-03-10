@@ -27,15 +27,27 @@ class UserProgressController extends Controller
                 ->withErrors('Chapter already marked as completed');
         }
         // Create a new progress record
-        $userProgress = UserProgress::create([
+        UserProgress::create([
             'user_id' => auth()->id(),
             'course_id' => $request->course_id,
             'chapter_id' => $request->chapter_id,
-            'completed_at' => now(),
-            'is_completed' => true,
+            'started_at' => now(),
+            'last_accessed_at' => now(),
         ]);
 
-        return Redirect::back()
-            ->with('success', 'Chapter marked as completed');
+        return Redirect::back()->with('success', 'Chapter progress saved');
+    }
+
+    public function update(Request $request, UserProgress $userProgress)
+    {
+        $request->validate([
+            'is_completed' => 'required|boolean',
+        ]);
+
+        $userProgress->update($request->all());
+
+        $userProgress->refresh();
+
+        return Redirect::back()->with('success', 'Chapter progress updated');
     }
 }

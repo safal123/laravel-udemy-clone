@@ -55,6 +55,11 @@ const ChapterTabs = ({chapter}: ChapterTabsProps) => {
           <div className="border rounded-md p-2">
             <h2 className="text-2xl font-semibold mb-4">Chapter Overview</h2>
             <EditorPreview value={chapter.description} />
+            <img
+              alt={'React Fundamentals'}
+              className="w-full h-64 object-cover rounded-lg mt-4"
+              src={'https://laravel-udemy-clone.s3.ap-southeast-2.amazonaws.com/courses/images/9e4b42b6-c0fe-4d9b-a7ed-8fc5fab047e6_thumbnail.jpg'}
+            />
           </div>
         </TabsContent>
 

@@ -19,6 +19,7 @@ class UserProgress extends Model
         'is_completed',
         'time_spent',
         'last_accessed_at',
+        'is_completed',
     ];
 
     protected $casts = [
