@@ -1,4 +1,5 @@
 import EditorPreview from '@/Components/shared/EditorPreview'
+import Footer from '@/Components/shared/Footer'
 import HomePageNavbar from '@/Components/shared/HomePageNavbar'
 import PaymentModal from '@/Components/shared/PaymentModal'
 import { Badge } from '@/Components/ui/badge'
@@ -26,12 +27,11 @@ import React from 'react'
 const CoursePreviewPage = ({auth}: PageProps) => {
   const course = usePage().props.course as Course
   const hasPurchased = auth.user?.purchased_courses?.some((c: Course) => c.id === course.id)
-  const isOwner = auth.user.id === course.user_id
   const {addToWishlist, removeFromWishlist} = useWishlist()
   const isOnWishlist = auth.user?.wishlists?.some((c) => c.course_id === course.id)
 
   const toggleWishlist = async (course: Course) => {
-    if (!course || (isOwner && !hasPurchased)) {
+    if (!course || (course.is_author && !hasPurchased)) {
       return false
     }
     await isOnWishlist ? removeFromWishlist(course) : addToWishlist(course)
@@ -77,7 +77,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
         className="bg-gradient-to-r from-red-200 via-red-300 to-yellow-900 py-12 text-gray-800 md:pt-6 pb-20 mt-16">
         <div className="container flex flex-col mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
-            <Button size={'sm'} variant={'ghost'}>
+            <Button size={'sm'} variant={'outline'} className={'bg-gray-900 text-white'}>
               <ChevronLeft size={16} className="mr-2"/>
               Browse All Series
             </Button>
@@ -104,7 +104,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
               <span>{course.students_count || 500} students</span>
             </div>
           </div>
-          {!isOwner && (
+          {!course.is_author && (
             <div className="flex flex-col md:flex-row gap-4">
               {course.is_enrolled ? (
                 <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
@@ -217,7 +217,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
                 </div>
               </div>
               <div className={'mt-2'}>
-                {!course.is_enrolled && !isOwner ?
+                {!course.is_enrolled && !course.is_author ?
                   <PaymentModal course={course}/>
                   :
                   <div className={'mt-6 flex flex-col space-y-4'}>
@@ -228,7 +228,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
                     </span>
                     <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
                       <Button variant={'outline'} className="w-full">
-                        {isOwner ? 'Course Preview' : 'Continue Series'}
+                        {course.is_author ? 'Course Preview' : 'Continue Series'}
                       </Button>
                     </Link>
                   </div>
@@ -238,11 +238,11 @@ const CoursePreviewPage = ({auth}: PageProps) => {
           </Card>
         </div>
         <div className={'lg:hidden bottom-4 inset-x-0 sticky'}>
-          {course.is_enrolled || isOwner ?
+          {course.is_enrolled || course.is_author ?
             <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
               <div className={'bg-gray-900 flex items-center justify-center py-2 rounded-md text-white'}>
                 <BookAIcon size={16} className="mr-2"/>
-                {isOwner ? 'Course Preview' : 'Continue Series'}
+                {course.is_author ? 'Course Preview' : 'Continue Series'}
               </div>
             </Link>
             :
@@ -250,6 +250,7 @@ const CoursePreviewPage = ({auth}: PageProps) => {
           }
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
