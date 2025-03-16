@@ -1,3 +1,4 @@
+import { AppTooltip } from '@/Components/shared/AppTooltip'
 import { Button } from '@/Components/ui/button'
 import ChapterLayout from '@/Layouts/ChapterLayout'
 import { cn } from '@/lib/utils'
@@ -10,7 +11,7 @@ import React from 'react'
 import { toast } from 'sonner'
 
 const CourseChapter = () => {
-  const {chapter} = usePage<{ chapter: Chapter; }>().props
+  const { chapter } = usePage<{ chapter: Chapter; }>().props
 
   const toggleCompletion = () => {
     console.log(chapter.is_completed)
@@ -31,7 +32,7 @@ const CourseChapter = () => {
 
   return (
     <div className="text-gray-900 w-full flex flex-col items-center relative">
-      <Head title={`Course Chapter: ${chapter.title}`}/>
+      <Head title={`Course Chapter: ${chapter.title}`} />
       <Button
         onClick={toggleCompletion}
         className={cn(
@@ -41,7 +42,7 @@ const CourseChapter = () => {
             'bg-primary hover:bg-green-600'
         )}
       >
-        <CheckCircle2Icon className="h-5 w-5 mr-2"/>
+        <CheckCircle2Icon className="h-5 w-5 mr-2" />
         {chapter.is_completed ? 'Completed' : 'Mark as Complete'}
       </Button>
       <div className="relative rounded-md shadow-lg overflow-hidden mx-auto w-full object-cover aspect-video-16/9">
@@ -57,30 +58,27 @@ const CourseChapter = () => {
       {/* Navigation and Completion Controls */}
       <div className="w-full flex items-center justify-between py-3 border-b overflow-y-auto">
         <div className="flex items-center gap-4 justify-between w-full">
-          <Button
-            size="sm"
-            disabled={!chapter.previous_chapter_id}
-            onClick={() => router.visit(`/courses/${chapter.course.slug}/chapters/${chapter.previous_chapter_id}`)}
-          >
-            <ChevronLeft className="h-5 w-5 md:mr-2"/>
-            <span className={'hidden md:inline'}>
-              Previous Chapter
-            </span>
-          </Button>
-
-          <Button
-            size="sm"
-            disabled={!chapter.next_chapter_id}
-            onClick={() => router.visit(`/courses/${chapter.course.slug}/chapters/${chapter.next_chapter_id}`)}
-          >
-            <span className={'hidden md:inline'}>
-              Next Chapter
-            </span>
-            <ChevronRight className="h-5 w-5 md:ml-2"/>
-          </Button>
+          <AppTooltip message={chapter.previous_chapter_id ? 'Previous Chapter' : 'No Previous Chapter'}>
+            <Button
+              size="sm"
+              disabled={!chapter.previous_chapter_id}
+              onClick={() => router.visit(`/courses/${chapter.course.slug}/chapters/${chapter.previous_chapter_id}`)}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          </AppTooltip>
+          <AppTooltip message={chapter.next_chapter_id ? 'Next Chapter' : 'No Next Chapter'}>
+            <Button
+              size="sm"
+              disabled={!chapter.next_chapter_id}
+              onClick={() => router.visit(`/courses/${chapter.course.slug}/chapters/${chapter.next_chapter_id}`)}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </AppTooltip>
         </div>
       </div>
-      <ChapterTabs chapter={chapter}/>
+      <ChapterTabs chapter={chapter} />
     </div>
   )
 }

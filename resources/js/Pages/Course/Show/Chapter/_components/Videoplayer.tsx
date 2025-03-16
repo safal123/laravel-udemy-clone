@@ -27,7 +27,7 @@ interface VideoPlayerProps {
   isCompleted: boolean
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, previousChapterId, isCompleted}) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, chapter, nextChapterId, previousChapterId, isCompleted }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [hlsInstance, setHlsInstance] = useState<Hls | null>(null)
@@ -36,7 +36,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [bufferedTime, setBufferedTime] = useState(0)
-  const {logActivity} = useActivityLogger()
+  const { logActivity } = useActivityLogger()
   const [isHovering, setIsHovering] = useState(false)
   const [hoverTime, setHoverTime] = useState(0)
   const [thumbnailPos, setThumbnailPos] = useState<{
@@ -53,6 +53,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
   const thumbnailCanvasRef = useRef<HTMLCanvasElement>(null)
   const [hoverPosition, setHoverPosition] = useState<number | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
+
+  // Sprite image configuration
+  // In a real implementation, these would be loaded dynamically based on the video
+  const [spriteConfig, setSpriteConfig] = useState({
+    url: `https://laravel-udemy-clone-converted.s3.amazonaws.com/courses/chapters/videos/${chapter.id}/${chapter.id}_spritesheet.jpg`,
+    width: 160, // Width of each thumbnail in the sprite
+    height: 90, // Height of each thumbnail in the sprite
+    cols: 10, // Number of columns in the sprite grid
+    rows: 10, // Number of rows in the sprite grid
+    count: 100, // Total number of thumbnails in the sprite
+    interval: 5 // Time interval between each thumbnail in seconds
+  });
 
   const {
     toggleMute,
@@ -74,6 +86,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
     const seconds = Math.floor(time % 60)
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
+  // https://laravel-udemy-clone-converted.s3.ap-southeast-2.amazonaws.com/courses/chapters/videos/9e6b3f84-7072-42e9-a18a-a79b61e742da/9e6b3f84-7072-42e9-a18a-a79b61e742da_spritesheet.jpg
+  console.log(`https://laravel-udemy-clone-converted.s3.amazonaws.com/courses/chapters/videos/${chapter.id}/${chapter.id}_spritesheet.jpg`)
 
   const handleHlsError = (hls: Hls, data: any) => {
     if (!data.fatal) return
@@ -186,6 +200,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
     }
   }, [])
 
+  // Set up sprite config after video metadata is loaded
+  useEffect(() => {
+    if (duration > 0) {
+      setSpriteConfig(prev => ({
+        ...prev,
+        // In a real implementation, you would calculate these values based on the video duration
+        // and the available sprite sheets
+        count: Math.ceil(duration / prev.interval),
+        interval: prev.interval
+      }));
+    }
+  }, [duration]);
+
   // Event handlers
   const handleQualityChange = (qualityIndex: number | 'auto') => {
     setSelectedQuality(qualityIndex)
@@ -194,32 +221,33 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
     }
   }
 
-  const generateThumbnail = (time: number) => {
-    const video = videoRef.current
-    const canvas = thumbnailCanvasRef.current
-    if (!video || !canvas) return
+  // Get sprite thumbnail style for a specific time
+  const getSpriteStyle = (time: number) => {
+    if (!spriteConfig.url || duration <= 0) return {};
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    // Calculate which thumbnail in the sprite corresponds to this time
+    const thumbnailIndex = Math.min(
+      Math.floor(time / spriteConfig.interval),
+      spriteConfig.count - 1
+    );
 
-    // Set thumbnail dimensions
-    canvas.width = 160  // Width of thumbnail
-    canvas.height = 90  // Height of thumbnail (16:9 ratio)
+    // Calculate row and column in the sprite grid
+    const row = Math.floor(thumbnailIndex / spriteConfig.cols);
+    const col = thumbnailIndex % spriteConfig.cols;
 
-    // Save current video time
-    const currentVideoTime = video.currentTime
+    // Calculate background position
+    const backgroundPositionX = -(col * spriteConfig.width);
+    const backgroundPositionY = -(row * spriteConfig.height);
 
-    // Update video time to capture frame
-    video.currentTime = time
-
-    // Draw the video frame
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-    // Reset video time
-    video.currentTime = currentVideoTime
-
-    return canvas.toDataURL('image/jpeg')
-  }
+    return {
+      backgroundImage: `url(${spriteConfig.url})`,
+      backgroundPosition: `${backgroundPositionX}px ${backgroundPositionY}px`,
+      backgroundSize: `${spriteConfig.cols * spriteConfig.width}px ${spriteConfig.rows * spriteConfig.height}px`,
+      backgroundRepeat: 'no-repeat',
+      width: `${THUMBNAIL_WIDTH}px`,
+      height: `${THUMBNAIL_HEIGHT}px`
+    };
+  };
 
   const handleSliderHover = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!progressBarRef.current) return
@@ -260,12 +288,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
     }
 
     setThumbnailPos(position)
-
-    // Generate thumbnail
-    const thumbnail = generateThumbnail(time)
-    if (thumbnail) {
-      setThumbnailUrl(thumbnail)
-    }
   }
 
   const handleMouseLeave = () => {
@@ -303,10 +325,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
   const markAsCompleted = (chapterId: string, courseId: string) => {
     if (isCompleted || !chapter.progress) return
     router.post(route('progress.update'), {
-        chapter_id: chapterId,
-        course_id: courseId,
-        is_completed: true
-      },
+      chapter_id: chapterId,
+      course_id: courseId,
+      is_completed: true
+    },
       {
         onSuccess: () => {
           return toast.success('Chapter marked as completed')
@@ -325,7 +347,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
       className="group relative w-full max-w-full h-auto md:h-full bg-black overflow-visible"
       onDoubleClick={toggleFullScreen}
     >
-      {/* Add back the hidden canvas for thumbnail generation */}
+      {/* Hidden canvas for old thumbnail method (kept for fallback) */}
       <canvas
         ref={thumbnailCanvasRef}
         className="hidden"
@@ -390,7 +412,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
             onMouseLeave={handleMouseLeave}
             onClick={handleProgressBarClick}
           >
-            {/* Thumbnail preview */}
+            {/* Thumbnail preview using sprite image */}
             {isHovering && (
               <div
                 className="absolute bottom-full mb-3 bg-black/90 rounded-md overflow-hidden shadow-xl border border-white/10"
@@ -403,13 +425,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
                   marginBottom: THUMBNAIL_MARGIN
                 }}
               >
-                {thumbnailUrl && (
-                  <img
-                    src={thumbnailUrl}
-                    alt="Preview"
-                    className="w-full h-[90px] object-cover"
-                  />
-                )}
+                <div
+                  style={getSpriteStyle(hoverTime)}
+                  className="w-full h-[90px]"
+                />
                 <div className="py-1.5 px-2 text-xs text-white text-center bg-black/90 font-medium">
                   {formatTime(hoverTime)}
                 </div>
@@ -421,12 +440,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
               {/* Buffered progress */}
               <div
                 className="absolute h-full bg-white/30 transition-all duration-300"
-                style={{width: `${(bufferedTime / duration) * 100}%`}}
+                style={{ width: `${(bufferedTime / duration) * 100}%` }}
               />
               {/* Played progress */}
               <div
                 className="absolute h-full bg-red-600 transition-all duration-300"
-                style={{width: `${(currentTime / duration) * 100}%`}}
+                style={{ width: `${(currentTime / duration) * 100}%` }}
               />
               {/* Hover progress indicator */}
               {hoverPosition !== null && (
@@ -441,15 +460,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
               )}
               {/* Thumb */}
               <div className="absolute h-full pointer-events-none"
-                   style={{width: `${(currentTime / duration) * 100}%`}}>
+                style={{ width: `${(currentTime / duration) * 100}%` }}>
                 <div
-                  className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full scale-0 group-hover/progress:scale-100 transition-transform"/>
+                  className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full scale-0 group-hover/progress:scale-100 transition-transform" />
               </div>
             </div>
           </div>
 
           {/* Bottom controls */}
-          <div className="flex items-center gap-4 px-2rounded-md py-2 opacity-90">
+          <div className="flex items-center gap-4 px-2 py-2 opacity-90 relative">
             <AppTooltip message={videoRef.current?.paused ? 'Play' : 'Pause'}>
               <Button
                 variant="ghost"
@@ -458,9 +477,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
                 className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center -ml-2 transition-all duration-200 hover:scale-110"
               >
                 {videoRef.current?.paused ? (
-                  <PlayIcon className="h-6 w-6 ml-0.5"/>
+                  <PlayIcon className="h-6 w-6 ml-0.5" />
                 ) : (
-                  <PauseIcon className="h-6 w-6"/>
+                  <PauseIcon className="h-6 w-6" />
                 )}
               </Button>
             </AppTooltip>
@@ -478,11 +497,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
                 className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110"
               >
                 {isMuted || volume === 0 ? (
-                  <VolumeXIcon className="h-5 w-5"/>
+                  <VolumeXIcon className="h-5 w-5" />
                 ) : volume < 0.5 ? (
-                  <Volume1Icon className="h-5 w-5"/>
+                  <Volume1Icon className="h-5 w-5" />
                 ) : (
-                  <Volume2Icon className="h-5 w-5"/>
+                  <Volume2Icon className="h-5 w-5" />
                 )}
               </Button>
 
@@ -512,7 +531,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
                   onClick={togglePictureInPicture}
                   className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110"
                 >
-                  <PictureInPicture2Icon className="h-5 w-5"/>
+                  <PictureInPicture2Icon className="h-5 w-5" />
                 </Button>
               </AppTooltip>
 
@@ -523,9 +542,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({src, chapter, nextChapterId, p
                 className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110"
               >
                 {isFullscreen ? (
-                  <Minimize2Icon className="h-5 w-5"/>
+                  <Minimize2Icon className="h-5 w-5" />
                 ) : (
-                  <Maximize2Icon className="h-5 w-5"/>
+                  <Maximize2Icon className="h-5 w-5" />
                 )}
               </Button>
             </div>

@@ -1,3 +1,4 @@
+import { AppTooltip } from '@/Components/shared/AppTooltip'
 import { SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/Components/ui/sidebar'
 import { cn } from '@/lib/utils'
 import { AppSidebar } from '@/Pages/Course/Show/Chapter/_components/AppSidebar'
@@ -44,26 +45,29 @@ export default function ChapterLayout({children}: { children: React.ReactNode })
       />
       <AppSidebar
         variant="dark"
+
       >
         {course.chapters.map((chapterItem, index) => (
-          <SidebarMenuItem key={chapterItem.id} className="p-1">
-            <Link
-              href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
-              <div
-                className={cn(
-                  'flex items-center hover:bg-gray-200 p-3 rounded-md',
-                  chapterId === String(chapterItem.id) ? 'bg-gray-200 border border-gray-300' : ''
-                )}
-              >
-                <span className={'h-6 w-6 rounded-full bg-gray-700 flex items-center justify-center mr-1'}>
-                  {index + 1}
-                </span>
-                <span className="text-gray-700 font-semibold">
-                  {chapterItem.title.substring(0, 20)}
-                </span>
-              </div>
-            </Link>
-          </SidebarMenuItem>
+          <AppTooltip message={chapterItem.title} key={chapterItem.id}>
+            <SidebarMenuItem key={chapterItem.id} className="p-1">
+              <Link
+                href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
+                <div
+                  className={cn(
+                    'flex items-center gap-2 hover:bg-gray-200 p-3 rounded-md font-normal text-sm',
+                    chapterId === String(chapterItem.id) ? 'bg-gray-100 border border-gray-300' : ''
+                  )}
+                >
+                  <span className={'h-6 w-6 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0'}>
+                    {index + 1}
+                  </span>
+                  <span className="text-gray-700 truncate">
+                    {chapterItem.title}
+                  </span>
+                </div>
+              </Link>
+            </SidebarMenuItem>
+          </AppTooltip>
         ))}
       </AppSidebar>
       <main className="flex-1 flex flex-col overflow-auto" id={'main-content'}>
