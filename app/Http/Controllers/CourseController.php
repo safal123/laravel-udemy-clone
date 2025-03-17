@@ -30,6 +30,7 @@ class CourseController extends Controller
                                     'title',
                                     'order',
                                     'course_id',
+                                    'is_free',
                                 ])
                                 ->orderBy('order');
                         },

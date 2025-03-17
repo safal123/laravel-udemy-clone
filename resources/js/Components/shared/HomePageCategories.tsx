@@ -1,14 +1,15 @@
 import { Link } from "@inertiajs/react";
+import { motion } from "framer-motion";
 import {
-  ChevronRight,
+  BookOpen,
+  Code,
   Cpu,
-  UserCircle,
-  HardHat,
-  Leaf,
+  BarChart3,
+  Palette,
   Camera,
-  Paintbrush,
-  Hammer,
-  Award,
+  Languages,
+  Music,
+  ChevronRight
 } from "lucide-react";
 
 type HomePageCategoriesProps = {
@@ -22,60 +23,99 @@ type HomePageCategoriesProps = {
 };
 
 const HomePageCategories = ({ categories }: HomePageCategoriesProps) => {
-  // Define gradient styles for each category
-  const gradientClasses = [
-    "from-blue-600 to-blue-400 hover:from-blue-400 hover:to-blue-600", // Blue
-    "from-green-600 to-green-400 hover:from-green-400 hover:to-green-600", // Green
-    "from-yellow-400 to-yellow-300 hover:from-yellow-300 hover:to-yellow-400", // Yellow
-    "from-pink-600 to-pink-400 hover:from-pink-400 hover:to-pink-600", // Pink
-    "from-orange-500 to-orange-300 hover:from-orange-300 hover:to-orange-500", // Orange
-    "from-teal-500 to-teal-300 hover:from-teal-300 hover:to-teal-500", // Teal
-    "from-red-500 to-red-400 hover:from-red-400 hover:to-red-500", // Red
-  ];
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-  // Define category icons
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
+  // Define category icons with more modern, professional options
   const categoryIcons = [
-    <Cpu key="cpu" className="w-12 h-12 text-white" />, // Engineering
-    <UserCircle key="user" className="w-12 h-12 text-white" />, // Personal Development
-    <HardHat key="hardhat" className="w-12 h-12 text-white" />, // Construction
-    <Leaf key="leaf" className="w-12 h-12 text-white" />, // Environment
-    <Camera key="camera" className="w-12 h-12 text-white" />, // Photography
-    <Paintbrush key="paintbrush" className="w-12 h-12 text-white" />, // Design
-    <Hammer key="hammer" className="w-12 h-12 text-white" />, // Crafts
-    <Award key="award" className="w-12 h-12 text-white" />, // Leadership
+    <Code key="code" className="w-6 h-6" />,
+    <BookOpen key="book" className="w-6 h-6" />,
+    <BarChart3 key="chart" className="w-6 h-6" />,
+    <Cpu key="cpu" className="w-6 h-6" />,
+    <Palette key="palette" className="w-6 h-6" />,
+    <Camera key="camera" className="w-6 h-6" />,
+    <Languages key="languages" className="w-6 h-6" />,
+    <Music key="music" className="w-6 h-6" />
   ];
 
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center mb-10 text-gray-800">
-          Explore Categories
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {categories.map((category, index) => (
-            <Link
-              key={category.id}
-              href={category?.href || "#"}
-              className="group block rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all"
-            >
-              <div
-                className={`bg-gradient-to-r ${gradientClasses[index % gradientClasses.length]} p-8 text-white text-center min-h-[200px] flex flex-col items-center justify-center rounded-t-lg transition-all duration-300`}
-              >
-                {categoryIcons[index % categoryIcons.length]}
-                <h3 className="text-2xl font-semibold mt-4">{category.name}</h3>
-              </div>
-              <div className="bg-white p-6 flex items-center justify-center border-t border-gray-200">
-                <span className="text-blue-600 font-semibold group-hover:text-blue-800 transition-all">
-                  Explore
-                </span>
-                <ChevronRight
-                  size={24}
-                  className="text-gray-600 ml-2 group-hover:text-blue-600 transition-all"
-                />
-              </div>
-            </Link>
-          ))}
+    <section className="py-20 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+          <div>
+            <div className="text-sm font-medium text-orange-600 mb-2 tracking-wide">BROWSE BY CATEGORY</div>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
+              Explore Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">Categories</span>
+            </h2>
+            <p className="mt-3 text-slate-600 max-w-2xl">
+              Find the perfect course across our diverse range of subjects taught by industry experts
+            </p>
+          </div>
+
+          <Link
+            href="/categories"
+            className="mt-4 md:mt-0 inline-flex items-center text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors group"
+          >
+            View all categories
+            <ChevronRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
+
+        <motion.div
+          className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          {categories.map((category, index) => (
+            <motion.div
+              key={category.id}
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Link
+                href={category?.href || `/categories/${category.id}`}
+                className="flex flex-col h-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 group"
+              >
+                <div className="flex items-center p-4 sm:p-5 bg-gradient-to-br from-slate-50 to-slate-100 border-b border-slate-200">
+                  <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 text-white shadow-sm">
+                    {categoryIcons[index % categoryIcons.length]}
+                  </div>
+                  <h3 className="text-sm sm:text-base font-semibold ml-3 text-slate-900">{category.name}</h3>
+                </div>
+
+                <div className="p-4 sm:p-5 flex-grow flex flex-col justify-between">
+                  <p className="text-xs sm:text-sm text-slate-600 mb-3 sm:mb-4 line-clamp-2">
+                    {category.description || `Explore our ${category.name} courses and advance your skills with expert instruction.`}
+                  </p>
+
+                  <div className="inline-flex items-center text-xs font-medium text-orange-600 group-hover:text-orange-700 transition-colors">
+                    Explore courses
+                    <ChevronRight className="ml-1 w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

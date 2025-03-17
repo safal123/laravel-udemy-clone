@@ -2,7 +2,7 @@ import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Course } from '@/types'
 import { Link } from '@inertiajs/react'
-import { BookAIcon, Edit2Icon, HandIcon, HeartIcon, LifeBuoyIcon, Star, Tv2Icon, Videotape } from 'lucide-react'
+import { BookOpenIcon, ClockIcon, HeartIcon, PlayCircleIcon, StarIcon, UsersIcon } from 'lucide-react'
 
 type CourseCardProps = {
   course: Course
@@ -14,17 +14,17 @@ const CourseCard = ({course, addToWishlist}: CourseCardProps) => {
   const TOTAL_RATINGS = 100
   const VIDEO_DURATION = '5 hours'
 
-  const truncateTitle = (title: string, maxLength: number = 20) =>
+  const truncateTitle = (title: string, maxLength: number = 40) =>
     title.length > maxLength ? `${title.substring(0, maxLength)}...` : title
 
   const renderStars = (rating: number) => (
     <div className="flex items-center">
       {[...Array(5)].map((_, index) => (
-        <Star
+        <StarIcon
           key={index}
-          className={`h-4 w-4 ${
+          className={`h-3.5 w-3.5 ${
             index < Math.round(rating)
-              ? 'text-yellow-400 fill-current'
+              ? 'text-yellow-400 fill-yellow-400'
               : 'text-gray-300'
           }`}
         />
@@ -36,69 +36,107 @@ const CourseCard = ({course, addToWishlist}: CourseCardProps) => {
     `/courses/${course.slug}/chapters/${course.chapters[0].id}`
 
   return (
-    <Card className="hover:shadow-lg transition-shadow flex flex-col h-full">
-      <CardHeader className="p-0 flex-shrink-0">
+    <Card className="group overflow-hidden border border-gray-200 hover:border-orange-200 hover:shadow-lg transition-all duration-300 flex flex-col h-full rounded-lg bg-white">
+      {/* Image Container with Overlay */}
+      <div className="relative overflow-hidden">
         <Link href={`/courses/${course.slug}`}>
-          <img
-            src={course.image_url}
-            alt={course.title}
-            className="w-full h-48 object-cover rounded-t-lg"
-          />
+          <div className="aspect-video relative">
+            <img
+              src={course.image_url}
+              alt={course.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70"></div>
+          </div>
+
+          {/* Play Button Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <PlayCircleIcon className="h-8 w-8 text-white" />
+            </div>
+          </div>
+
+          {/* Course Stats */}
+          <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-3 text-white text-xs">
+            <div className="flex items-center bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
+              <ClockIcon size={12} className="mr-1" />
+              <span>{VIDEO_DURATION}</span>
+            </div>
+            <div className="flex items-center bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
+              <UsersIcon size={12} className="mr-1" />
+              <span>{TOTAL_RATINGS} students</span>
+            </div>
+          </div>
         </Link>
-      </CardHeader>
 
-      <CardContent className="p-4 flex flex-col flex-grow">
-        <CardTitle className="text-lg font-semibold flex-shrink-0">
-          {truncateTitle(course.title)}
-        </CardTitle>
+        {/* Wishlist Button */}
+        <button
+          onClick={() => addToWishlist(course)}
+          className="absolute top-3 right-3 p-2 rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/50 transition-colors"
+          aria-label="Add to wishlist"
+        >
+          <HeartIcon size={16} className="text-white" />
+        </button>
+      </div>
 
-        <div className="mt-2 flex items-center flex-shrink-0">
+      <CardContent className="p-5 flex flex-col flex-grow">
+        <div className="flex items-center justify-between mb-2">
           {renderStars(RATING)}
-          <span className="ml-2 text-sm text-gray-600">
-            {RATING} ({TOTAL_RATINGS} ratings)
-          </span>
+          <span className="text-xs font-medium text-gray-500">{RATING}/5</span>
         </div>
 
-        <ul className="mt-4 space-y-2 text-gray-600 text-sm flex-shrink-0">
-          <li className="flex items-center">
-            <Videotape size={16}/>
-            <span className="ml-2">{VIDEO_DURATION} on-demand video</span>
-          </li>
-          <li className="flex items-center">
-            <BookAIcon size={16}/>
-            <span className="ml-2">{course.chapters.length} lectures</span>
-          </li>
-          <li className="flex items-center">
-            <LifeBuoyIcon size={16}/>
-            <span className="ml-2">Full lifetime access</span>
-          </li>
-        </ul>
+        <Link href={`/courses/${course.slug}`} className="group-hover:text-orange-600 transition-colors">
+          <CardTitle className="text-base font-semibold leading-tight mb-2">
+            {truncateTitle(course.title)}
+          </CardTitle>
+        </Link>
 
-        <div className="mt-4 flex items-center">
-          {course.is_enrolled ? (
-            <Link href={getFirstChapterLink()} className={'w-full'}>
-              <Button variant="outline" className={'w-full'}>
-                Continue Learning
-                <HandIcon size={16} className={'ml-2'}/>
-              </Button>
-            </Link>
-          ) : (
-            <>
-              {course.is_author ?
-                <Link href={`/teachers/courses/${course.id}/edit`} className={'w-full'}>
-                  <Button variant="ghost" className={'w-full'}>
-                    <Edit2Icon size={16} className={'mr-2'}/>
-                    Edit Course
-                  </Button>
-                </Link> :
-                <Link href={`/courses/${course.slug}`} className={'w-full'}>
-                  <Button className={'w-full'}>
-                    Enroll now for ${course.price}
-                  </Button>
-                </Link>
-              }
-            </>
-          )}
+        <div className="text-xs text-gray-500 mb-4 flex items-center">
+          <BookOpenIcon size={14} className="mr-1 text-gray-400" />
+          <span>{course.chapters.length} lessons</span>
+        </div>
+
+        <div className="mt-auto pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="font-bold text-slate-900">
+              ${course.price}
+            </div>
+
+            {course.is_enrolled ? (
+              <Link href={getFirstChapterLink()}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                >
+                  Continue
+                </Button>
+              </Link>
+            ) : (
+              <>
+                {course.is_author ? (
+                  <Link href={`/teachers/courses/${course.id}/edit`}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="font-medium border-slate-300 hover:border-slate-400"
+                    >
+                      Edit Course
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href={`/courses/${course.slug}`}>
+                    <Button
+                      size="sm"
+                      className="font-medium bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 border-0"
+                    >
+                      Enroll Now
+                    </Button>
+                  </Link>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
