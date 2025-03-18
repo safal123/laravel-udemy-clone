@@ -14,8 +14,6 @@ import "react-quill/dist/quill.bubble.css";
 import {
   AudioLines,
   BookAIcon,
-  CheckCircle2Icon,
-  ChevronLeft,
   Clock,
   PlayCircle,
   SaveIcon,

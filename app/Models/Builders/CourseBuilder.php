@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CourseBuilder extends Builder
 {
+    /*
+    * Qualify the course for building the query.
+    * Only published courses with published chapters are qualified.
+    */
+    public function qualify(): self
+    {
+        return $this
+            ->published()
+            ->whereHasPublishedChapters();
+    }
+
     /**
      * Filter only published courses.
      */
@@ -19,10 +30,12 @@ class CourseBuilder extends Builder
      */
     public function whereHasPublishedChapters(): self
     {
-        return $this->whereHas('chapters', function ($query) {
-            $query->where('is_published', true)
-                ->whereNotNull('video_storage_id');
-        });
+        return $this
+            ->whereHas('chapters', function ($query) {
+                $query
+                    ->where('is_published', true)
+                    ->whereNotNull('video_storage_id');
+            });
     }
 
     /**
@@ -50,9 +63,10 @@ class CourseBuilder extends Builder
      */
     public function loadPublishedChapters(): self
     {
-        return $this->with(['chapters' => fn ($query) => $query
-            ->where('is_published', true)
-            ->whereNotNull('video_storage_id'),
+        return $this->with([
+            'chapters' => fn($query) => $query
+                ->where('is_published', true)
+                ->whereNotNull('video_storage_id'),
         ]);
     }
 
@@ -61,9 +75,10 @@ class CourseBuilder extends Builder
      */
     public function countPublishedChapters(): self
     {
-        return $this->withCount(['chapters' => fn ($query) => $query
-            ->where('is_published', true)
-            ->whereNotNull('video_storage_id'),
+        return $this->withCount([
+            'chapters' => fn($query) => $query
+                ->where('is_published', true)
+                ->whereNotNull('video_storage_id'),
         ]);
     }
 
@@ -90,12 +105,19 @@ class CourseBuilder extends Builder
             ->orderByCreatedAtDesc();
     }
 
+    /**
+     * Load user-specific attributes.
+     * @param int|null $userId
+     * @return self
+     */
     public function withUserSpecificAttributes($userId): self
     {
         return $this->when($userId, function ($query) use ($userId) {
             $query->withExists([
                 'students as is_enrolled' => function ($query) use ($userId) {
-                    $query->where('course_user.user_id', $userId);
+                    $query
+                        ->where('course_user.user_id', $userId)
+                        ->where('course_user.purchase_status', '!=', 'pending');
                 },
                 'wishlists as is_wishlisted' => function ($query) use ($userId) {
                     $query->where('wishlists.user_id', $userId);

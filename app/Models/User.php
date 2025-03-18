@@ -79,8 +79,10 @@ class User extends Authenticatable
 
     public function hasCoursePurchased(Course $course): bool
     {
-        return $this->purchasedCourses()
+        return $this
+            ->purchasedCourses()
             ->where('course_id', $course->id)
+            ->where('purchase_status', '=', 'succeeded')
             ->exists();
     }
 

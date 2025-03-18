@@ -1,8 +1,18 @@
 import { Button } from "@/Components/ui/button";
+import { PageProps } from "@/types";
+import { usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
+// Extend PageProps interface to include the expected properties
+interface HeroSectionProps extends PageProps {
+  totalCourses: number;
+  totalStudents: number;
+  totalRatings: number;
+}
+
 export default function HeroSection() {
+  const { totalCourses, totalStudents, totalRatings } = usePage<HeroSectionProps>().props;
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
@@ -33,10 +43,10 @@ export default function HeroSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center py-20 md:py-28">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-20 md:py-28 lg:py-32 max-w-7xl mx-auto">
           {/* Left Content */}
           <motion.div
-            className="w-full lg:w-1/2 text-center lg:text-left lg:pr-12"
+            className="w-full lg:w-5/12 text-center lg:text-left"
             initial="hidden"
             animate="visible"
             variants={stagger}
@@ -67,11 +77,11 @@ export default function HeroSection() {
             </motion.p>
 
             {/* Feature List */}
-            <motion.ul variants={fadeInUp} className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-3 max-w-2xl mx-auto lg:mx-0">
+            <motion.ul variants={fadeInUp} className="mb-8 space-y-3 max-w-lg mx-auto lg:mx-0">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-center text-slate-200">
                   <CheckCircle2 className="mr-2 h-5 w-5 text-green-400 flex-shrink-0" />
-                  <span>{feature}</span>
+                  <span className="text-base">{feature}</span>
                 </li>
               ))}
             </motion.ul>
@@ -97,19 +107,19 @@ export default function HeroSection() {
             {/* Stats */}
             <motion.div
               variants={fadeInUp}
-              className="mt-10 grid grid-cols-3 gap-3 text-center lg:text-left max-w-2xl mx-auto lg:mx-0 border-t border-slate-700 pt-6"
+              className="mt-10 flex space-x-10 justify-center lg:justify-start max-w-2xl mx-auto lg:mx-0 border-t border-slate-700/50 pt-6"
             >
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">20K+</div>
-                <div className="text-xs text-slate-400 uppercase tracking-wider">Courses</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">{totalCourses}</div>
+                <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Courses</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">500K+</div>
-                <div className="text-xs text-slate-400 uppercase tracking-wider">Students</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{totalStudents}</div>
+                <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Students</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400">4.8/5</div>
-                <div className="text-xs text-slate-400 uppercase tracking-wider">Rating</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400">{totalRatings}/5</div>
+                <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Rating</div>
               </div>
             </motion.div>
           </motion.div>
@@ -123,20 +133,21 @@ export default function HeroSection() {
           >
             <div className="relative mx-auto max-w-md lg:max-w-full">
               {/* Decorative elements */}
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+              <div className="absolute -top-16 -right-16 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-[64px] opacity-20 animate-blob"></div>
+              <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-[64px] opacity-20 animate-blob animation-delay-2000"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-full filter blur-[84px] opacity-30"></div>
 
               {/* Main image with decorative border */}
-              <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-1 shadow-2xl ring-1 ring-slate-700/50">
+              <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-1.5 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.3)] ring-1 ring-slate-700/50 lg:rotate-1 hover:rotate-0 transition-transform duration-500">
                 <img
                   src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80"
                   alt="Learning Platform Dashboard"
-                  className="rounded-lg w-full h-auto object-cover shadow-lg transform hover:scale-[1.01] transition-transform"
+                  className="rounded-xl w-full h-auto object-cover shadow-lg transform hover:scale-[1.01] transition-transform"
                 />
 
                 {/* Floating Badge */}
-                <div className="absolute -bottom-5 -right-5 bg-white text-slate-900 px-4 py-2 rounded-lg shadow-lg font-bold text-sm">
-                  <span className="text-orange-500">30-Day</span> Money Back Guarantee
+                <div className="absolute -bottom-6 -right-6 bg-white text-slate-900 px-5 py-3 rounded-xl shadow-lg font-bold text-sm lg:text-base">
+                  <span className="text-orange-500 font-bold">30-Day</span> Money Back Guarantee
                 </div>
               </div>
             </div>

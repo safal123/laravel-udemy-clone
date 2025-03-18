@@ -15,5 +15,23 @@ class CourseUser extends Pivot
     protected $fillable = [
         'user_id',
         'course_id',
+        'payment_intent_id',
+        'payment_method',
+        'purchase_status',
     ];
+
+    /**
+     * Update the enrollment record with payment details
+     *
+     * @param object $paymentIntent
+     * @return bool
+     */
+    public function updatePaymentDetails($paymentIntent, $status = 'pending')
+    {
+        return $this->update([
+            'payment_intent_id' => $paymentIntent->id,
+            'payment_method' => $paymentIntent->payment_method ?? null,
+            'purchase_status' => $status,
+        ]);
+    }
 }
