@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 
 type CourseCardProps = {
   course: Course
-  addToWishlist: (course: Course) => void
+  addToWishlist: (courseId: string) => void
 }
 
 const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
@@ -112,7 +112,7 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
 
         {/* Wishlist Button */}
         <button
-          onClick={() => addToWishlist(course)}
+          onClick={() => addToWishlist(course.id)}
           className="absolute top-3 right-3 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 hover:scale-110 z-10 shadow-md"
           aria-label="Add to wishlist"
         >

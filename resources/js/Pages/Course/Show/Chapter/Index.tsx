@@ -108,7 +108,7 @@ const CourseChapter = () => {
 
           <div className="hidden md:block text-center">
             <span className="text-sm text-gray-500">
-              Chapter {chapter.position} of {chapter.course.chapters_count}
+              Chapter {chapter.order} of {chapter.course.chapters_count}
             </span>
           </div>
 
