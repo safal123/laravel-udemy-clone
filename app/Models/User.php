@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Mail\VerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,8 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Billable, HasFactory, HasRoles, HasUuids, Notifiable;
 
@@ -104,5 +106,10 @@ class User extends Authenticatable
     public function hasReviewedCourse(Course $course): bool
     {
         return $this->reviews()->where('course_id', $course->id)->exists();
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
     }
 }

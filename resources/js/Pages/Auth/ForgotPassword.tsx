@@ -2,50 +2,174 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, useForm } from '@inertiajs/react';
+import InputLabel from '@/Components/InputLabel';
+import { Head, useForm, Link } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
 export default function ForgotPassword({ status }: { status?: string }) {
-    const { data, setData, post, processing, errors } = useForm({
-        email: '',
-    });
+  const { data, setData, post, processing, errors } = useForm({
+    email: '',
+  });
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault();
 
-        post(route('password.email'));
-    };
+    post(route('password.email'));
+  };
 
-    return (
-        <GuestLayout>
-            <Head title="Forgot Password" />
+  return (
+    <div className="min-h-screen flex bg-gray-50">
+      {/* Left Column - Image and Content */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        {/* Background with overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 opacity-95"></div>
 
-            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                Forgot your password? No problem. Just let us know your email address and we will email you a password
-                reset link that will allow you to choose a new one.
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-20"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?q=80&w=2070')",
+            backgroundBlendMode: 'overlay'
+          }}
+        ></div>
+
+        {/* Content */}
+        <div className="relative p-12 flex flex-col h-full z-10">
+          {/* Logo Area */}
+          <div className="mb-10">
+            <div className="flex items-center space-x-2">
+              <svg className="h-8 w-8 text-emerald-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <h1 className="text-2xl font-bold text-white tracking-tight">LearnHub</h1>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="my-auto max-w-lg">
+            <h2 className="text-4xl font-bold mb-6 text-white tracking-tight leading-tight">
+              Get Back to Learning
+            </h2>
+            <p className="text-lg mb-10 text-slate-300 leading-relaxed">
+              We'll help you reset your password and get back to your courses quickly and securely.
+            </p>
+
+            {/* Features List */}
+            <div className="space-y-6 mb-12">
+              <div className="flex items-start">
+                <div className="bg-emerald-500/20 rounded-full p-2 mr-4 mt-0.5">
+                  <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-medium text-white text-lg mb-1">Secure Process</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">Our password reset process is secure and protects your account information.</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <div className="bg-emerald-500/20 rounded-full p-2 mr-4 mt-0.5">
+                  <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-medium text-white text-lg mb-1">Quick Recovery</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">Reset your password in minutes and continue your learning journey.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-sm text-slate-400 flex items-center space-x-4">
+            <span>© 2023 LearnHub</span>
+            <span>•</span>
+            <a href="#" className="hover:text-emerald-400 transition-colors">Privacy</a>
+            <span>•</span>
+            <a href="#" className="hover:text-emerald-400 transition-colors">Terms</a>
+          </div>
+        </div>
+
+        {/* Decorative shapes */}
+        <div className="absolute top-0 right-0 -mt-16 -mr-16">
+          <div className="w-64 h-64 rounded-full bg-emerald-500/10"></div>
+        </div>
+        <div className="absolute bottom-0 left-0 -mb-16 -ml-16">
+          <div className="w-80 h-80 rounded-full bg-indigo-600/10"></div>
+        </div>
+      </div>
+
+      {/* Right Column - Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-12 bg-white">
+        <Head title="Forgot Password" />
+
+        <div className="w-full max-w-md">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-slate-800 mb-2">Forgot your password?</h2>
+            <p className="text-slate-500">
+              No problem. We'll email you a password reset link.
+            </p>
+          </div>
+
+          {status && (
+            <div className="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200">
+              <p className="text-sm text-emerald-700 flex items-center">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {status}
+              </p>
+            </div>
+          )}
+
+          <form onSubmit={submit} className="space-y-6">
+            <div>
+              <InputLabel htmlFor="email" value="Email address" className="text-slate-700 font-medium" />
+              <TextInput
+                id="email"
+                type="email"
+                name="email"
+                value={data.email}
+                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                isFocused={true}
+                onChange={(e) => setData('email', e.target.value)}
+              />
+              <InputError message={errors.email} className="mt-2" />
             </div>
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600 dark:text-green-400">{status}</div>}
+            <div>
+              <PrimaryButton
+                className="w-full flex justify-center py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 rounded-md text-white font-medium shadow-sm transition-all duration-200"
+                disabled={processing}
+              >
+                {processing ? (
+                  <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sending link...
+                  </span>
+                ) : (
+                  "Email Password Reset Link"
+                )}
+              </PrimaryButton>
+            </div>
+          </form>
 
-            <form onSubmit={submit}>
-                <TextInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    isFocused={true}
-                    onChange={(e) => setData('email', e.target.value)}
-                />
-
-                <InputError message={errors.email} className="mt-2" />
-
-                <div className="flex items-center justify-end mt-4">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Email Password Reset Link
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
+          <div className="mt-10 pt-6 border-t border-slate-200 text-center">
+            <p className="text-sm text-slate-600">
+              Remember your password?{' '}
+              <Link href={route('login')} className="font-medium text-emerald-600 hover:text-emerald-500">
+                Back to login
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

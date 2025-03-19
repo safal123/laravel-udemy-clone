@@ -21,7 +21,7 @@ Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
 Route::stripeWebhooks('stripe/webhook');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('activities', ActivityController::class)
         ->only(['store'])
         ->names('activities');
