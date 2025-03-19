@@ -9,11 +9,19 @@ import {
 } from '@/Components/ui/dropdown-menu'
 import { Link, usePage } from '@inertiajs/react'
 import * as React from 'react'
-import { Home, LogOut, Settings, Book, UserCircle } from 'lucide-react'
+import { Home, LogOut, Settings, Book, UserCircle, Star } from 'lucide-react'
+
+interface CourseReview {
+  id: number;
+  title: string;
+  thumbnail?: string;
+}
 
 export function UserMenu() {
   // @ts-ignore
   const user = usePage().props.auth.user
+  // @ts-ignore
+  const pendingReviews: CourseReview[] = usePage().props.pendingReviews || []
 
   // Get user initials for avatar
   const getUserInitials = () => {
@@ -48,7 +56,64 @@ export function UserMenu() {
             )}
           </p>
           <p className="text-xs text-gray-600 truncate">{user?.email}</p>
+          <div className="flex justify-end mt-2">
+            <Link
+              href="/profile"
+              className="text-xs text-blue-600 font-medium hover:text-blue-700 transition-colors"
+            >
+              View Profile
+            </Link>
+          </div>
         </div>
+
+        {/* Pending reviews section */}
+        {pendingReviews.length > 0 && (
+          <>
+            <div className="px-3 py-2 mb-2">
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Waiting for your review
+              </h4>
+              <div className="space-y-2">
+                {pendingReviews.slice(0, 2).map((course: any) => (
+                  <Link
+                    key={course.id}
+                    href={route('courses.review', course.id)}
+                    className="flex items-center p-2 rounded-md bg-amber-50 border border-amber-100 hover:bg-amber-100 transition-colors"
+                  >
+                    <div className="h-8 w-8 bg-white rounded-md overflow-hidden shrink-0 mr-2 border border-amber-200">
+                      {course.thumbnail ? (
+                        <img src={course.thumbnail} alt={course.title} className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center bg-amber-100">
+                          <Book className="h-4 w-4 text-amber-600" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-gray-900 truncate">{course.title}</p>
+                      <div className="flex items-center mt-0.5">
+                        <Star className="h-3 w-3 text-amber-500" />
+                        <Star className="h-3 w-3 text-amber-500" />
+                        <Star className="h-3 w-3 text-amber-500" />
+                        <Star className="h-3 w-3 text-amber-500" />
+                        <Star className="h-3 w-3 text-amber-500" />
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+                {pendingReviews.length > 2 && (
+                  <Link
+                    href={route('user.reviews')}
+                    className="block text-xs text-center font-medium text-amber-600 hover:text-amber-700 py-1"
+                  >
+                    + {pendingReviews.length - 2} more courses to review
+                  </Link>
+                )}
+              </div>
+            </div>
+            <DropdownMenuSeparator className="my-1 bg-gray-200" />
+          </>
+        )}
 
         <DropdownMenuGroup className="space-y-0.5 px-1">
           <DropdownMenuItem asChild>

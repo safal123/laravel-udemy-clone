@@ -41,6 +41,8 @@ export interface Course {
   is_author: boolean;
   is_purchased: boolean;
   is_wishlisted: boolean;
+  reviews?: CourseReview[];
+  has_reviewed: boolean;
 }
 
 export interface Wishlist {
@@ -118,3 +120,21 @@ export type PageProps<
   };
   ziggy: Config & { location: string };
 };
+
+export interface CourseReview {
+  id: string;
+  user_id: string;
+  course_id: string;
+  rating: number;
+  title: string;
+  comment: string;
+  helpful_count: number;
+  created_at: string;
+  updated_at: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    profile_photo_url?: string;
+  };
+}

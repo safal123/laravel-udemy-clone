@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\CourseRatingController;
+use App\Http\Controllers\CourseReviewController;
 use App\Http\Controllers\DashboardController as StudentDashboardController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\PaymentIntentController;
@@ -15,7 +15,7 @@ use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
@@ -45,9 +45,6 @@ Route::middleware('auth')->group(function () {
         ->only(['index', 'store', 'destroy'])
         ->names('wishlists');
 
-    Route::resource('/course-rating', CourseRatingController::class)
-        ->only(['store'])
-        ->names('course-rating');
     /*
      * Teacher Courses Routes
      */
@@ -86,6 +83,19 @@ Route::middleware('auth')->group(function () {
             ->name('courses.show');
         Route::get('/{course:slug}/chapters/{chapter}', [\App\Http\Controllers\ChapterController::class, 'show'])
             ->name('courses.chapters.show');
+
+        // Course Review Routes
+        Route::resource('{course}/reviews', CourseReviewController::class)
+            ->only(['store', 'edit', 'update', 'show'])
+            ->names([
+                'index' => 'courses.reviews',
+                'store' => 'courses.submitReview',
+                'edit' => 'courses.editReview',
+                'update' => 'courses.updateReview',
+                'show' => 'courses.reviews.show',
+            ]);
+        Route::post('reviews/{review}/helpful', [CourseReviewController::class, 'markHelpful'])
+            ->name('reviews.markHelpful');
     });
 
     /*

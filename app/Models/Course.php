@@ -75,15 +75,15 @@ class Course extends Model implements CourseConstants
             ->orderBy('order');
     }
 
-    public function ratings(): HasMany
+    public function reviews(): HasMany
     {
-        return $this->hasMany(CourseRating::class);
+        return $this->hasMany(CourseReview::class)->latest();
     }
 
     public function averageRating(): float
     {
         return $this
-            ->ratings()
+            ->reviews()
             ->avg('rating') ?? 0;
     }
 

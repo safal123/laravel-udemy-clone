@@ -35,6 +35,7 @@ class CourseController extends Controller
                                 ->orderBy('order');
                         },
                         'wishlists',
+                        'reviews.user:id,name:',
                         'students' => function ($query) use ($course) {
                             $query
                                 ->withPivot([

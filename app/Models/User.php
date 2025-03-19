@@ -95,4 +95,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserProgress::class);
     }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(CourseReview::class);
+    }
+
+    public function hasReviewedCourse(Course $course): bool
+    {
+        return $this->reviews()->where('course_id', $course->id)->exists();
+    }
 }

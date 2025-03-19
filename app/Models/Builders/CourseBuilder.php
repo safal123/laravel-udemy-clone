@@ -116,14 +116,18 @@ class CourseBuilder extends Builder
             $query->withExists([
                 'students as is_enrolled' => function ($query) use ($userId) {
                     $query
-                        ->where('course_user.user_id', $userId)
-                        ->where('course_user.purchase_status', '!=', 'pending');
+                        ->where('course_user.user_id', $userId);
+                    // TODO: Uncomment this when we have a way to handle pending purchases
+                    // ->where('course_user.purchase_status', '!=', 'pending');
                 },
                 'wishlists as is_wishlisted' => function ($query) use ($userId) {
                     $query->where('wishlists.user_id', $userId);
                 },
                 'author as is_author' => function ($query) use ($userId) {
                     $query->where('user_id', $userId);
+                },
+                'reviews as has_reviewed' => function ($query) use ($userId) {
+                    $query->where('course_reviews.user_id', $userId);
                 },
             ]);
         });

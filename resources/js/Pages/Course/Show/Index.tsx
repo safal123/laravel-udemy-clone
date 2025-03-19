@@ -64,7 +64,10 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
           <ChaptersPreview course={course} />
           <AuthorProfile author={course.author} />
           <div className="mt-8">
-            <CourseReview />
+            <CourseReview
+              course={course}
+              isEnrolled={course.is_enrolled && !course.is_author}
+            />
           </div>
         </div>
 

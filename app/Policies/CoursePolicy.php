@@ -60,7 +60,8 @@ class CoursePolicy
         // is the course free,
         // or the user is the teacher of the course
         // then do not allow the user to enroll in the course.
-        if ($user->hasCoursePurchased($course)
+        if (
+            $user->hasCoursePurchased($course)
             || $course->isFree()
             || $user->isTeacherOfCourse($course)
         ) {
@@ -68,5 +69,17 @@ class CoursePolicy
         }
 
         return Response::allow();
+    }
+
+    public function review(User $user, Course $course): Response
+    {
+        // If already reviewed, do not allow the user to review the course again.
+        if ($user->hasReviewedCourse($course)) {
+            return Response::deny('You have already reviewed this course.');
+        }
+
+        return $user->hasCoursePurchased($course)
+            ? Response::allow()
+            : Response::deny('You must purchase this course before leaving a review.');
     }
 }

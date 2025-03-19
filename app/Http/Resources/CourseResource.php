@@ -34,11 +34,13 @@ class CourseResource extends JsonResource
             'students_count' => $this->students_count,
             'duration' => $this->duration ?? 10,
             'level' => $this->level,
-            'ratings' => $this->whenLoaded('ratings'),
+            'reviews' => CourseReviewResource::collection($this->whenLoaded('reviews')),
+            'rating' => $this->averageRating(),
             'students' => UserResource::collection($this->whenLoaded('students')),
             'is_enrolled' => $this->is_enrolled ?? false,
             'is_wishlisted' => $this->is_wishlisted ?? false,
             'is_author' => $this->is_author ?? false,
+            'has_reviewed' => $this->has_reviewed
         ];
     }
 }
