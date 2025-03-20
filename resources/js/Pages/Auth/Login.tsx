@@ -6,7 +6,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
-
+import Logo from '@/Components/shared/Logo';
 export default function Login({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     email: '',
@@ -46,11 +46,7 @@ export default function Login({ status, canResetPassword }: { status?: string, c
           {/* Logo Area */}
           <div className="mb-10">
             <div className="flex items-center space-x-2">
-              <svg className="h-8 w-8 text-emerald-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Logo />
               <h1 className="text-2xl font-bold text-white tracking-tight">LearnHub</h1>
             </div>
           </div>
@@ -126,6 +122,9 @@ export default function Login({ status, canResetPassword }: { status?: string, c
         <Head title="Log in" />
 
         <div className="w-full max-w-md">
+          <div className="flex flex-col items-center justify-center mb-10">
+            <Logo size="20" />
+          </div>
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-slate-800 mb-2">Welcome back</h2>
             <p className="text-slate-500">

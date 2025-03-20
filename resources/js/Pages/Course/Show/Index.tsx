@@ -27,6 +27,7 @@ import CourseReview from './_component/CourseReview'
 import AuthorProfile from '@/Components/shared/AuthorProfile'
 import CourseHeader from './_component/CourseHeader'
 import CourseDescription from './_component/CourseDescription'
+import { format } from 'date-fns'
 
 const CoursePreviewPage = ({ auth }: PageProps) => {
   const course = usePage().props.course as Course
@@ -73,38 +74,40 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
 
         {/* Sidebar */}
         <div className="hidden lg:block lg:col-span-1">
-          <Card className="bg-white shadow-lg sticky top-20">
-            <CardHeader>
-              <CardTitle className="text-2xl">Course Details</CardTitle>
+          <Card className="bg-white shadow-md sticky top-20 border border-gray-100">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-xl font-semibold text-gray-900">Course Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <BookAIcon className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-800">{course.chapters.length} Lessons</span>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center space-x-3">
+                  <BookAIcon className="w-5 h-5 text-emerald-600" />
+                  <span className="text-gray-700 font-medium">{course.chapters.length} Lessons</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-800">{course.duration} hrs</span>
+                <div className="flex items-center space-x-3">
+                  <Clock className="w-5 h-5 text-emerald-600" />
+                  <span className="text-gray-700 font-medium">{course.duration} hrs</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <AudioLines className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-800">Level: Intermediate</span>
+                <div className="flex items-center space-x-3">
+                  <AudioLines className="w-5 h-5 text-emerald-600" />
+                  <span className="text-gray-700 font-medium">Level: Intermediate</span>
                 </div>
               </div>
-              <div className={'mt-2'}>
+
+              <div>
                 {!course.is_enrolled && !course.is_author ?
                   <PaymentModal course={course} />
                   :
-                  <div className={'mt-6 flex flex-col space-y-4'}>
-                    <span>
-                      <Badge className={''} variant={'outline'}>
-                        Purchased on: <span className="text-gray-800">12th July 2021</span>
-                      </Badge>
-                    </span>
+                  <div className="mt-4 flex flex-col space-y-4">
+                    <Badge variant="outline" className="py-1.5 px-3 justify-center text-sm font-normal">
+                      Enrolled on: <span className="ml-1 font-medium">
+                        {/* @ts-ignore */}
+                        {format(new Date(course.students[0].purchase_details.created_at), 'MMM d, yyyy')}
+                      </span>
+                    </Badge>
                     <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
-                      <Button variant={'outline'} className="w-full">
-                        {course.is_author ? 'Course Preview' : 'Continue Series'}
+                      <Button variant="default" className="w-full bg-emerald-600 hover:bg-emerald-700">
+                        {course.is_author ? 'Course Preview' : 'Continue Learning'}
                       </Button>
                     </Link>
                   </div>

@@ -1,6 +1,5 @@
 import { Badge } from '@/Components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
-import CourseLayout from '@/Layouts/CourseLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card'
 import CheckoutForm from '@/Pages/Payment/Partials/CheckoutForm';
 import { Course, PageProps } from '@/types';
 import { router } from '@inertiajs/react';

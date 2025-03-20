@@ -42,48 +42,15 @@ export function AppSidebar({ children, variant = 'light' }: MainMenuItemProps) {
             : 'bg-white dark:bg-gray-800'
         )}
       >
-        <div className="p-2 w-full">
-          {/* Status Bar */}
-          <div className="flex items-center justify-between px-2 mb-2">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mr-1.5">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              </div>
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Active Now</span>
+        <div className="p-2 w-full flex flex-row items-start space-x-2">
+        <UserMenu />
+          <div className="mt-2 px-2">
+            <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              {user?.name}
             </div>
-
-            {isPremium ? (
-              <div className="flex items-center py-0.5 pl-1.5 pr-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full">
-                <ShieldCheck className="h-3 w-3 mr-1 text-white" />
-                <span className="text-[10px] uppercase tracking-wider text-white font-semibold">Premium</span>
-              </div>
-            ) : (
-              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                <Zap className="h-3 w-3 mr-1 text-emerald-500" />
-                <span>Upgrade</span>
-              </div>
-            )}
-          </div>
-
-          {/* System Status */}
-          <div className="mb-2 px-2">
-            <div className="flex justify-between items-center text-[10px] text-gray-500 dark:text-gray-500">
-              <div className="flex items-center space-x-1">
-                <Activity className="h-2.5 w-2.5" />
-                <span>System: Normal</span>
-              </div>
-              <span>v2.4.1</span>
+            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              {user?.email}
             </div>
-          </div>
-
-          {/* User Menu */}
-          <div className={cn(
-            "rounded-lg shadow-sm overflow-hidden",
-            isPremium
-              ? "bg-white dark:bg-gray-800 border border-amber-200 dark:border-amber-800/30"
-              : "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
-          )}>
-            <UserMenu />
           </div>
         </div>
       </SidebarFooter>
