@@ -23,7 +23,7 @@ class CourseUser extends Pivot
     /**
      * Update the enrollment record with payment details
      *
-     * @param object $paymentIntent
+     * @param  object  $paymentIntent
      * @return bool
      */
     public function updatePaymentDetails($paymentIntent, $status = 'pending')

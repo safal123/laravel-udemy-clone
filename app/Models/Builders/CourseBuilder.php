@@ -64,7 +64,7 @@ class CourseBuilder extends Builder
     public function loadPublishedChapters(): self
     {
         return $this->with([
-            'chapters' => fn($query) => $query
+            'chapters' => fn ($query) => $query
                 ->where('is_published', true)
                 ->whereNotNull('video_storage_id'),
         ]);
@@ -76,7 +76,7 @@ class CourseBuilder extends Builder
     public function countPublishedChapters(): self
     {
         return $this->withCount([
-            'chapters' => fn($query) => $query
+            'chapters' => fn ($query) => $query
                 ->where('is_published', true)
                 ->whereNotNull('video_storage_id'),
         ]);
@@ -107,8 +107,8 @@ class CourseBuilder extends Builder
 
     /**
      * Load user-specific attributes.
-     * @param int|null $userId
-     * @return self
+     *
+     * @param  int|null  $userId
      */
     public function withUserSpecificAttributes($userId): self
     {

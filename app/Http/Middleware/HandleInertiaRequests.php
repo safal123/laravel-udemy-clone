@@ -6,7 +6,6 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\UserResource;
 use App\Models\Category;
 use App\Models\Course;
-use App\Models\CourseRating;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -51,7 +50,7 @@ class HandleInertiaRequests extends Middleware
                     return CategoryResource::collection(Category::all());
                 });
             },
-            'ziggy' => fn() => [
+            'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Mail\VerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +12,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -84,7 +84,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this
             ->purchasedCourses()
             ->where('course_id', $course->id)
-            ->where('purchase_status', '=', 'succeeded')
+            // TODO: Uncomment this when we fix the payment gateway
+            // ->where('purchase_status', '=', 'succeeded')
             ->exists();
     }
 
@@ -108,6 +109,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->reviews()->where('course_id', $course->id)->exists();
     }
 
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyEmail);

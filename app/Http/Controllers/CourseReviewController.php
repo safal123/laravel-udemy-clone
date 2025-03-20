@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\CourseReview;
-use App\Models\CourseUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class CourseReviewController extends Controller
@@ -53,7 +51,7 @@ class CourseReviewController extends Controller
 
         return Inertia::render('Course/Reviews/Show', [
             'course' => $course,
-            'reviews' => $reviews
+            'reviews' => $reviews,
         ]);
     }
 
@@ -68,7 +66,7 @@ class CourseReviewController extends Controller
 
         return Inertia::render('Course/Review/Edit', [
             'course' => $course,
-            'review' => $review
+            'review' => $review,
         ]);
     }
 
@@ -116,6 +114,7 @@ class CourseReviewController extends Controller
     public function markHelpful(CourseReview $review)
     {
         $review->increment('helpful_count');
+
         return back();
     }
 

@@ -38,7 +38,7 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
             ->where('course_id', $metadata['course_id'])
             ->where('purchase_status', '=', 'succeeded')
             ->exists();
-            
+
         Log::info('Has purchase', ['hasPurchase' => $hasPurchase]);
 
         if ($hasPurchase) {
@@ -49,9 +49,9 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
 
         CourseUser::updateOrCreate([
             'user_id' => $metadata['user_id'],
-            'course_id' => $metadata['course_id']
+            'course_id' => $metadata['course_id'],
         ], [
-            'purchase_status' => 'succeeded'
+            'purchase_status' => 'succeeded',
         ]);
     }
 }

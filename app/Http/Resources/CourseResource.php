@@ -40,7 +40,7 @@ class CourseResource extends JsonResource
             'is_enrolled' => $this->is_enrolled ?? false,
             'is_wishlisted' => $this->is_wishlisted ?? false,
             'is_author' => $this->is_author ?? false,
-            'has_reviewed' => $this->has_reviewed
+            'has_reviewed' => $this->has_reviewed,
         ];
     }
 }

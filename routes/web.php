@@ -15,7 +15,7 @@ use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');

@@ -87,7 +87,7 @@ const PaymentModal = ({ course }: PaymentModalProps) => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-900">
                 Secure Checkout
               </span>
-            </DialogTitle>
+          </DialogTitle>
           </div>
         </div>
 
@@ -344,20 +344,20 @@ const PaymentModal = ({ course }: PaymentModalProps) => {
             <div className="flex items-center justify-between w-full">
               <div className="text-sm text-slate-600">
                 Questions? <a href="#" className="text-orange-600 hover:text-orange-700 font-medium">Contact support</a>
-              </div>
+      </div>
               <Button
                 variant="outline"
                 onClick={() => setOpen(false)}
                 className="border-slate-300 text-slate-700 hover:bg-slate-100"
               >
-                Cancel
-              </Button>
+            Cancel
+          </Button>
             </div>
-          </DialogFooter>
+      </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>
-  )
+)
 }
 
 export default PaymentModal

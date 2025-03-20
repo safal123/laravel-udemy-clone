@@ -12,9 +12,8 @@ class StripeClientSecret
     /**
      * Create a payment intent for course enrollment and return client secret
      *
-     * @param User $user
-     * @param int $courseId
-     * @return array
+     * @param  int  $courseId
+     *
      * @throws Exception
      */
     public function createPaymentIntent(User $user, Course $course): array
@@ -39,28 +38,22 @@ class StripeClientSecret
             'status' => 'success',
             'course' => $course,
             // TODO: Create a resource for the course user
-            'courseUser' => $courseUser
+            'courseUser' => $courseUser,
         ];
     }
 
     /**
      * Calculate the payment amount in cents
      *
-     * @param float $price
-     * @return int
+     * @param  float  $price
      */
     private function calculateAmount($price): int
     {
-        return (int)($price * 100);
+        return (int) ($price * 100);
     }
 
     /**
      * Get payment metadata for the payment intent
-     *
-     * @param Course $course
-     * @param User $user
-     * @param CourseUser $courseUser
-     * @return array
      */
     private function getPaymentMetadata(Course $course, User $user, CourseUser $courseUser): array
     {

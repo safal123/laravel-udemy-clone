@@ -10,25 +10,21 @@ use Illuminate\Support\Facades\Gate;
 
 class StripeClientSecretController extends Controller
 {
-
     /**
      * Constructor
-     *
-     * @param StripeClientSecret $stripeClientSecret
      */
     public function __construct(protected StripeClientSecret $stripeClientSecret) {}
 
     /**
      * Create a payment intent and return the client secret
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function createClientSecret(Request $request)
     {
         // Validate the request
         $validated = $request->validate([
-            'course' => 'required|exists:courses,id'
+            'course' => 'required|exists:courses,id',
         ]);
 
         // Authorize the user to enroll in the course
@@ -44,9 +40,10 @@ class StripeClientSecretController extends Controller
             return response()->json($result);
         } catch (\Exception $e) {
             report($e);
+
             return response()->json([
                 'error' => 'Unable to initialize payment.',
-                'message' => config('app.debug') ? $e->getMessage() : 'An error occurred'
+                'message' => config('app.debug') ? $e->getMessage() : 'An error occurred',
             ], 500);
         }
     }
