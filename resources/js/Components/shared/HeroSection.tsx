@@ -146,7 +146,7 @@ export default function HeroSection() {
                 />
 
                 {/* Floating Badge */}
-                <div className="absolute -bottom-6 -right-6 bg-white text-slate-900 px-5 py-3 rounded-xl shadow-lg font-bold text-sm lg:text-base">
+                <div className="absolute -bottom-6 sm:-bottom-6 -right-2 sm:-right-6 bg-white text-slate-900 px-3 sm:px-5 py-2 sm:py-3 rounded-xl shadow-lg font-bold text-xs sm:text-sm lg:text-base">
                   <span className="text-orange-500 font-bold">30-Day</span> Money Back Guarantee
                 </div>
               </div>
