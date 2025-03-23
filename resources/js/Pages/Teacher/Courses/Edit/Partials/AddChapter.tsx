@@ -22,7 +22,11 @@ const AddChapter = ({ course }: AddNewChapterProps) => {
         <span>Add Chapter</span>
       </Button>
 
-      <Modal show={show} onClose={() => setShow(false)} maxWidth="2xl">
+      <Modal
+        show={show}
+        onClose={() => setShow(false)} maxWidth="2xl"
+        closeIcon={false}
+      >
         <ChapterForm course={course} setShow={setShow} />
       </Modal>
     </div>

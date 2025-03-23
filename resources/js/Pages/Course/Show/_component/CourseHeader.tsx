@@ -239,7 +239,7 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
                     <VideoIcon size={18} className="mr-2 group-hover:animate-pulse" />
                     Continue Learning
                     <span className="ml-2 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">
-                      {course.progress || 0}% Complete
+                      {course.user_progress[0]?.progress_percentage}% Complete
                     </span>
                   </Button>
                 </Link>

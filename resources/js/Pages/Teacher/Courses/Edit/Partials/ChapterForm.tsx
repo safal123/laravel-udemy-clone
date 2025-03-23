@@ -44,8 +44,8 @@ const ChapterForm = ({ course, setShow, chapter, action = 'create' }: ChapterFor
     }
   }
   return (
-    <form onSubmit={handleSubmit} className="px-8 py-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b">
+    <form onSubmit={handleSubmit} className="max-h-[calc(100vh-4rem)] overflow-y-auto">
+      <div className="p-6 flex items-center justify-between mb-6 pb-4 border-b">
         <div className="flex items-center">
           <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
           <h2 className="text-xl font-semibold text-gray-900">
@@ -61,7 +61,7 @@ const ChapterForm = ({ course, setShow, chapter, action = 'create' }: ChapterFor
         </button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 px-6">
         {/* Informational Note */}
         <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
           <p className="text-sm text-blue-800">
@@ -108,7 +108,7 @@ const ChapterForm = ({ course, setShow, chapter, action = 'create' }: ChapterFor
         </div>
       </div>
 
-      <div className="mt-8 pt-4 border-t flex justify-end gap-3">
+      <div className="mt-8 p-4 border-t flex justify-end gap-3">
         <Button
           type="button"
           variant="outline"

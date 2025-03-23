@@ -6,6 +6,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "doctrine/dbal": "^4.2",
+        "fakerphp/faker": "^1.23",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/cashier": "^15.3",
         "laravel/framework": "^11.9",
@@ -16,8 +18,7 @@
         "spatie/laravel-route-attributes": "^1.25",
         "spatie/laravel-stripe-webhooks": "^3.8",
         "spatie/laravel-webhook-client": "^3.4",
-        "tightenco/ziggy": "^2.0",
-        "fakerphp/faker": "^1.23"
+        "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",

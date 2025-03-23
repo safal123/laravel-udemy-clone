@@ -15,7 +15,7 @@ use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
@@ -86,13 +86,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Course Review Routes
         Route::resource('{course}/reviews', CourseReviewController::class)
-            ->only(['store', 'edit', 'update', 'show'])
+            ->only(['store', 'edit', 'update', 'show',  'destroy'])
             ->names([
                 'index' => 'courses.reviews',
                 'store' => 'courses.submitReview',
                 'edit' => 'courses.editReview',
                 'update' => 'courses.updateReview',
                 'show' => 'courses.reviews.show',
+                'destroy' => 'courses.reviews.destroy',
             ]);
         Route::post('reviews/{review}/helpful', [CourseReviewController::class, 'markHelpful'])
             ->name('reviews.markHelpful');

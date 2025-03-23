@@ -34,7 +34,7 @@ const DeleteChapter = ({ chapter }: DeleteChapterProps) => {
       </button>
 
       <Modal show={show} onClose={() => setShow(false)} maxWidth="2xl">
-        <form onSubmit={handleSubmit} className="overflow-hidden">
+        <form onSubmit={handleSubmit} className="overflow-hidden border rounded-md">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
             <div className="flex items-center">

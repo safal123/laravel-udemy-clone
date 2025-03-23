@@ -103,9 +103,11 @@ class CourseReviewController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Course $course, CourseReview $review)
     {
-        //
+        $review->delete();
+
+        return back()->with('success', 'Your review has been deleted successfully');
     }
 
     /**

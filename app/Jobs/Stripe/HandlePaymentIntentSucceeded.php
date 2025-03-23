@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Stripe;
 
+use App\Jobs\CreateCourseProgressRecordsJob;
 use App\Models\CourseUser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,24 +35,18 @@ class HandlePaymentIntentSucceeded implements ShouldQueue
         $metadata = $event->data->object->metadata;
 
         Log::info('Metadata', ['metadata' => $metadata['user_id']]);
-        $hasPurchase = CourseUser::where('user_id', $metadata['user_id'])
-            ->where('course_id', $metadata['course_id'])
-            ->where('purchase_status', '=', 'succeeded')
-            ->exists();
-
-        Log::info('Has purchase', ['hasPurchase' => $hasPurchase]);
-
-        if ($hasPurchase) {
-            Log::info('User is already enrolled in the course', ['metadata' => $metadata]);
-
-            return;
-        }
 
         CourseUser::updateOrCreate([
             'user_id' => $metadata['user_id'],
             'course_id' => $metadata['course_id'],
         ], [
             'purchase_status' => 'succeeded',
+            'payment_completed_at' => now(),
         ]);
+
+        Log::info('Creating course progress records', ['metadata' => $metadata]);
+
+        // Dispatch a job to create course progress records
+        CreateCourseProgressRecordsJob::dispatch($metadata['course_id'], $metadata['user_id']);
     }
 }

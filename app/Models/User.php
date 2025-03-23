@@ -85,7 +85,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->purchasedCourses()
             ->where('course_id', $course->id)
             // TODO: Uncomment this when we fix the payment gateway
-            // ->where('purchase_status', '=', 'succeeded')
+            ->where('purchase_status', '=', 'succeeded')
             ->exists();
     }
 

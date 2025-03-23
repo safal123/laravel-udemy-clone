@@ -18,6 +18,7 @@ class CourseUser extends Pivot
         'payment_intent_id',
         'payment_method',
         'purchase_status',
+        'payment_completed_at',
     ];
 
     /**

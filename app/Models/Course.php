@@ -120,4 +120,9 @@ class Course extends Model implements CourseConstants
     {
         return $this->price === 0;
     }
+
+    public function userProgress()
+    {
+        return $this->hasMany(UserProgress::class);
+    }
 }

@@ -22,6 +22,7 @@ class CourseReviewResource extends JsonResource
             'helpful_count' => $this->helpful_count,
             'user' => UserResource::make($this->whenLoaded('user')),
             'created_at' => $this->created_at,
+            'user_id' => $this->user_id
         ];
     }
 }

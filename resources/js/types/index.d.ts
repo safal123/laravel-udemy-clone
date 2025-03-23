@@ -81,6 +81,20 @@ export interface Chapter {
   progress: UserProgress[]
 }
 
+export interface Review {
+  id: string;
+  user_id: string;
+  course_id: string;
+  rating: number;
+  title: string;
+  comment: string;
+  helpful_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+
+
 export type PaginatedData<T> = {
   data: T[];
   links: {

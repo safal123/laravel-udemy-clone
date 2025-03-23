@@ -49,6 +49,12 @@ class CourseController extends Controller
                                 ->where('course_user.user_id', Auth::id())
                                 ->where('course_user.course_id', $course->id);
                         },
+                        'userProgress' => function ($query) use ($course) {
+                            $query
+                                ->where('user_id', Auth::id())
+                                ->where('course_id', $course->id)
+                                ->where('content_type', '=', 'course');
+                        },
                     ])
                     ->withCount([
                         'students',
