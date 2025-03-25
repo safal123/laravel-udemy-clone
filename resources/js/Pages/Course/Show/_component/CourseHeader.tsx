@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 // Extended types to support new properties
+// @ts-ignore
 interface ExtendedCourse extends Omit<Course, 'price'> {
   categories?: string[];
   level?: string;

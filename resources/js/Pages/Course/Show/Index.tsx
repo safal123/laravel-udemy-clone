@@ -100,7 +100,7 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
                   <PaymentModal course={course} />
                   :
                   <div className="mt-4 flex flex-col space-y-4">
-                    {course.students.length > 0 && <Badge variant="outline" className="py-1.5 px-3 justify-center text-sm font-normal">
+                    {course.students && <Badge variant="outline" className="py-1.5 px-3 justify-center text-sm font-normal">
                       Enrolled on: <span className="ml-1 font-medium">
                         {/* @ts-ignore */}
                         {format(new Date(course.students[0].purchase_details.created_at), 'MMM d, yyyy')}

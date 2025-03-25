@@ -197,7 +197,7 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
               </div>
             </div>
 
-            {reviewStats && course?.reviews?.length > 0 && (
+            {reviewStats && course?.reviews && course.reviews?.length > 0 && (
               <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-gray-100 w-full lg:w-auto">
                 <h4 className="text-sm font-medium text-gray-700 mb-3">Rating Breakdown</h4>
                 <div className="space-y-2 w-full lg:w-64">
