@@ -14,6 +14,8 @@ use App\Http\Controllers\Teacher\DashboardController;
 use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WishlistController;
 use App\Mail\CoursePurchaseSuccess;
+use App\Models\Course;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +36,14 @@ Route::get('/test', function () {
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
 Route::stripeWebhooks('stripe/webhook');
+
+//Route::get('/courses/search', function (Request $request) {
+//    $query = $request->input('query');
+//    $courses = Course::where('title', 'like', "%{$query}%")
+//        ->get();
+//
+//    return response()->json(\App\Http\Resources\CourseResource::collection($courses));
+//});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('activities', ActivityController::class)

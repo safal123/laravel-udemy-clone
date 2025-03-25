@@ -47,10 +47,10 @@ class HandleInertiaRequests extends Middleware
                 $cacheKey = "categories.{$date->format('Y-m-d')}";
 
                 return cache()->remember($cacheKey, 60 * 60 * 24, function () {
-                    return CategoryResource::collection(Category::all());
+                    return CategoryResource::collection(Category::orderBy('name')->get());
                 });
             },
-            'ziggy' => fn () => [
+            'ziggy' => fn() => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],

@@ -1,7 +1,7 @@
 import HomePageNavbar from '@/Components/shared/HomePageNavbar'
 import { Course, PageProps, PaginatedData } from '@/types'
-import { Head, Link, router } from '@inertiajs/react'
-import { useState, useEffect, useCallback } from 'react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Card, CardContent } from '@/Components/ui/card'
 import { Input } from '@/Components/ui/input'
 import { Button } from '@/Components/ui/button'
@@ -33,7 +33,7 @@ interface CoursePageProps extends PageProps {
   }
 }
 
-const Index = ({ auth, courses, categories, search = '', filters = { category: '', level: '', sort: 'popular', price: '' } }: CoursePageProps) => {
+const Index = ({ auth, courses, categories, search = '', filters = { category: '', level: '', sort: '', price: '' } }: CoursePageProps) => {
   const [searchTerm, setSearchTerm] = useState(search)
   const [selectedCategory, setSelectedCategory] = useState(filters.category)
   const [selectedLevel, setSelectedLevel] = useState(filters.level)
@@ -47,6 +47,8 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
   const [isSearching, setIsSearching] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const [hasFilters, setHasFilters] = useState(search !== '' || filters.category !== '' || filters.level !== '' || filters.price !== '')
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const { url } = usePage();
 
   const prices = [
     { id: 'free', name: 'Free' },
@@ -70,12 +72,14 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
   const debouncedSearch = useCallback(
     debounce((term: string) => {
       setIsSearching(true);
+      setCurrentPage(1); // Reset to page 1 when search changes
       startFetching();
       // Use Inertia to refresh with the search term
       router.visit(
         window.location.pathname,
         {
           data: {
+            page: 1, // Explicitly set page to 1
             search: term,
             category: selectedCategory,
             level: selectedLevel,
@@ -105,11 +109,13 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
   // Apply category filter
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
+    setCurrentPage(1); // Reset to page 1 when filter changes
     startFetching();
     router.visit(
       window.location.pathname,
       {
         data: {
+          page: 1, // Explicitly set page to 1
           search: searchTerm,
           category: category,
           level: selectedLevel,
@@ -128,11 +134,13 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
   const handleLevelChange = (level: string, checked: boolean) => {
     const newLevel = checked ? level : '';
     setSelectedLevel(newLevel);
+    setCurrentPage(1); // Reset to page 1 when filter changes
     startFetching();
     router.visit(
       window.location.pathname,
       {
         data: {
+          page: 1, // Explicitly set page to 1
           search: searchTerm,
           category: selectedCategory,
           level: newLevel,
@@ -151,11 +159,13 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
   const handlePriceChange = (priceId: string, checked: boolean) => {
     const newPrice = checked ? priceId : '';
     setSelectedPrice(newPrice);
+    setCurrentPage(1); // Reset to page 1 when filter changes
     startFetching();
     router.visit(
       window.location.pathname,
       {
         data: {
+          page: 1, // Explicitly set page to 1
           search: searchTerm,
           category: selectedCategory,
           level: selectedLevel,
@@ -173,11 +183,13 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
   // Apply sorting
   const handleSortChange = (value: string) => {
     setSortBy(value);
+    setCurrentPage(1); // Reset to page 1 when sort changes
     startFetching();
     router.visit(
       window.location.pathname,
       {
         data: {
+          page: 1, // Explicitly set page to 1
           search: searchTerm,
           category: selectedCategory,
           level: selectedLevel,
@@ -216,27 +228,34 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
   // Track when courses prop changes (e.g. when more courses are loaded)
   useEffect(() => {
     // Only append new courses when loading more (when current page > 1)
-    if (currentPage > 1 && !isSearching && !hasFilters) {
-      setAllLoadedCourses(prevCourses => {
-        // Create a map of existing course IDs to avoid duplicates
-        const existingIds = new Set(prevCourses.map(course => course.id));
-        // Only add courses that don't already exist in the array
-        const newCourses = courses.data.filter(course => !existingIds.has(course.id));
-        return [...prevCourses, ...newCourses];
+    if (currentPage > 1) {
+      // Log current state before updating
+      console.log(`Before update: Displayed courses: ${displayedCourses.length}, New batch: ${courses.data.length}`);
+
+      const updatedDisplayedCourses = [...displayedCourses];
+      const existingIds = new Set(updatedDisplayedCourses.map(course => course.id));
+      let addedCount = 0;
+
+      // Add new courses without duplicates
+      courses.data.forEach(course => {
+        if (!existingIds.has(course.id)) {
+          updatedDisplayedCourses.push(course);
+          existingIds.add(course.id);
+          addedCount++;
+        }
       });
 
-      setDisplayedCourses(prevCourses => {
-        // Create a map of existing course IDs to avoid duplicates
-        const existingIds = new Set(prevCourses.map(course => course.id));
-        // Only add courses that don't already exist in the array
-        const newCourses = courses.data.filter(course => !existingIds.has(course.id));
-        return [...prevCourses, ...newCourses];
-      });
+      console.log(`Added ${addedCount} new courses. Updated total: ${updatedDisplayedCourses.length}`);
+
+      setDisplayedCourses(updatedDisplayedCourses);
+      setAllLoadedCourses(updatedDisplayedCourses);
     } else {
       // On initial load, filter reset, or search/filter changes
+      console.log(`Reset to initial ${courses.data.length} courses`);
       setAllLoadedCourses(courses.data);
       setDisplayedCourses(courses.data);
     }
+
     setIsLoading(false);
     endFetching();
   }, [courses.data]);
@@ -249,7 +268,8 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
 
-      router.visit(window.location.pathname, {
+
+      router.visit(route('courses.index'), {
         data: {
           page: nextPage,
           search: searchTerm,
@@ -259,9 +279,9 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
           sort: sortBy
         },
         preserveState: true,
-        preserveScroll: true,
         only: ['courses'],
-        onSuccess: () => {
+        onSuccess: (page) => {
+          console.log(`Loaded page ${nextPage} successfully, received ${(page.props as any).courses.data.length} courses`);
           setIsLoading(false);
           endFetching();
         },
@@ -301,6 +321,22 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
       }
     });
   }
+
+  // Check for search=focus query param and focus the search input
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('search') === '' && searchInputRef.current) {
+      // Scroll to the top and focus the search input
+      window.scrollTo(0, 0);
+      searchInputRef.current.focus();
+
+      // Clean up the URL by removing the focus parameter
+      const newParams = new URLSearchParams(window.location.search);
+      newParams.delete('search');
+      const newPath = window.location.pathname + (newParams.toString() ? `?${newParams.toString()}` : '');
+      window.history.replaceState({}, '', newPath);
+    }
+  }, [url]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -350,6 +386,7 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
                     levels={levels}
                     isSearching={isSearching}
                     onResetFilters={resetFilters}
+                    searchInputRef={searchInputRef}
                   />
                 </div>
               </div>
@@ -375,6 +412,7 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
                 levels={levels}
                 isSearching={isSearching}
                 onResetFilters={resetFilters}
+                searchInputRef={searchInputRef}
               />
             </div>
           </div>
@@ -411,7 +449,7 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="popular">Most Popular</SelectItem>
-                    <SelectItem value="rating">Highest Rated</SelectItem>
+                    {/* <SelectItem value="rating">Highest Rated</SelectItem> */}
                     <SelectItem value="newest">Newest</SelectItem>
                     <SelectItem value="price-low">Price: Low to High</SelectItem>
                     <SelectItem value="price-high">Price: High to Low</SelectItem>
@@ -497,6 +535,7 @@ interface SidebarFiltersProps {
   isSearching?: boolean
   isMobile?: boolean
   onResetFilters: () => void
+  searchInputRef?: React.RefObject<HTMLInputElement>
 }
 
 const SidebarFilters = ({
@@ -513,7 +552,8 @@ const SidebarFilters = ({
   levels,
   isSearching = false,
   isMobile = false,
-  onResetFilters
+  onResetFilters,
+  searchInputRef
 }: SidebarFiltersProps) => {
   return (
     <div>
@@ -538,6 +578,7 @@ const SidebarFilters = ({
             value={searchTerm}
             onChange={onSearchChange}
             className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-sm h-9"
+            ref={searchInputRef}
           />
         </div>
       </div>
@@ -634,84 +675,50 @@ const SidebarFilters = ({
 }
 
 const CourseCard = ({ course }: { course: Course }) => {
-  const discountPercentage = course.discount_price
-    ? Math.round(((course.price - course.discount_price) / course.price) * 100)
-    : 0;
-
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl group h-full flex flex-col border-gray-200 dark:border-gray-700 relative">
-      {/* Hover Overlay with View Details Button */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 p-4">
+      {/* Hover Overlay with View Course Button */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
         <Button
           className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
           asChild
         >
           <Link href={route('courses.show', course.slug)}>
-            View Course <ArrowRight className="ml-2 h-4 w-4" />
+            View Details
           </Link>
         </Button>
       </div>
 
+      {/* Course Image */}
       <div className="relative">
         <img
           src={course.image_url}
           alt={course.title}
-          className="h-48 w-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="h-44 w-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        {course.discount_price && (
-          <Badge className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium py-1">
-            {discountPercentage}% OFF
-          </Badge>
-        )}
-        <Badge
-          className="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-sm text-white border-0"
-        >
-          {course.category}
-        </Badge>
       </div>
-      <CardContent className="p-5 flex flex-col flex-grow bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-        <div className="flex items-center mb-2">
-          <Badge variant="outline" className="mr-2 font-normal border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
-            {course.level}
-          </Badge>
-          <div className="flex items-center text-amber-500 ml-auto">
-            <StarIcon className="h-4 w-4 fill-current" />
-            <span className="ml-1 text-sm font-medium">{course.rating.toFixed(1)}</span>
-            <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">({course.reviews_count})</span>
-          </div>
-        </div>
 
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2 flex-grow group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors duration-200">{course.title}</h3>
+      {/* Title and Price */}
+      <CardContent className="p-4 flex flex-col flex-grow bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+        {/* Title */}
+        <h3 className="font-semibold text-base mb-2 line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors duration-200">
+          {course.title}
+        </h3>
 
-        <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
-          <div className="flex items-center">
-            <ClockIcon className="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" />
-            <span>{course.duration}</span>
-          </div>
-          <div className="flex items-center">
-            <UserIcon className="h-4 w-4 mr-1 text-green-500 dark:text-green-400" />
-            <span>{123} students</span>
-          </div>
-        </div>
-
-        <div className="flex items-end justify-between mt-auto pt-3 border-t border-gray-100 dark:border-gray-700">
-          <div>
-            {course.discount_price ? (
-              <div className="flex items-center">
-                <span className="text-lg font-bold bg-gradient-to-r from-orange-500 to-pink-500 text-transparent bg-clip-text">${course.discount_price}</span>
-                <span className="ml-2 text-sm line-through text-gray-500">${course.price}</span>
-              </div>
-            ) : (
-              <span className="text-lg font-bold bg-gradient-to-r from-orange-500 to-pink-500 text-transparent bg-clip-text">${course.price}</span>
-            )}
-          </div>
-          <Button variant="ghost" size="sm" className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 p-0 flex items-center">
-            Details <ChevronRightIcon className="ml-1 h-4 w-4" />
-          </Button>
+        {/* Price */}
+        <div className="mt-auto">
+          {course.discount_price ? (
+            <div className="flex items-center">
+              <span className="text-lg font-bold bg-gradient-to-r from-orange-500 to-pink-500 text-transparent bg-clip-text">${course.discount_price}</span>
+              <span className="ml-2 text-sm line-through text-gray-500">${course.price}</span>
+            </div>
+          ) : (
+            <span className="text-lg font-bold bg-gradient-to-r from-orange-500 to-pink-500 text-transparent bg-clip-text">${course.price}</span>
+          )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default Index

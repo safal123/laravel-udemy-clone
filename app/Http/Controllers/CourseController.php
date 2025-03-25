@@ -8,112 +8,56 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CourseController extends Controller
 {
     public function index(Request $request): Response
     {
-        // Start with the base query
-        $query = Course::query()
+        $courses = Course::query()
             ->whereHasPublishedChapters()
             ->withCount('students')
-            ->with('category');
+            ->with('category')
+            ->when($request->has('search') && !empty($request->search), function ($query) use ($request) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('title', 'like', '%' . $request->search . '%')
+                        ->orWhere('description', 'like', '%' . $request->search . '%');
+                });
+            })
+            ->when($request->has('category') && !empty($request->category), function ($query) use ($request) {
+                $query->whereHas('category', function ($q) use ($request) {
+                    $q->where('name', $request->category);
+                });
+            })
+            ->when($request->has('level') && !empty($request->level), function ($query) use ($request) {
+                $query->where('level', $request->level);
+            })
+            ->when($request->has('price') && !empty($request->price), function ($query) use ($request) {
+                match ($request->price) {
+                    'free' => $query->where('price', 0),
+                    'under-50' => $query->where('price', '>', 0)->where('price', '<=', 50),
+                    '50-100' => $query->where('price', '>', 50)->where('price', '<=', 100),
+                    'over-100' => $query->where('price', '>', 100),
+                    default => $query,
+                };
+            })
+            ->when($request->has('sort') && !empty($request->sort), function ($query) use ($request) {
+                match ($request->sort) {
+                    'popular' => $query->orderBy('students_count', 'desc'),
+                    'rating' => $query->orderBy('rating', 'desc'),
+                    'newest' => $query->orderBy('created_at', 'desc'),
+                    'price-low' => $query->orderBy('price', 'asc'),
+                    'price-high' => $query->orderBy('price', 'desc'),
+                    default => $query->orderBy('students_count', 'desc'), // Default sort is popular
+                };
+            })
+            ->paginate($request->per_page ?? 12)
+            ->withQueryString();
 
-        // Apply search filter if provided
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
-            });
-        }
 
-        // Apply category filter if provided
-        if ($request->has('category') && !empty($request->category)) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('name', $request->category);
-            });
-        }
 
-        // Apply level filter if provided
-        if ($request->has('level') && !empty($request->level)) {
-            $query->where('level', $request->level);
-        }
-
-        // Apply price filter if provided
-        if ($request->has('price') && !empty($request->price)) {
-            switch ($request->price) {
-                case 'free':
-                    $query->where('price', 0);
-                    break;
-                case 'under-50':
-                    $query->where('price', '>', 0)->where('price', '<=', 50);
-                    break;
-                case '50-100':
-                    $query->where('price', '>', 50)->where('price', '<=', 100);
-                    break;
-                case 'over-100':
-                    $query->where('price', '>', 100);
-                    break;
-            }
-        }
-
-        // Apply sorting if provided
-        if ($request->has('sort') && !empty($request->sort)) {
-            switch ($request->sort) {
-                case 'popular':
-                    $query->orderBy('students_count', 'desc');
-                    break;
-                case 'rating':
-                    $query->orderBy('rating', 'desc');
-                    break;
-                case 'newest':
-                    $query->orderBy('created_at', 'desc');
-                    break;
-                case 'price-low':
-                    $query->orderBy('price', 'asc');
-                    break;
-                case 'price-high':
-                    $query->orderBy('price', 'desc');
-                    break;
-                default:
-                    $query->orderBy('students_count', 'desc'); // Default sort is popular
-            }
-        } else {
-            // Default sort is by popularity
-            $query->orderBy('students_count', 'desc');
-        }
-
-        // Get pagination params and ensure they're valid
-        $perPage = 6; // Number of items per page
-        $page = max(1, intval($request->input('page', 1)));
-
-        // Paginate the results
-        $courses = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
-
-        // Get all categories for the filter - fixed to use the category relationship
-        $categories = \App\Models\Category::select('id', 'name')
-            ->whereHas('courses')
-            ->orderBy('name')
-            ->get()
-            ->map(function ($category) {
-                return [
-                    'id' => $category->id,
-                    'name' => $category->name
-                ];
-            });
-
-        // Return data based on whether it's an initial load or pagination request
         return Inertia::render('Course/Index', [
             'courses' => CourseResource::collection($courses),
-            'categories' => $categories,
-            'search' => $request->search ?? '',
-            'filters' => [
-                'category' => $request->category ?? '',
-                'level' => $request->level ?? '',
-                'sort' => $request->sort ?? 'popular',
-                'price' => $request->price ?? '',
-            ],
         ]);
     }
 
