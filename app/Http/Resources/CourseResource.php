@@ -32,6 +32,7 @@ class CourseResource extends JsonResource
             'chapters' => ChapterResource::collection($this->whenLoaded('chapters')),
             'chapters_count' => $this->chapters_count,
             'students_count' => $this->students_count,
+            'reviews_count' => $this->reviews_count,
             'duration' => $this->duration ?? 10,
             'level' => $this->level,
             'reviews' => CourseReviewResource::collection($this->whenLoaded('reviews')),

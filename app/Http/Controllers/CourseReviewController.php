@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Course\CourseReviewAction;
 use App\Models\Course;
 use App\Models\CourseReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class CourseReviewController extends Controller
 {
+    protected CourseReviewAction $action;
+
+    public function __construct(CourseReviewAction $action)
+    {
+        $this->action = $action;
+    }
+
     /**
      * Store a newly created review in storage.
      */
@@ -18,56 +27,16 @@ class CourseReviewController extends Controller
         $this->authorize('review', $course);
 
         // Validate request
-        $validated = $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'title' => 'required|string|min:3|max:100',
-            'comment' => 'required|string|min:10|max:1000',
-        ]);
+        $validated = $request->validate(CourseReviewAction::rules());
 
-        CourseReview::create([
-            'user_id' => Auth::id(),
-            'course_id' => $course->id,
-            'rating' => $validated['rating'],
-            'title' => $validated['title'],
-            'comment' => $validated['comment'],
-        ]);
-
-        // Refresh the course rating
-        $this->updateCourseRating($course);
-
-        return back()->with('success', 'Your review has been submitted successfully');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Course $course)
-    {
-        $reviews = CourseReview::where('course_id', $course->id)
-            ->with(['user:id,name,email,profile_photo_url'])
-            ->orderBy('helpful_count', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
-
-        return Inertia::render('Course/Reviews/Show', [
-            'course' => $course,
-            'reviews' => $reviews,
-        ]);
-    }
-
-    /**
-     * Show the form for editing the review.
-     */
-    public function edit(Course $course)
-    {
-        $review = CourseReview::where('user_id', Auth::id())
-            ->where('course_id', $course->id)
-            ->firstOrFail();
-
-        return Inertia::render('Course/Review/Edit', [
-            'course' => $course,
-            'review' => $review,
-        ]);
+        try {
+            $this->action->store($validated, $course, Auth::user());
+            return back()->with('success', 'Your review has been submitted successfully');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
     }
 
     /**
@@ -75,29 +44,18 @@ class CourseReviewController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        // Get the review or fail
-        $review = CourseReview::where('user_id', Auth::id())
-            ->where('course_id', $course->id)
-            ->firstOrFail();
-
         // Validate request
-        $validated = $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'title' => 'required|string|min:3|max:100',
-            'comment' => 'required|string|min:10|max:1000',
-        ]);
+        $validated = $request->validate(CourseReviewAction::rules());
 
-        // Update review
-        $review->rating = $validated['rating'];
-        $review->title = $validated['title'];
-        $review->comment = $validated['comment'];
-        $review->save();
-
-        // Refresh the course rating
-        $this->updateCourseRating($course);
-
-        return redirect()->route('courses.show', $course->slug)
-            ->with('success', 'Your review has been updated successfully');
+        try {
+            $this->action->update($validated, $course, Auth::user());
+            return redirect()->route('courses.show', $course->slug)
+                ->with('success', 'Your review has been updated successfully');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
     }
 
     /**
@@ -105,9 +63,14 @@ class CourseReviewController extends Controller
      */
     public function destroy(Course $course, CourseReview $review)
     {
-        $review->delete();
-
-        return back()->with('success', 'Your review has been deleted successfully');
+        try {
+            $this->action->destroy($course, $review);
+            return back()->with('success', 'Your review has been deleted successfully');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
     }
 
     /**
@@ -115,18 +78,11 @@ class CourseReviewController extends Controller
      */
     public function markHelpful(CourseReview $review)
     {
-        $review->increment('helpful_count');
-
-        return back();
-    }
-
-    /**
-     * Update the course's average rating.
-     */
-    private function updateCourseRating(Course $course)
-    {
-        // This method would typically update a cached value or recalculate
-        // the average rating for the course.
-        // For now, we'll rely on the averageRating() method in the Course model
+        try {
+            $this->action->markHelpful($review);
+            return back()->with('success', 'Review marked as helpful');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
     }
 }

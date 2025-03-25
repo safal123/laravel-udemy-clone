@@ -13,9 +13,23 @@ use App\Http\Controllers\Teacher\CourseController;
 use App\Http\Controllers\Teacher\DashboardController;
 use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WishlistController;
+use App\Mail\CoursePurchaseSuccess;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/auth.php';
+
+Route::get('/test', function () {
+    $user = \App\Models\User::first();
+    $course = \App\Models\Course::with('author')->first();
+
+    // Mail::to($user->email)->send(new CoursePurchaseSuccess($user, $course));
+
+    return view('emails.review-thanks', [
+        'user' => $user,
+        'course' => $course,
+    ]);
+});
 
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');

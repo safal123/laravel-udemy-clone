@@ -95,7 +95,7 @@ export default function Modal({
                   <div className="absolute top-3 right-3 z-10">
                     <button
                       type="button"
-                      className="rounded-md bg-white dark:bg-gray-800 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                      className="absolute top-4 right-4 text-gray-700 hover:text-gray-500 dark:hover:text-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded-full p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={close}
                     >
                       <span className="sr-only">Close</span>

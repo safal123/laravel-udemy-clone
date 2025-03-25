@@ -100,12 +100,12 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
                   <PaymentModal course={course} />
                   :
                   <div className="mt-4 flex flex-col space-y-4">
-                    <Badge variant="outline" className="py-1.5 px-3 justify-center text-sm font-normal">
+                    {course.students.length > 0 && <Badge variant="outline" className="py-1.5 px-3 justify-center text-sm font-normal">
                       Enrolled on: <span className="ml-1 font-medium">
                         {/* @ts-ignore */}
-                        {/* {format(new Date(course.students[0].purchase_details.created_at), 'MMM d, yyyy')} */}
+                        {format(new Date(course.students[0].purchase_details.created_at), 'MMM d, yyyy')}
                       </span>
-                    </Badge>
+                    </Badge>}
                     <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
                       <Button variant="default" className="w-full bg-emerald-600 hover:bg-emerald-700">
                         {course.is_author ? 'Course Preview' : 'Continue Learning'}

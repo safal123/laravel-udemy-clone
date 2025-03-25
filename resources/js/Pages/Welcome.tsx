@@ -61,7 +61,9 @@ export default function LandingPage({ auth }: PageProps) {
       />
       <Head title={'Home'} />
       <HomePageNavbar auth={auth} />
-      <HeroSection />
+      <div className={'mt-16'}>
+        <HeroSection />
+      </div>
       <RecentlyAddedCourses courses={courses.data} addToWishlist={handleAddToWishlist} />
       <HomePageCategories categories={categories} />
       <TrustedBySlider />

@@ -22,17 +22,6 @@ const VideoQualitySwitcher = ({
   const isMobile = useIsMobile()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Handle screen size changes
-  // useEffect(() => {
-  //   const checkScreenSize = () => {
-  //     setIsMobile(window.innerWidth < 640)
-  //   }
-  //
-  //   checkScreenSize()
-  //   window.addEventListener('resize', checkScreenSize)
-  //   return () => window.removeEventListener('resize', checkScreenSize)
-  // }, [])
-
   // Close panel when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

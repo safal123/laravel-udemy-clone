@@ -1,6 +1,6 @@
 import { Button } from "@/Components/ui/button";
 import { PageProps } from "@/types";
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from '@inertiajs/react'
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
@@ -43,7 +43,7 @@ export default function HeroSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between py-20 md:py-28 lg:py-32 max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-20 md:py-28 lg:py-16 max-w-7xl mx-auto">
           {/* Left Content */}
           <motion.div
             className="w-full lg:w-5/12 text-center lg:text-left"
@@ -94,14 +94,16 @@ export default function HeroSection() {
               <Button size="lg" className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 font-medium px-6">
                 Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white/10 backdrop-blur-sm border-orange-300/30 text-orange-100 hover:bg-white/20 hover:text-white hover:border-orange-300/50 transition-all px-6 relative overflow-hidden group"
-              >
-                <span className="relative z-10">Explore Courses</span>
-                <span className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-pink-500/10 group-hover:opacity-100 opacity-0 transition-opacity"></span>
-              </Button>
+              <Link href={'/courses'} as-Child>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white/10 backdrop-blur-sm border-orange-300/30 text-orange-100 hover:bg-white/20 hover:text-white hover:border-orange-300/50 transition-all px-6 relative overflow-hidden group"
+                >
+                  <span className="relative z-10">Explore Courses</span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-pink-500/10 group-hover:opacity-100 opacity-0 transition-opacity"></span>
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Stats */}

@@ -2,52 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\UserProgressAction;
 use App\Models\UserProgress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 class UserProgressController extends Controller
 {
+    public function __construct(
+        protected UserProgressAction $action
+    ) {}
+
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'course_id' => 'required|uuid',
             'chapter_id' => 'required|uuid',
         ]);
 
-        $existingProgress = UserProgress::where('user_id', auth()->id())
-            ->where('course_id', $request->course_id)
-            ->where('chapter_id', $request->chapter_id)
-            ->whereNotNull('completed_at')
-            ->where('is_completed', true)
-            ->first();
+        $result = $this->action->store(
+            $validated['course_id'],
+            $validated['chapter_id'],
+            Auth::user()
+        );
 
-        if ($existingProgress) {
-            return Redirect::back()
-                ->withErrors('Chapter already marked as completed');
+        if ($result['status'] === 'error') {
+            return Redirect::back()->withErrors($result['message']);
         }
-        // Create a new progress record
-        UserProgress::create([
-            'user_id' => auth()->id(),
-            'course_id' => $request->course_id,
-            'chapter_id' => $request->chapter_id,
-            'started_at' => now(),
-            'last_accessed_at' => now(),
-        ]);
 
-        return Redirect::back()->with('success', 'Chapter progress saved');
+        return Redirect::back()->with('success', $result['message']);
     }
 
     public function update(Request $request, UserProgress $userProgress)
     {
-        $request->validate([
+        $validated = $request->validate([
             'is_completed' => 'required|boolean',
+            'time_spent' => 'nullable|string',
         ]);
 
-        $userProgress->update($request->all());
+        $result = $this->action->update($validated, $userProgress);
 
-        $userProgress->refresh();
-
-        return Redirect::back()->with('success', 'Chapter progress updated');
+        return Redirect::back()->with('success', $result['message']);
     }
 }

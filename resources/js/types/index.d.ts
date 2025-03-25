@@ -43,6 +43,14 @@ export interface Course {
   is_wishlisted: boolean;
   reviews?: CourseReview[];
   has_reviewed: boolean;
+  user_progress: UserProgress[]
+  reviews_count: number;
+  rating: number;
+  price: number;
+  discount_price: number;
+  duration: number;
+  level: string;
+  category: string;
 }
 
 export interface Wishlist {
@@ -60,6 +68,7 @@ export interface UserProgress {
   completed_at: string;
   created_at: string;
   course_id: string;
+  progress_percentage: number
 }
 
 export interface Chapter {

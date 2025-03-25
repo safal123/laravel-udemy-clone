@@ -125,4 +125,12 @@ class Course extends Model implements CourseConstants
     {
         return $this->hasMany(UserProgress::class);
     }
+
+    /**
+     * Get the category that owns the course.
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

@@ -53,14 +53,14 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
   return (
     <section className="relative">
       {/* Background gradient with pattern overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary to-primary/80 opacity-90"></div>
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjMiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary to-primary/80 opacity-90" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjMiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30" />
 
       {/* Subtle dot pattern overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] bg-[length:20px_20px] opacity-20"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] bg-[length:20px_20px] opacity-20" />
 
       {/* Content container */}
-      <div className="relative py-16 md:py-20 text-white">
+      <div className="relative py-8 md:py-12 text-white">
         <div className="container mx-auto px-4">
           {/* Top navigation and category */}
           <div className="flex flex-row items-center justify-between flex-wrap gap-3 mb-10 pt-6 md:pt-0">
@@ -91,7 +91,7 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
           </div>
 
           {/* Course title with animated gradient */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 animate-gradient">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-pink-200 to-pink-500/80 animate-gradient">
             {course.title}
           </h1>
 
@@ -158,19 +158,18 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
                   </div>
                 )}
 
-                {course.last_updated && (
+                {course.updated_at && (
                   <div className="bg-white/5 p-3 rounded-lg flex items-center gap-3 col-span-2">
                     <div className="w-9 h-9 rounded-full bg-red-500/20 flex-shrink-0 flex items-center justify-center">
                       <Calendar className="w-4 h-4 text-red-400" />
                     </div>
                     <div>
-                      <p className="text-lg font-medium">{course.last_updated}</p>
+                      <p className="text-lg font-medium">{course.updated_at}</p>
                       <p className="text-xs text-white/70">Last updated</p>
                     </div>
                   </div>
                 )}
               </div>
-
               {/* Desktop view - Row layout */}
               <div className="hidden md:flex md:flex-row md:items-center gap-4 md:gap-8 p-4 md:px-6 md:py-3">
                 <div className="flex items-center space-x-3">
@@ -178,8 +177,8 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
                     <Star className="w-5 h-5 text-yellow-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold">{course.rating || 5}</p>
-                    <p className="text-xs text-white/70">{course.reviews_count || 1200} reviews</p>
+                    <p className="text-2xl font-bold">{course.rating}</p>
+                    <p className="text-xs text-white/70">{course.reviews_count} reviews</p>
                   </div>
                 </div>
 
@@ -215,13 +214,13 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
                   </div>
                 )}
 
-                {course.last_updated && (
+                {course.updated_at && (
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
                       <Calendar className="w-5 h-5 text-red-400" />
                     </div>
                     <div>
-                      <p className="text-base font-medium">{course.last_updated}</p>
+                      <p className="text-base font-medium">{course.updated_at}</p>
                       <p className="text-xs text-white/70">Last updated</p>
                     </div>
                   </div>
