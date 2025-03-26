@@ -1,9 +1,17 @@
 import { Button } from '@/Components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
+import { Card, CardContent, CardTitle } from '@/Components/ui/card'
 import { Course } from '@/types'
 import { Link } from '@inertiajs/react'
-import { BookOpenIcon, ClockIcon, GraduationCapIcon, HeartIcon, PlayCircleIcon, StarIcon, TrendingUpIcon, UsersIcon } from 'lucide-react'
-import { motion } from 'framer-motion'
+import {
+  BookOpenIcon,
+  ClockIcon,
+  GraduationCapIcon,
+  HeartIcon,
+  PlayCircleIcon,
+  StarIcon,
+  TrendingUpIcon,
+  UsersIcon
+} from 'lucide-react'
 
 type CourseCardProps = {
   course: Course
@@ -11,35 +19,30 @@ type CourseCardProps = {
 }
 
 const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
-  const RATING = 4.5
-  const TOTAL_RATINGS = 100
   const VIDEO_DURATION = '5 hours'
 
-  const truncateTitle = (title: string, maxLength: number = 40) =>
-    title.length > maxLength ? `${title.substring(0, maxLength)}...` : title
-
-  const renderStars = (rating: number) => (
-    <div className="flex items-center">
-      {[...Array(5)].map((_, index) => (
-        <StarIcon
-          key={index}
-          className={`h-3.5 w-3.5 ${index < Math.round(rating)
-            ? 'text-yellow-400 fill-yellow-400'
-            : 'text-gray-300'
+  const renderStars = (rating: number) => {
+    if (rating < 1) {
+      return ''
+    }
+    return (
+      <div className="flex items-center">
+        {[...Array(5)].map((_, index) => (
+          <StarIcon
+            key={index}
+            className={`h-3.5 w-3.5 ${index < Math.round(rating)
+              ? 'text-yellow-400 fill-yellow-400'
+              : 'text-gray-300'
             }`}
-        />
-      ))}
-    </div>
-  )
+          />
+        ))}
+      </div>
+    )
+  }
 
   const getFirstChapterLink = () =>
-    `/courses/${course.slug}/chapters/${course.chapters[0].id}`
-
-  // Get a random level label for the demo
-  const getLevelLabel = () => {
-    const levels = ['Beginner', 'Intermediate', 'Advanced'];
-    return levels[Math.floor(Math.random() * levels.length)];
-  }
+    // TODO: Fix this
+    `/courses/${course.slug}`
 
   // Get a random badge for some courses
   const getRandomBadge = () => {
@@ -55,13 +58,6 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
   }
 
   const badge = getRandomBadge();
-  const level = getLevelLabel();
-
-  const author = {
-    name: course.author ? course.author.name : "Jane Smith",
-    role: Math.random() > 0.5 ? "Senior Instructor" : "Instructor",
-    avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'women' : 'men'}/${Math.floor(Math.random() * 100)}.jpg`
-  };
 
   return (
     <Card className="group overflow-hidden border border-slate-200 shadow-md hover:shadow-xl hover:shadow-orange-100/30 transition-all duration-300 flex flex-col h-full rounded-xl bg-white relative">
@@ -92,20 +88,21 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
           </div>
 
           {/* Course level tag */}
-          <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-md flex items-center">
-            <GraduationCapIcon size={12} className="mr-1.5" />
-            <span>{level}</span>
+          <div
+            className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-md flex items-center">
+            <GraduationCapIcon size={12} className="mr-1.5"/>
+            <span>{course.level}</span>
           </div>
 
           {/* Course Stats */}
           <div className="absolute bottom-3 right-3 flex space-x-2 text-white text-xs">
             <div className="flex items-center bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md">
-              <ClockIcon size={12} className="mr-1.5" />
+              <ClockIcon size={12} className="mr-1.5"/>
               <span>{VIDEO_DURATION}</span>
             </div>
             <div className="flex items-center bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md">
-              <UsersIcon size={12} className="mr-1.5" />
-              <span>{TOTAL_RATINGS}</span>
+              <UsersIcon size={12} className="mr-1.5"/>
+              <span>{course.rating}</span>
             </div>
           </div>
         </Link>
@@ -119,17 +116,18 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
           <HeartIcon size={18} className="text-white drop-shadow-md" />
         </button>
       </div>
-
       <CardContent className="p-5 flex flex-col flex-grow bg-gradient-to-b from-white to-slate-50">
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            {renderStars(RATING)}
-            <span className="text-xs font-medium text-slate-600 ml-2">{RATING} <span className="text-slate-400">({TOTAL_RATINGS})</span></span>
-          </div>
+          {course.rating > 0 && <div className="flex items-center">
+            {renderStars(course.rating)}
+            <span className="text-xs font-medium text-slate-600 ml-2">{course.rating} <span
+              className="text-slate-400">({course.reviews_count})</span></span>
+          </div>}
 
-          <span className="text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600 flex items-center">
-            <BookOpenIcon size={12} className="mr-1 text-orange-500" />
-            {course.chapters.length} lessons
+          <span
+            className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600 flex items-center">
+            <BookOpenIcon size={12} className="mr-1 text-orange-500"/>
+            {course.chapters_count} lessons
           </span>
         </div>
 
@@ -148,21 +146,23 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
 
         <div className="my-3 pt-3 border-t border-gray-100">
           <div className="flex items-center space-x-1">
-            <TrendingUpIcon size={14} className="text-emerald-500" />
-            <span className="text-xs text-slate-600">98% completion rate</span>
+            <TrendingUpIcon size={14} className="text-emerald-500"/>
+            <span className="text-xs text-slate-600">
+              {Math.floor(Math.random() * (98 - 90 + 1)) + 90} completion rate
+            </span>
           </div>
         </div>
 
         {/* Author profile */}
         <div className="flex items-center space-x-3 py-3 border-t border-gray-100">
           <img
-            src={author.avatar}
-            alt={author.name}
+            src={course.author.image_url || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'women' : 'men'}/${Math.floor(Math.random() * 100)}.jpg`}
+            alt={course.author.name}
             className="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-sm"
           />
           <div>
-            <p className="text-sm font-medium text-slate-900 leading-tight">{author.name}</p>
-            <p className="text-xs text-slate-500">{author.role}</p>
+            <p className="text-sm font-medium text-slate-900 leading-tight">{course.author.name}</p>
+            <p className="text-xs text-slate-500">{course.author.role || 'Instructor'}</p>
           </div>
         </div>
 

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class Course extends Model implements CourseConstants
 {
@@ -80,17 +81,11 @@ class Course extends Model implements CourseConstants
         return $this->hasMany(CourseReview::class)->latest();
     }
 
-    public function averageRating(): float
-    {
-        return $this
-            ->reviews()
-            ->avg('rating') ?? 0;
-    }
-
     public static function boot()
     {
         parent::boot();
         static::created(function ($course) {
+            Cache::forget('total_courses');
             $course->update([
                 'image_storage_id' => $course->id,
             ]);
@@ -126,10 +121,7 @@ class Course extends Model implements CourseConstants
         return $this->hasMany(UserProgress::class);
     }
 
-    /**
-     * Get the category that owns the course.
-     */
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }

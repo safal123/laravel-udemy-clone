@@ -13,56 +13,39 @@ use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
     protected $rootView = 'app';
 
-    /**
-     * Determine the current asset version.
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user() !== null ?
-                    new UserResource($request->user()->load(['roles', 'wishlists.course']))
+                'user' => $request->user()
+                    ? new UserResource($request->user()->loadMissing(['roles', 'wishlists.course']))
                     : null,
             ],
-            'categories' => function () {
-                $date = now()->addDay();
-                $cacheKey = "categories.{$date->format('Y-m-d')}";
-
-                return cache()->remember($cacheKey, 60 * 60 * 24, function () {
-                    return CategoryResource::collection(Category::orderBy('name')->get());
-                });
-            },
+            'categories' => fn() => cache()->remember('categories', 86400, function () {
+                return CategoryResource::collection(Category::orderBy('name')->get());
+            }),
             'ziggy' => fn() => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'flash' => function () use ($request) {
-                return [
-                    'success' => $request->session()->get('success'),
-                    'error' => $request->session()->get('error'),
-                ];
-            },
-            'totalCourses' => Course::query()->qualify()->count(),
-            'totalStudents' => User::query()->count(),
-            'totalRatings' => 4.9,
+            'flash' => fn() => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
+            'totalCourses' => cache()->remember('total_courses', 3600, fn() => Course::count()),
+            'totalStudents' => cache()->remember('total_students', 3600, fn() => User::count()),
+            'totalRatings' => cache()->remember('total_ratings', 3600, function () {
+                return Course::join('course_reviews', 'courses.id', '=', 'course_reviews.course_id')
+                    ->avg('course_reviews.rating');
+            }),
         ];
     }
 }

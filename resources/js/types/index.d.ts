@@ -14,6 +14,8 @@ export interface User {
   courses: Course[];
   purchased_courses: Course[];
   wishlists: Wishlist[];
+  image_url: string,
+  role: string,
 }
 
 
@@ -35,7 +37,7 @@ export interface Course {
   author: User;
   user_id: string;
   rating: number;
-  students: number;
+  students: User[];
   is_enrolled: boolean;
   students_count: number;
   is_author: boolean;

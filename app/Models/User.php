@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Cashier\Billable;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -60,13 +61,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this
             ->belongsToMany(Course::class, 'course_user')
-            ->withPivot('id', 'created_at', 'user_id', 'course_id')
+            ->withPivot('id', 'created_at', 'user_id', 'course_id', 'status')
             ->as('purchaseDetails');
     }
 
     public static function boot(): void
     {
         parent::boot();
+        static::created(fn() => Cache::forget('total_students'));
     }
 
     public function isTeacher(): bool
@@ -84,7 +86,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this
             ->purchasedCourses()
             ->where('course_id', $course->id)
-            // TODO: Uncomment this when we fix the payment gateway
             ->where('purchase_status', '=', 'succeeded')
             ->exists();
     }

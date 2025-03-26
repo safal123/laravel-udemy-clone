@@ -1,4 +1,4 @@
-import EditorPreview from '@/Components/shared/EditorPreview'
+import AuthorProfile from '@/Components/shared/AuthorProfile'
 import Footer from '@/Components/shared/Footer'
 import HomePageNavbar from '@/Components/shared/HomePageNavbar'
 import PaymentModal from '@/Components/shared/PaymentModal'
@@ -8,31 +8,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Toaster } from '@/Components/ui/sonner'
 import { useWishlist } from '@/hooks/useWishlist'
 import { Course, PageProps } from '@/types'
-import { Head, Link, router, usePage } from '@inertiajs/react'
-import "react-quill/dist/quill.bubble.css";
-
-import {
-  AudioLines,
-  BookAIcon,
-  Clock,
-  PlayCircle,
-  SaveIcon,
-  Star,
-  User,
-  VideoIcon
-} from 'lucide-react'
-import React from 'react'
-import ChaptersPreview from './_component/ChaptersPreview'
-import CourseReview from './_component/CourseReview'
-import AuthorProfile from '@/Components/shared/AuthorProfile'
-import CourseHeader from './_component/CourseHeader'
-import CourseDescription from './_component/CourseDescription'
+import { Head, Link, usePage } from '@inertiajs/react'
 import { format } from 'date-fns'
 
-const CoursePreviewPage = ({ auth }: PageProps) => {
+import { AudioLines, BookAIcon, Clock } from 'lucide-react'
+import React from 'react'
+import 'react-quill/dist/quill.bubble.css'
+import ChaptersPreview from './_component/ChaptersPreview'
+import CourseDescription from './_component/CourseDescription'
+import CourseHeader from './_component/CourseHeader'
+import CourseReview from './_component/CourseReview'
+
+const CoursePreviewPage = ({auth}: PageProps) => {
   const course = usePage().props.course as Course
   const hasPurchased = auth.user?.purchased_courses?.some((c: Course) => c.id === course.id)
-  const { addToWishlist, removeFromWishlist } = useWishlist()
+  const {addToWishlist, removeFromWishlist} = useWishlist()
   const isOnWishlist = auth.user?.wishlists?.some((c) => c.course_id === course.id)
 
   const toggleWishlist = async (course: Course) => {
@@ -86,26 +76,29 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
                   <span className="text-gray-700 font-medium">{course.chapters.length} Lessons</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Clock className="w-5 h-5 text-emerald-600" />
+                  <Clock className="w-5 h-5 text-emerald-600"/>
                   <span className="text-gray-700 font-medium">{course.duration} hrs</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <AudioLines className="w-5 h-5 text-emerald-600" />
+                  <AudioLines className="w-5 h-5 text-emerald-600"/>
                   <span className="text-gray-700 font-medium">Level: Intermediate</span>
                 </div>
               </div>
-
               <div>
                 {!course.is_enrolled && !course.is_author ?
-                  <PaymentModal course={course} />
+                  <PaymentModal course={course}/>
                   :
                   <div className="mt-4 flex flex-col space-y-4">
-                    {course.students && <Badge variant="outline" className="py-1.5 px-3 justify-center text-sm font-normal">
-                      Enrolled on: <span className="ml-1 font-medium">
+                    <pre>
+                      {JSON.stringify(course.students, null, 2)}
+                    </pre>
+                    {course.students.length &&
+                      <Badge variant="outline" className="py-1.5 px-3 justify-center text-sm font-normal">
+                        Enrolled on: <span className="ml-1 font-medium">
                         {/* @ts-ignore */}
                         {format(new Date(course.students[0].purchase_details.created_at), 'MMM d, yyyy')}
                       </span>
-                    </Badge>}
+                      </Badge>}
                     <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
                       <Button variant="default" className="w-full bg-emerald-600 hover:bg-emerald-700">
                         {course.is_author ? 'Course Preview' : 'Continue Learning'}

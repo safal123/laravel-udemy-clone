@@ -36,12 +36,7 @@ const HomePageNavbar = ({ auth }: HomePageNavbarProps) => {
                 <MenuIcon size={20} />
               )}
             </button>
-            <Link href="/" className="hidden md:block">
-              <Logo />
-            </Link>
-            <Link href="/" className="md:hidden">
-              <Logo />
-            </Link>
+            <Logo />
           </div>
 
           {/* Right Section - User Menu or Auth Buttons */}

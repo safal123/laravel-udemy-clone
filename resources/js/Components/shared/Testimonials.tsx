@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { Link } from '@inertiajs/react';
 
 const Testimonials = () => {
   // Enhanced testimonial data with more realistic content and better images
@@ -179,12 +180,14 @@ const Testimonials = () => {
           variants={scaleIn}
         >
           <h3 className="text-xl md:text-2xl font-bold text-white mb-6">Ready to transform your career?</h3>
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 font-medium px-8 py-6 shadow-lg shadow-orange-500/20 rounded-full"
-          >
-            Start Learning Today
-          </Button>
+          <Link href="/courses">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 font-medium px-8 py-6 shadow-lg shadow-orange-500/20 rounded-full"
+            >
+              Start Learning Today
+            </Button>
+          </Link>
           <p className="mt-4 text-slate-400 text-sm">Join over 50,000 students worldwide</p>
         </motion.div>
       </div>

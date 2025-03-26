@@ -152,8 +152,8 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
                   )}
                 </div>
               </div>
-            </div>
-          </Card>
+              </div>
+            </Card>
         </motion.div>
       )}
 
@@ -346,9 +346,9 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
                 )}
               </div>
             )}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </CardContent>
+    </Card>
     </>
   )
 }

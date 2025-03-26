@@ -92,7 +92,7 @@ const HomePageCategories = ({ categories }: HomePageCategoriesProps) => {
               transition={{ duration: 0.2 }}
             >
               <Link
-                href={category?.href || `/categories/${category.id}`}
+                href={`/courses?category=${encodeURIComponent(category.name)}&level=&page=1&price=&sort=`}
                 className="flex flex-col h-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 group"
               >
                 <div className="flex items-center p-4 sm:p-5 bg-gradient-to-br from-slate-50 to-slate-100 border-b border-slate-200">

@@ -2,6 +2,7 @@
 
 namespace App\Models\Builders;
 
+use App\Models\Constants\CourseUserConstants;
 use Illuminate\Database\Eloquent\Builder;
 
 class CourseBuilder extends Builder
@@ -100,7 +101,6 @@ class CourseBuilder extends Builder
             ->published()
             ->whereHasPublishedChapters()
             ->loadAuthor()
-            ->loadPublishedChapters()
             ->countPublishedChapters()
             ->orderByCreatedAtDesc();
     }
@@ -117,8 +117,7 @@ class CourseBuilder extends Builder
                 'students as is_enrolled' => function ($query) use ($userId) {
                     $query
                         ->where('course_user.user_id', $userId)
-                    // TODO: Uncomment this when we have a way to handle pending purchases
-                        ->where('course_user.purchase_status', '!=', 'pending');
+                        ->where('course_user.purchase_status', '=', CourseUserConstants::SUCCEEDED);
                 },
                 'wishlists as is_wishlisted' => function ($query) use ($userId) {
                     $query->where('wishlists.user_id', $userId);

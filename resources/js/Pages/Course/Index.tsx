@@ -136,13 +136,18 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
     setSelectedLevel(newLevel);
     setCurrentPage(1); // Reset to page 1 when filter changes
     startFetching();
+
+    // Get current URL parameters to preserve them
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentCategory = urlParams.get('category') || selectedCategory;
+
     router.visit(
       window.location.pathname,
       {
         data: {
           page: 1, // Explicitly set page to 1
           search: searchTerm,
-          category: selectedCategory,
+          category: currentCategory, // Use the category from URL if available
           level: newLevel,
           price: selectedPrice,
           sort: sortBy
@@ -161,13 +166,18 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
     setSelectedPrice(newPrice);
     setCurrentPage(1); // Reset to page 1 when filter changes
     startFetching();
+
+    // Get current URL parameters to preserve them
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentCategory = urlParams.get('category') || selectedCategory;
+
     router.visit(
       window.location.pathname,
       {
         data: {
           page: 1, // Explicitly set page to 1
           search: searchTerm,
-          category: selectedCategory,
+          category: currentCategory, // Use the category from URL if available
           level: selectedLevel,
           price: newPrice,
           sort: sortBy
@@ -185,13 +195,18 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
     setSortBy(value);
     setCurrentPage(1); // Reset to page 1 when sort changes
     startFetching();
+
+    // Get current URL parameters to preserve them
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentCategory = urlParams.get('category') || selectedCategory;
+
     router.visit(
       window.location.pathname,
       {
         data: {
           page: 1, // Explicitly set page to 1
           search: searchTerm,
-          category: selectedCategory,
+          category: currentCategory, // Use the category from URL if available
           level: selectedLevel,
           price: selectedPrice,
           sort: value
@@ -206,14 +221,27 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: '
 
   // On initial render, ensure state is properly initialized from props
   useEffect(() => {
-    // Initialize states with values from props
-    setSearchTerm(search);
-    setSelectedCategory(filters.category);
-    setSelectedLevel(filters.level);
-    setSelectedPrice(filters.price || '');
-    setSortBy(filters.sort);
+    // Check for URL parameters first, then fall back to props
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryFromUrl = urlParams.get('category') || '';
+    const levelFromUrl = urlParams.get('level') || '';
+    const priceFromUrl = urlParams.get('price') || '';
+    const sortFromUrl = urlParams.get('sort') || '';
+    const searchFromUrl = urlParams.get('search') || '';
+
+    // Initialize states with values from URL if available, otherwise use props
+    setSearchTerm(searchFromUrl || search);
+    setSelectedCategory(categoryFromUrl || filters.category);
+    setSelectedLevel(levelFromUrl || filters.level);
+    setSelectedPrice(priceFromUrl || filters.price || '');
+    setSortBy(sortFromUrl || filters.sort);
     setCurrentPage(courses.meta.current_page);
-    setHasFilters(search !== '' || filters.category !== '' || filters.level !== '' || filters.price !== '');
+    setHasFilters(
+      searchFromUrl !== '' || categoryFromUrl !== '' ||
+      levelFromUrl !== '' || priceFromUrl !== '' ||
+      search !== '' || filters.category !== '' ||
+      filters.level !== '' || filters.price !== ''
+    );
     setAllLoadedCourses(courses.data);
     setDisplayedCourses(courses.data);
   }, []);

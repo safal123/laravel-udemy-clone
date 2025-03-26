@@ -17,6 +17,8 @@ class CourseController extends Controller
         $courses = Course::query()
             ->whereHasPublishedChapters()
             ->withCount('students')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
             ->with('category')
             ->when($request->has('search') && !empty($request->search), function ($query) use ($request) {
                 $query->where(function ($q) use ($request) {
@@ -43,18 +45,15 @@ class CourseController extends Controller
             })
             ->when($request->has('sort') && !empty($request->sort), function ($query) use ($request) {
                 match ($request->sort) {
-                    'popular' => $query->orderBy('students_count', 'desc'),
-                    'rating' => $query->orderBy('rating', 'desc'),
+                    'rating' => $query->orderBy('reviews_avg_rating', 'desc'),
                     'newest' => $query->orderBy('created_at', 'desc'),
                     'price-low' => $query->orderBy('price', 'asc'),
                     'price-high' => $query->orderBy('price', 'desc'),
-                    default => $query->orderBy('students_count', 'desc'), // Default sort is popular
+                    default => $query->orderBy('students_count', 'desc'),
                 };
             })
             ->paginate($request->per_page ?? 12)
             ->withQueryString();
-
-
 
         return Inertia::render('Course/Index', [
             'courses' => CourseResource::collection($courses),
@@ -67,6 +66,8 @@ class CourseController extends Controller
             'course' => new CourseResource(
                 Course::query()
                     ->whereHasPublishedChapters()
+                    ->withCount(['students', 'reviews'])
+                    ->withAvg('reviews', 'rating')
                     ->loadRelations([
                         'author:id,name,email',
                         'chapters' => function ($query) {
@@ -80,7 +81,9 @@ class CourseController extends Controller
                                 ])
                                 ->orderBy('order');
                         },
-                        'wishlists',
+                        'wishlists' => function ($query) {
+                            $query->select(['id', 'user_id', 'course_id']);
+                        },
                         'reviews.user:id,name:',
                         'students' => function ($query) use ($course) {
                             $query
@@ -89,6 +92,7 @@ class CourseController extends Controller
                                     'created_at',
                                     'user_id',
                                     'course_id',
+                                    'purchase_status'
                                 ])
                                 ->as('purchaseDetails')
                                 ->as('purchaseDetails')
@@ -101,10 +105,6 @@ class CourseController extends Controller
                                 ->where('course_id', $course->id)
                                 ->where('content_type', '=', 'course');
                         },
-                    ])
-                    ->withCount([
-                        'students',
-                        'reviews'
                     ])
                     ->withUserSpecificAttributes(Auth::id())
                     ->find($course->id)

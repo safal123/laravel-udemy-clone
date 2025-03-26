@@ -30,19 +30,19 @@ class CourseResource extends JsonResource
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(),
             'author' => new UserResource($this->whenLoaded('author')),
             'chapters' => ChapterResource::collection($this->whenLoaded('chapters')),
-            'chapters_count' => $this->chapters_count,
-            'students_count' => $this->students_count,
+            'chapters_count' => (int) $this->chapters_count,
+            'students_count' => (int) $this->students_count,
             'reviews_count' => $this->reviews_count,
             'duration' => $this->duration ?? 10,
             'level' => $this->level,
             'reviews' => CourseReviewResource::collection($this->whenLoaded('reviews')),
-            'rating' => $this->averageRating(),
+            'rating' => (int) $this->reviews_avg_rating,
             'students' => UserResource::collection($this->whenLoaded('students')),
             'is_enrolled' => $this->is_enrolled ?? false,
             'is_wishlisted' => $this->is_wishlisted ?? false,
             'is_author' => $this->is_author ?? false,
             'has_reviewed' => $this->has_reviewed,
-            'user_progress' => $this->userProgress,
+            'user_progress' => $this->whenLoaded('userProgress')
         ];
     }
 }

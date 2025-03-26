@@ -16,6 +16,8 @@ class HomePageController extends Controller
             'courses' => CourseResource::collection(
                 Course::query()
                     ->allPublishedCourses()
+                    ->withAvg('reviews', 'rating')
+                    ->withCount('reviews')
                     ->withUserSpecificAttributes(Auth::id())
                     ->paginate(4)
             ),

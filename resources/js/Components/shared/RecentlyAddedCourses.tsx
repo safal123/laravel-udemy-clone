@@ -1,5 +1,6 @@
 import { Course } from "@/types";
 import { Button } from "@/Components/ui/button"
+import { Link } from '@inertiajs/react'
 import { motion } from 'framer-motion';
 import CourseCard from "@/Components/shared/CourseCard"
 
@@ -97,13 +98,15 @@ export default function RecentlyAddedCourses({ courses, addToWishlist }: Recentl
         {/* "View More" button when there are many courses */}
         {courses.length > 0 && (
           <div className="mt-12 text-center">
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-full border-slate-300 hover:border-orange-300 hover:text-orange-600 px-8"
-            >
-              Browse All Courses
-            </Button>
+            <Link href={"/courses"}>
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full border-slate-300 hover:border-orange-300 hover:text-orange-600 px-8"
+              >
+                Browse All Courses
+              </Button>
+            </Link>
           </div>
         )}
       </div>
