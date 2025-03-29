@@ -69,16 +69,16 @@ const PaymentModal = ({ course }: PaymentModalProps) => {
           ref={buttonRef}
           className="w-full mt-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white"
           size="lg"
-          onClick={() => {
+          onClick={async () => {
             setOpen(true)
-            fetchClientSecret()
+            await fetchClientSecret()
           }}>
           <CreditCard className="w-5 h-5 mr-2" />
           Enroll Now
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="w-full sm:max-w-xl md:max-w-2xl rounded-xl p-0">
+      <DialogContent className="w-full sm:max-w-xl md:max-w-2xl rounded-xl p-0 mx-auto">
         {/* Fixed Header */}
         <div className="border-b border-slate-200 bg-gradient-to-r from-slate-50 to-slate-100 rounded-t-xl">
           <div className="p-6 flex items-center justify-between relative">

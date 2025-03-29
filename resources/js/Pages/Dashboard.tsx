@@ -1,3 +1,4 @@
+import CourseCard from "@/Components/shared/CourseCard"
 import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/Components/ui/card'
 import DashboardLayout from '@/Layouts/DashboardLayout'
@@ -33,25 +34,7 @@ export default function Dashboard({auth}: PageProps) {
             {courses.length > 0 ?
               <div className={'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4'}>
                 {courses.map((course) => (
-                  <Card key={course.id}>
-                    <CardHeader>
-                      <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
-                        <img
-                          src={course.image_url}
-                          alt={course.title}
-                          className={'w-full h-56 object-cover rounded-lg'}
-                        />
-                      </Link>
-                      <p className={'text-lg font-semibold mt-4'}>
-                        {course.title}
-                      </p>
-                    </CardHeader>
-                    <CardFooter>
-                      <Button>
-                        Continue Learning
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  <CourseCard course={course} />
                 ))}
               </div> :
 

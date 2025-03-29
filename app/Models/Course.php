@@ -24,10 +24,21 @@ class Course extends Model implements CourseConstants
         'title',
         'description',
         'price',
+        'discount_price',
         'is_published',
+        'is_featured',
         'image_storage_id',
+        'preview_video_id',
         'slug',
         'category_id',
+        'level',
+        'language',
+        'duration_minutes',
+        'requirements',
+        'target_audience',
+        'what_you_will_learn',
+        'tags',
+        'average_rating',
     ];
 
     protected $casts = [

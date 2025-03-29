@@ -26,17 +26,22 @@ export interface Course {
   slug: string;
   description: string;
   price: number;
+  discount_price?: number | null;
   is_published: boolean;
+  is_featured?: boolean;
   created_at: string;
   updated_at: string;
   category_id: string;
   image_url: string;
+  preview_video_id?: string | null;
   chapters: Chapter[];
   chapters_count: number;
   duration: number;
+  duration_minutes?: number | null;
   author: User;
   user_id: string;
   rating: number;
+  average_rating?: number | null;
   students: User[];
   is_enrolled: boolean;
   students_count: number;
@@ -47,12 +52,13 @@ export interface Course {
   has_reviewed: boolean;
   user_progress: UserProgress[]
   reviews_count: number;
-  rating: number;
-  price: number;
-  discount_price: number;
-  duration: number;
   level: string;
+  language?: string;
   category: string;
+  requirements?: string;
+  target_audience?: string;
+  what_you_will_learn?: string;
+  tags?: string;
 }
 
 export interface Wishlist {

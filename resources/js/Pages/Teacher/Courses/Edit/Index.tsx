@@ -14,47 +14,48 @@ import { Head, usePage } from '@inertiajs/react'
 import React from 'react'
 
 const Index = () => {
-  const {course} = usePage<{ course: Course }>().props
-  const {errors} = usePage().props
+  const { course } = usePage<{ course: Course }>().props
+  const { errors } = usePage().props
   return (
     <>
-      <Head title={'Edit Course'}/>
-      <div className={'flex flex-col space-y-4'}>
-        <CoursePageHeader course={course}/>
+      <Head title={'Edit Course'} />
+      <div className="flex flex-col space-y-6 pb-8">
+        <CoursePageHeader course={course} />
+
         <Card>
           <CardHeader className={'flex flex-row items-center justify-between'}>
             <h2 className={'text-xl font-semibold text-gray-700'}>Chapters</h2>
-            <AddChapter course={course}/>
+            <AddChapter course={course} />
           </CardHeader>
           <CardContent>
-            <ChaptersTable chapters={course.chapters}/>
+            <ChaptersTable chapters={course.chapters} />
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
-            <h2 className={'text-xl font-semibold text-gray-700'}>Course Details</h2>
+            <h2 className="text-xl font-semibold text-gray-700">Course Details</h2>
           </CardHeader>
           <CardContent>
-            <CourseForm course={course}/>
+            <CourseForm course={course} />
           </CardContent>
         </Card>
-        <div className="w-full xl:w-1/2 flex-1">
-          <div className={'min-h-[400px]'}>
-            <Card>
-              <CardHeader>
-                <h2 className={'text-xl font-semibold text-gray-700'}>Course Image</h2>
-              </CardHeader>
-              <CardContent>
-                <UploadCourseImage
-                  errors={errors}
-                  course={course}
-                />
-              </CardContent>
-            </Card>
-          </div>
+
+        <div className="w-full xl:w-1/2">
+          <Card className="h-full">
+            <CardHeader>
+              <h2 className="text-xl font-semibold text-gray-700">Course Image</h2>
+            </CardHeader>
+            <CardContent>
+              <UploadCourseImage
+                errors={errors}
+                course={course}
+              />
+            </CardContent>
+          </Card>
         </div>
-        <CourseSettings course={course}/>
-        <CourseDeleteCard/>
+
+        <CourseDeleteCard />
       </div>
     </>
   )

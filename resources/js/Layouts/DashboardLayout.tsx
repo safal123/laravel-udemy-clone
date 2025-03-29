@@ -60,7 +60,7 @@ export default function DashboardLayout({
           </AppSidebar>
         </div>
 
-        <main className="flex-1 flex flex-col overflow-auto">
+        <main className="flex-1 flex flex-col">
           {/* Top Navigation Bar */}
           <header className={`sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 ${scrolled ? 'shadow-md' : ''} transition-shadow duration-200`}>
             <div className="px-4 h-16 flex items-center justify-between">

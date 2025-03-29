@@ -26,7 +26,7 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
     return Array(5).fill(0).map((_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`}
+        className={`w-4 h-4 ${i < rating ? 'text-yellow-600 fill-yellow-500' : 'text-gray-200'}`}
       />
     ))
   }
@@ -86,8 +86,7 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
                 }}
               ></div>
 
-              {/* Content container with spacing */}
-              <div className="relative z-10">
+              <div className="relative">
                 <div className="flex flex-col sm:flex-row items-start gap-5">
                   {/* Left side with icon and text */}
                   <div className="flex-shrink-0">

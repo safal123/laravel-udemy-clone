@@ -1,3 +1,4 @@
+import Modal from '@/Components/Modal'
 import { AppTooltip } from '@/Components/shared/AppTooltip'
 import FileInput from '@/Components/shared/form/FileInput'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/Components/ui/dialog'
@@ -69,7 +70,7 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
         <DialogTrigger>
           <Video className={'w-7 h-7 cursor-pointer text-green-600 mt-2'}/>
         </DialogTrigger>
-        <DialogContent className={'max-w-4xl min-h-[calc(100vh-40%)]'}>
+        <DialogContent className={'max-w-4xl'}>
           <DialogHeader>
             <DialogTitle>
               Chapter Video

@@ -9,17 +9,16 @@ import {
   HeartIcon,
   PlayCircleIcon,
   StarIcon,
-  TrendingUpIcon,
   UsersIcon
 } from 'lucide-react'
 
 type CourseCardProps = {
   course: Course
-  addToWishlist: (courseId: string) => void
+  addToWishlist?: (courseId: string) => void
 }
 
 const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
-  const VIDEO_DURATION = '5 hours'
+  const VIDEO_DURATION = course.duration
 
   const renderStars = (rating: number) => {
     if (rating < 1) {
@@ -33,7 +32,7 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
             className={`h-3.5 w-3.5 ${index < Math.round(rating)
               ? 'text-yellow-400 fill-yellow-400'
               : 'text-gray-300'
-            }`}
+              }`}
           />
         ))}
       </div>
@@ -90,18 +89,18 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
           {/* Course level tag */}
           <div
             className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-md flex items-center">
-            <GraduationCapIcon size={12} className="mr-1.5"/>
-            <span>{course.level}</span>
+            <GraduationCapIcon size={12} className="mr-1.5" />
+            <span>{course.level.toUpperCase()}</span>
           </div>
 
           {/* Course Stats */}
           <div className="absolute bottom-3 right-3 flex space-x-2 text-white text-xs">
             <div className="flex items-center bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md">
-              <ClockIcon size={12} className="mr-1.5"/>
+              <ClockIcon size={12} className="mr-1.5" />
               <span>{VIDEO_DURATION}</span>
             </div>
             <div className="flex items-center bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md">
-              <UsersIcon size={12} className="mr-1.5"/>
+              <UsersIcon size={12} className="mr-1.5" />
               <span>{course.rating}</span>
             </div>
           </div>
@@ -109,7 +108,7 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
 
         {/* Wishlist Button */}
         <button
-          onClick={() => addToWishlist(course.id)}
+          onClick={() => addToWishlist && addToWishlist(course.id)}
           className="absolute top-3 right-3 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 hover:scale-110 z-10 shadow-md"
           aria-label="Add to wishlist"
         >
@@ -120,13 +119,16 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
         <div className="flex items-center justify-between mb-2">
           {course.rating > 0 && <div className="flex items-center">
             {renderStars(course.rating)}
-            <span className="text-xs font-medium text-slate-600 ml-2">{course.rating} <span
-              className="text-slate-400">({course.reviews_count})</span></span>
+            <span className="text-xs font-medium text-slate-600 ml-2">{course.rating}
+              <span
+                className="text-slate-400">({course.reviews_count})
+              </span>
+            </span>
           </div>}
 
           <span
             className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600 flex items-center">
-            <BookOpenIcon size={12} className="mr-1 text-orange-500"/>
+            <BookOpenIcon size={12} className="mr-1 text-orange-500" />
             {course.chapters_count} lessons
           </span>
         </div>
@@ -139,21 +141,46 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
 
         {/* Course highlights */}
         <div className="my-2 flex flex-wrap gap-1.5">
-          <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">React</span>
-          <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Frontend</span>
-          <span className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">UX/UI</span>
+          {course.tags && (() => {
+            const tags = course.tags.split(',')
+            const visibleTags = tags.slice(0, 3)
+            const remainingCount = tags.length - 3
+
+            return (
+              <>
+                {visibleTags.map((tag, index) => {
+                  // Generate a dynamic color based on the tag or index
+                  const colors = [
+                    'bg-blue-100 text-blue-800',
+                    'bg-green-100 text-green-800',
+                    'bg-purple-100 text-purple-800',
+                    'bg-amber-100 text-amber-800',
+                    'bg-rose-100 text-rose-800',
+                    'bg-teal-100 text-teal-800'
+                  ]
+                  const colorClass = colors[index % colors.length]
+
+                  return (
+                    <span
+                      key={index}
+                      className={`px-2 py-0.5 ${colorClass} rounded-full text-xs font-medium`}
+                    >
+                      {tag.trim()}
+                    </span>
+                  )
+                })}
+
+                {remainingCount > 0 && (
+                  <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">
+                    +{remainingCount} more
+                  </span>
+                )}
+              </>
+            )
+          })()}
         </div>
 
-        <div className="my-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center space-x-1">
-            <TrendingUpIcon size={14} className="text-emerald-500"/>
-            <span className="text-xs text-slate-600">
-              {Math.floor(Math.random() * (98 - 90 + 1)) + 90} completion rate
-            </span>
-          </div>
-        </div>
 
-        {/* Author profile */}
         <div className="flex items-center space-x-3 py-3 border-t border-gray-100">
           <img
             src={course.author.image_url || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'women' : 'men'}/${Math.floor(Math.random() * 100)}.jpg`}
@@ -181,7 +208,7 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
               <Button
                 variant="default"
                 size="sm"
-                className="rounded-full font-medium bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 shadow-md shadow-orange-500/20 px-5"
+                className="rounded-full font-medium bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 shadow-md shadow-emerald-500/20 px-5"
               >
                 Continue
               </Button>

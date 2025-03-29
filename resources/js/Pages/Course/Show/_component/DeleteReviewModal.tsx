@@ -53,7 +53,7 @@ export default function DeleteReviewModal({ isOpen, course, review, onClose, onE
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.3, delay: 0.1 }}
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 shadow-sm"
+              className="flex items-center justify-center flex-shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 shadow-sm"
             >
               <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
             </motion.div>
@@ -73,7 +73,7 @@ export default function DeleteReviewModal({ isOpen, course, review, onClose, onE
         </div>
 
         {/* Content */}
-        <div className="px-7 py-6 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+        <div className="px-7 py-6 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md w-full">
           <div className="space-y-5">
             <div>
               <p className="text-base leading-relaxed">
@@ -84,7 +84,6 @@ export default function DeleteReviewModal({ isOpen, course, review, onClose, onE
               </div>
             </div>
 
-            {/* Enhanced Edit Option Information - only show if onEdit is available */}
             {onEdit && (
               <div className="p-5 border border-blue-100 dark:border-blue-800/30 rounded-md bg-blue-50 dark:bg-blue-900/10">
                 <div className="flex items-start">
@@ -186,7 +185,7 @@ export default function DeleteReviewModal({ isOpen, course, review, onClose, onE
         </div>
 
         {/* Footer */}
-        <div className="px-7 py-5 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+        <div className="px-7 py-5 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex flex-col md:flex-row justify-end gap-3">
           <Button
             type="button"
             variant="outline"
