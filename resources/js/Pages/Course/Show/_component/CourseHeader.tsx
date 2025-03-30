@@ -26,6 +26,7 @@ interface ExtendedCourse extends Omit<Course, 'price'> {
   last_updated?: string;
   progress?: number;
   price?: string | number;
+  thumbnail?: string;
 }
 
 interface ExtendedUser {
@@ -41,6 +42,37 @@ interface CourseHeaderProps {
   isOnWishlist: boolean;
 }
 
+// Reusable component for course stats
+interface CourseStatItemProps {
+  icon: any;
+  value: string | number;
+  label: string;
+  bgColor: string;
+  isMobile?: boolean;
+}
+
+const CourseStatItem = ({ icon: Icon, value, label, bgColor, isMobile = false }: CourseStatItemProps) => (
+  <div className={cn(
+    "flex items-center gap-3",
+    isMobile ? "bg-black/20 backdrop-blur-sm p-3 rounded-lg" : ""
+  )}>
+    <div className={cn(
+      "rounded-full flex items-center justify-center",
+      isMobile ? "w-8 h-8" : "w-10 h-10",
+      bgColor
+    )}>
+      <Icon className={cn(
+        "text-white",
+        isMobile ? "w-4 h-4" : "w-5 h-5"
+      )} />
+    </div>
+    <div>
+      <p className="font-bold text-lg text-white">{value}</p>
+      <p className="text-sm text-white/80">{label}</p>
+    </div>
+  </div>
+);
+
 export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: CourseHeaderProps) {
   // Helper function to get initials for avatar fallback
   const getInitials = (name: string) => {
@@ -51,227 +83,171 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
       .toUpperCase();
   };
 
+  // Helper function to format duration
+  const formatDuration = (minutes?: number | null) => {
+    const mins = minutes ?? 0;
+    const hours = Math.floor(mins / 60);
+    const remainingMinutes = mins % 60;
+    return `${hours}h ${remainingMinutes}m`;
+  };
+
   return (
-    <section className="relative">
-      {/* Background gradient with pattern overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary to-primary/80 opacity-90" />
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjMiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30" />
+    <section className="relative bg-slate-900">
+      {/* Subtle pattern overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] [background-size:20px_20px] opacity-10" />
 
-      {/* Subtle dot pattern overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] bg-[length:20px_20px] opacity-20" />
-
-      {/* Content container */}
-      <div className="relative py-8 md:py-12 text-white">
+      <div className="relative py-8 lg:py-12">
         <div className="container mx-auto px-4">
-          {/* Top navigation and category */}
-          <div className="flex flex-row items-center justify-between flex-wrap gap-3 mb-10 pt-6 md:pt-0">
+          {/* Top navigation */}
+          <div className="flex items-center justify-between mb-8">
             <Link href="/courses">
-              <Button size={'sm'} variant={'outline'} className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20 transition-all duration-200">
+              <Button size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
                 <ChevronLeft size={16} className="mr-2" />
                 Browse All Series
               </Button>
             </Link>
 
-            <div className="flex flex-wrap items-center gap-2 justify-end">
+            <div className="flex items-center gap-2">
               {course.categories?.map((category: string, index: number) => (
-                <Badge key={index} className="bg-white/15 hover:bg-white/25 text-white backdrop-blur-sm transition-all duration-200">
+                <Badge key={index} className="bg-white/20 text-white hover:bg-white/30">
                   {category}
                 </Badge>
-              )) || (
-                  <Badge className="bg-white/15 hover:bg-white/25 text-white backdrop-blur-sm transition-all duration-200">
-                    Frameworks
-                  </Badge>
-                )}
-
+              ))}
               {course.level && (
-                <Badge variant="outline" className="border-white/20 text-white">
+                <Badge variant="outline" className="border-white/30 text-white">
                   {course.level}
                 </Badge>
               )}
             </div>
           </div>
 
-          {/* Course title with animated gradient */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-pink-200 to-pink-500/80 animate-gradient">
-            {course.title}
-          </h1>
-
-          {/* Author info with avatar */}
-          <div className="flex items-center mb-8 group">
-            <Avatar className="h-10 w-10 border-2 border-white/20 mr-3 group-hover:scale-105 transition-all duration-300">
-              <AvatarImage src={course.author.avatar} alt={course.author.name} />
-              <AvatarFallback className="bg-white/10 text-white">{getInitials(course.author.name)}</AvatarFallback>
-            </Avatar>
+          <div className="grid lg:grid-cols-[1fr,400px] gap-8 items-start">
+            {/* Left column - Course info */}
             <div>
-              <p className="text-lg font-medium">
-                By <Link href={`/instructors/${course.author.id}`} className="underline decoration-2 decoration-white/30 hover:decoration-white/70 transition-all duration-200 ml-1">{course.author.name}</Link>
-              </p>
-              {course.author.role && (
-                <p className="text-sm text-white/70">{course.author.role}</p>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white leading-tight">
+                {course.title}
+              </h1>
+
+              {/* Author info */}
+              <div className="flex items-center mb-8">
+                <Avatar className="h-12 w-12 border-2 border-white/20 mr-4">
+                  <AvatarImage src={course.author.avatar} alt={course.author.name} />
+                  <AvatarFallback className="bg-white/20 text-white">{getInitials(course.author.name)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-lg font-medium text-white">
+                    By <Link href={`/instructors/${course.author.id}`} className="hover:text-primary-400">{course.author.name}</Link>
+                  </p>
+                  {course.author.role && (
+                    <p className="text-sm text-white/70">{course.author.role}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Course stats - Desktop */}
+              <div className="hidden lg:grid grid-cols-3 gap-6 mb-8">
+                <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                  <CourseStatItem icon={Star} value={course.rating} label={`${course.reviews_count || 0} Reviews`} bgColor="bg-yellow-500" />
+                </div>
+                <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                  <CourseStatItem icon={Clock} value={formatDuration(course?.duration_minutes)} label="Course Duration" bgColor="bg-blue-500" />
+                </div>
+                <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                  <CourseStatItem icon={User} value={course.students_count || 0} label="Students Enrolled" bgColor="bg-green-500" />
+                </div>
+                {course.chapters?.length > 0 && (
+                  <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                    <CourseStatItem icon={BookOpen} value={course.chapters.length} label="Total Chapters" bgColor="bg-purple-500" />
+                  </div>
+                )}
+                {course.updated_at && (
+                  <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                    <CourseStatItem icon={Calendar} value={course.updated_at} label="Last Updated" bgColor="bg-red-500" />
+                  </div>
+                )}
+              </div>
+
+              {/* Course stats - Mobile */}
+              <div className="grid grid-cols-2 gap-3 mb-8 lg:hidden">
+                <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                  <CourseStatItem icon={Star} value={course.rating || 5} label="Rating" bgColor="bg-yellow-500" isMobile />
+                </div>
+                <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                  <CourseStatItem icon={Clock} value={formatDuration(course?.duration_minutes)} label="Duration" bgColor="bg-blue-500" isMobile />
+                </div>
+                <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                  <CourseStatItem icon={User} value={course.students_count || 0} label="Students" bgColor="bg-green-500" isMobile />
+                </div>
+                {course.chapters?.length > 0 && (
+                  <div className="bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                    <CourseStatItem icon={BookOpen} value={course.chapters.length} label="Chapters" bgColor="bg-purple-500" isMobile />
+                  </div>
+                )}
+                {course.updated_at && (
+                  <div className="col-span-2 bg-black/20 backdrop-blur-sm p-4 rounded-lg">
+                    <CourseStatItem icon={Calendar} value={course.updated_at} label="Last Updated" bgColor="bg-red-500" isMobile />
+                  </div>
+                )}
+              </div>
+
+              {/* Action buttons */}
+              {!course.is_author && (
+                <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                  {course.is_enrolled ? (
+                    <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`} className="w-full sm:w-auto">
+                      <Button size="lg" className="w-full bg-primary text-white hover:bg-primary/90">
+                        <VideoIcon size={18} className="mr-2" />
+                        Continue Learning
+                        <span className="ml-2 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">
+                          {course.user_progress[0]?.progress_percentage}% Complete
+                        </span>
+                      </Button>
+                    </Link>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row gap-3 w-full">
+                      <Button
+                        variant="outline"
+                        onClick={() => toggleWishlist(course as unknown as Course)}
+                        className={cn(
+                          "w-full sm:w-auto border-white/30 bg-white/10 text-white hover:bg-white/20",
+                          isOnWishlist && "bg-white/20"
+                        )}
+                      >
+                        <SaveIcon size={18} className={cn("mr-2", isOnWishlist && "fill-white")} />
+                        {isOnWishlist ? 'Saved to Wishlist' : 'Add to Wishlist'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
-          </div>
 
-          {/* Course stats with improved visual design */}
-          <div className="flex flex-wrap gap-6 mb-10">
-            <div className="w-full md:w-fit bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden">
-              {/* Mobile view - Grid layout */}
-              <div className="grid grid-cols-2 gap-2 p-4 md:hidden">
-                <div className="bg-white/5 p-3 rounded-lg flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-yellow-500/20 flex-shrink-0 flex items-center justify-center">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                  </div>
-                  <div>
-                    <p className="text-xl font-bold leading-tight">{course.rating || 5}</p>
-                    <p className="text-xs text-white/70">Rating</p>
-                  </div>
-                </div>
-
-                <div className="bg-white/5 p-3 rounded-lg flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-blue-500/20 flex-shrink-0 flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="text-xl font-bold leading-tight">{course.duration}</p>
-                    <p className="text-xs text-white/70">Duration</p>
-                  </div>
-                </div>
-
-                <div className="bg-white/5 p-3 rounded-lg flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-green-500/20 flex-shrink-0 flex items-center justify-center">
-                    <User className="w-4 h-4 text-green-400" />
-                  </div>
-                  <div>
-                    <p className="text-xl font-bold leading-tight">{course.students_count || 500}</p>
-                    <p className="text-xs text-white/70">Students</p>
-                  </div>
-                </div>
-
-                {course.chapters?.length > 0 && (
-                  <div className="bg-white/5 p-3 rounded-lg flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-purple-500/20 flex-shrink-0 flex items-center justify-center">
-                      <BookOpen className="w-4 h-4 text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="text-xl font-bold leading-tight">{course.chapters.length}</p>
-                      <p className="text-xs text-white/70">Chapters</p>
-                    </div>
-                  </div>
-                )}
-
-                {course.updated_at && (
-                  <div className="bg-white/5 p-3 rounded-lg flex items-center gap-3 col-span-2">
-                    <div className="w-9 h-9 rounded-full bg-red-500/20 flex-shrink-0 flex items-center justify-center">
-                      <Calendar className="w-4 h-4 text-red-400" />
-                    </div>
-                    <div>
-                      <p className="text-lg font-medium">{course.updated_at}</p>
-                      <p className="text-xs text-white/70">Last updated</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              {/* Desktop view - Row layout */}
-              <div className="hidden md:flex md:flex-row md:items-center gap-4 md:gap-8 p-4 md:px-6 md:py-3">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                    <Star className="w-5 h-5 text-yellow-400" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{course.rating}</p>
-                    <p className="text-xs text-white/70">{course.reviews_count} reviews</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{course.duration}</p>
-                    <p className="text-xs text-white/70">Course duration</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <User className="w-5 h-5 text-green-400" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{course.students_count || 500}</p>
-                    <p className="text-xs text-white/70">Enrolled students</p>
-                  </div>
-                </div>
-
-                {course.chapters?.length > 0 && (
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">{course.chapters.length}</p>
-                      <p className="text-xs text-white/70">Total chapters</p>
-                    </div>
-                  </div>
-                )}
-
-                {course.updated_at && (
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                      <Calendar className="w-5 h-5 text-red-400" />
-                    </div>
-                    <div>
-                      <p className="text-base font-medium">{course.updated_at}</p>
-                      <p className="text-xs text-white/70">Last updated</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Action buttons with improved styling */}
-          {!course.is_author && (
-            <div className="flex flex-col sm:flex-row gap-4">
-              {course.is_enrolled ? (
-                <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
-                  <Button size="lg" className="bg-white text-primary hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 group">
-                    <VideoIcon size={18} className="mr-2 group-hover:animate-pulse" />
-                    Continue Learning
-                    <span className="ml-2 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">
-                      {course.user_progress[0]?.progress_percentage}% Complete
-                    </span>
-                  </Button>
-                </Link>
+            {/* Right column - Course thumbnail */}
+            <div className="relative aspect-video rounded-xl overflow-hidden bg-black/30 shadow-xl ring-1 ring-white/10">
+              {course.image_url ? (
+                <img
+                  src={course.image_url}
+                  alt={course.title}
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => toggleWishlist(course as unknown as Course)}
-                    className={cn(
-                      "border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white transition-all duration-200",
-                      isOnWishlist && "bg-white/20"
-                    )}
-                  >
-                    <SaveIcon size={18} className={cn(
-                      "mr-2 transition-all duration-300",
-                      isOnWishlist && "fill-white"
-                    )} />
-                    {isOnWishlist ? 'Saved to Wishlist' : 'Add to Wishlist'}
-                  </Button>
-
-                  {/* Mobile-only enroll button - Floating action button style */}
-                  <Link href={`/courses/${course.slug}/enroll`} className="sm:hidden fixed bottom-6 right-6 z-50">
-                    <Button size="icon" className="w-14 h-14 rounded-full bg-white text-primary hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl">
-                      <TrendingUp size={24} />
-                    </Button>
-                  </Link>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <VideoIcon className="w-16 h-16 text-white/30" />
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
       </div>
+
+      {/* Mobile enroll button */}
+      {!course.is_author && !course.is_enrolled && (
+        <Link href={`/courses/${course.slug}/enroll`} className="sm:hidden fixed bottom-6 right-6 z-50">
+          <Button size="icon" className="w-14 h-14 rounded-full bg-primary text-white hover:bg-primary/90 shadow-lg">
+            <TrendingUp size={24} />
+          </Button>
+        </Link>
+      )}
     </section>
-  )
+  );
 }

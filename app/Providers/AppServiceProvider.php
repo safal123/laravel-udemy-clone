@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         JsonResource::withoutWrapping();
         $this->bootRoute();
+
+        Gate::define('view-teacher-dashboard', function (User $user) {
+            return $user->hasAnyRole(['teacher', 'admin']);
+        });
     }
 
     public function bootRoute(): void {}
