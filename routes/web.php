@@ -18,6 +18,7 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 require __DIR__ . '/auth.php';
 
@@ -133,3 +134,48 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('s3.get-object-url');
     });
 });
+
+// Footer Pages
+Route::get('/about', function () {
+    return Inertia::render('About/Index');
+})->name('about');
+
+Route::get('/contact', function () {
+    return Inertia::render('Contact/Index');
+})->name('contact');
+
+Route::get('/terms', function () {
+    return Inertia::render('Legal/Terms');
+})->name('terms');
+
+Route::get('/privacy', function () {
+    return Inertia::render('Legal/Privacy');
+})->name('privacy');
+
+Route::get('/cookie-policy', function () {
+    return Inertia::render('Legal/Cookie');
+})->name('cookie-policy');
+
+Route::get('/help', function () {
+    return Inertia::render('Help/Index');
+})->name('help');
+
+Route::get('/careers', function () {
+    return Inertia::render('Careers/Index');
+})->name('careers');
+
+Route::get('/blog', function () {
+    return Inertia::render('Blog/Index');
+})->name('blog');
+
+Route::get('/teach', function () {
+    return Inertia::render('Teach/Index');
+})->name('teach');
+
+Route::get('/instructor-guidelines', function () {
+    return Inertia::render('Teach/Guidelines');
+})->name('instructor-guidelines');
+
+Route::get('/partner', function () {
+    return Inertia::render('Partner/Index');
+})->name('partner');

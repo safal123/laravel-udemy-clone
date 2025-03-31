@@ -26,7 +26,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user()
-                    ? new UserResource($request->user()->loadMissing(['roles', 'wishlists.course']))
+                    ? new UserResource(
+                        User::with('roles', 'wishlists.course')
+                            ->find($request->user()->id)
+
+                    )
                     : null,
             ],
             'categories' => fn() => cache()->remember('categories', 86400, function () {

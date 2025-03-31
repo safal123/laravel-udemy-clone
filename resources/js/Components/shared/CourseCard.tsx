@@ -220,9 +220,12 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-full font-medium border-slate-300 hover:border-slate-400 hover:bg-slate-50 px-5"
+                    className="relative group overflow-hidden rounded-full font-medium border-emerald-900/20 hover:border-emerald-900/30 px-5"
                   >
-                    Edit Course
+                    <span className="absolute inset-0 bg-gradient-to-r from-emerald-900/5 via-slate-900/5 to-rose-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <span className="relative bg-gradient-to-r from-emerald-900 via-slate-900 to-rose-900 bg-clip-text text-transparent">
+                      Edit Course
+                    </span>
                   </Button>
                 </Link>
               ) : (

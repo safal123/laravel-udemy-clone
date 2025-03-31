@@ -55,7 +55,7 @@
         "embla-carousel": "^8.1.5",
         "embla-carousel-autoplay": "^8.1.5",
         "embla-carousel-react": "^8.1.5",
-        "framer-motion": "^12.5.0",
+        "framer-motion": "^12.6.2",
         "highlight.js": "^11.11.1",
         "hls.js": "^1.5.20",
         "lodash": "^4.17.21",

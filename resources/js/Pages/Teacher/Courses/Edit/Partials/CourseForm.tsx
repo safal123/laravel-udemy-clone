@@ -57,8 +57,15 @@ const CourseForm = ({ course, mode }: CourseFormProps) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (mode === 'create') return post(route('teachers.courses.store'))
-    put(route('teachers.courses.update', course?.id))
+    if (mode === 'create') {
+      post(route('teachers.courses.store'), {
+        preserveScroll: true
+      })
+    } else {
+      put(route('teachers.courses.update', course?.id), {
+        preserveScroll: true
+      })
+    }
   }
 
   useEffect(() => {
@@ -94,13 +101,24 @@ const CourseForm = ({ course, mode }: CourseFormProps) => {
 
   return (
     <div className="w-full">
+      {mode !== 'create' && (
+        <div className="flex items-center justify-end py-2">
+          <LoadingButton
+            loading={processing}
+            type="submit"
+            className="px-8"
+          >
+            Update Course
+          </LoadingButton>
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-6">
         <Tabs defaultValue="basic" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative mb-6">
-            <TabsList className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-2 md:overflow-visible">
+            <TabsList className="bg-green-50/90 p-0 border h-full flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-2 md:overflow-visible">
               <TabsTrigger
                 value="basic"
-                className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 snap-start text-sm md:text-base"
+                className="flex-1 min-w-[120px] border-r flex items-center justify-center gap-1.5 snap-start text-sm md:text-base"
               >
                 <PenIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">Basic Info</span>

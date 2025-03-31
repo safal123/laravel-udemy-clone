@@ -16,6 +16,8 @@ export interface User {
   wishlists: Wishlist[];
   image_url: string,
   role: string,
+  is_teacher: boolean,
+  is_admin: boolean,
 }
 
 

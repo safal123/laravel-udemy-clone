@@ -120,7 +120,9 @@ export default function HeroSection() {
                 <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Students</div>
               </div>
               <div>
-                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400">{totalRatings}/5</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400">
+                  {((Math.round(totalRatings * 2) / 2) % 1 === 0 ? Math.round(totalRatings * 2) / 2 : (Math.round(totalRatings * 2) / 2).toFixed(2))}/5
+                </div>
                 <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Rating</div>
               </div>
             </motion.div>

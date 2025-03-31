@@ -24,9 +24,7 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->whenHas('email_verified_at'),
             'wishlists' => WishlistResource::collection($this->whenLoaded('wishlists')),
             'roles' => $this->whenLoaded('roles'),
-            'is_teacher' => $this->whenLoaded('roles', function () {
-                return $this->hasRole('teacher');
-            }),
+            'is_teacher' => $this->whenLoaded('roles') ? ($this->hasRole('teacher') || $this->hasRole('super-admin')) : false,
             'purchase_details' => $this->purchaseDetails,
         ];
     }
