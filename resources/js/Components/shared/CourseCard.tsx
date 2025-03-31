@@ -1,7 +1,8 @@
 import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardTitle } from '@/Components/ui/card'
-import { Course } from '@/types'
-import { Link } from '@inertiajs/react'
+import { useWishlist } from '@/hooks/useWishlist'
+import { Course, PageProps, User } from '@/types'
+import { Link, usePage } from '@inertiajs/react'
 import {
   BookOpenIcon,
   ClockIcon,
@@ -17,8 +18,18 @@ type CourseCardProps = {
   addToWishlist?: (courseId: string) => void
 }
 
-const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
-  const VIDEO_DURATION = course.duration
+const CourseCard = ({ course }: CourseCardProps) => {
+  const { addToWishlist, removeFromWishlist } = useWishlist()
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const remainingMinutes = minutes % 60
+    return hours > 0 ? `${hours}h ${remainingMinutes}m` : `${minutes}m`
+  }
+
+  const toggleWishlist = () => {
+    course.is_wishlisted ? removeFromWishlist(course) : addToWishlist(course)
+  }
 
   const renderStars = (rating: number) => {
     if (rating < 1) {
@@ -67,6 +78,7 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
         </div>
       )}
 
+
       {/* Image Container with Overlay */}
       <div className="relative overflow-hidden">
         <Link href={`/courses/${course.slug}`}>
@@ -95,24 +107,26 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
 
           {/* Course Stats */}
           <div className="absolute bottom-3 right-3 flex space-x-2 text-white text-xs">
-            <div className="flex items-center bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md">
-              <ClockIcon size={12} className="mr-1.5" />
-              <span>{VIDEO_DURATION}</span>
-            </div>
+            {course.duration_minutes && (
+              <div className="flex items-center bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md">
+                <ClockIcon size={12} className="mr-1.5" />
+                <span>{formatDuration(course.duration_minutes)}</span>
+              </div>
+            )}
             <div className="flex items-center bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md">
               <UsersIcon size={12} className="mr-1.5" />
-              <span>{course.rating}</span>
+              <span>{course.students_count}</span>
             </div>
           </div>
         </Link>
 
         {/* Wishlist Button */}
         <button
-          onClick={() => addToWishlist && addToWishlist(course.id)}
+          onClick={toggleWishlist}
           className="absolute top-3 right-3 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 hover:scale-110 z-10 shadow-md"
           aria-label="Add to wishlist"
         >
-          <HeartIcon size={18} className="text-white drop-shadow-md" />
+          <HeartIcon size={18} className={`drop-shadow-md ${course.is_wishlisted ? 'text-red-500' : 'text-white'}`} />
         </button>
       </div>
       <CardContent className="p-5 flex flex-col flex-grow bg-gradient-to-b from-white to-slate-50">
@@ -198,8 +212,8 @@ const CourseCard = ({ course, addToWishlist }: CourseCardProps) => {
             <div className="font-bold text-slate-900 text-lg">
               ${course.price}
             </div>
-            {course.price > 0 && (
-              <div className="text-xs text-slate-500 line-through">${(course.price * 1.3).toFixed(2)}</div>
+            {course.discount_price && course.discount_price > 0 && (
+              <div className="text-xs text-slate-500 line-through">${course.discount_price}</div>
             )}
           </div>
 

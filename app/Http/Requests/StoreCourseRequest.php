@@ -25,7 +25,7 @@ class StoreCourseRequest extends FormRequest
     {
         return [
             'title' => 'required|string|min:3|max:255',
-            'description' => 'required|string|min:10',
+            'description' => 'nullable|string|min:10',
             'price' => 'required|numeric|min:0|max:999',
             'discount_price' => 'nullable|numeric|min:0|max:999|lt:price',
             'category_id' => 'required|exists:categories,id',
@@ -33,6 +33,7 @@ class StoreCourseRequest extends FormRequest
             'is_published' => 'boolean',
             'is_featured' => 'boolean',
             'level' => [
+                'nullable',
                 'string',
                 Rule::in([
                     CourseConstants::LEVEL_BEGINNER,
@@ -40,7 +41,6 @@ class StoreCourseRequest extends FormRequest
                     CourseConstants::LEVEL_ADVANCED,
                     CourseConstants::LEVEL_ALL_LEVELS,
                 ]),
-                'default:' . CourseConstants::LEVEL_BEGINNER,
             ],
             'language' => 'string|max:50',
             'duration_minutes' => 'nullable|integer|min:1',
@@ -51,6 +51,18 @@ class StoreCourseRequest extends FormRequest
             'preview_video_id' => 'nullable|string',
             'image_storage_id' => 'nullable|string',
         ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (!$this->has('level')) {
+            $this->merge([
+                'level' => CourseConstants::LEVEL_BEGINNER
+            ]);
+        }
     }
 
     /**

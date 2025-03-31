@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,6 @@ class WishlistController extends Controller
             return redirect()
                 ->back()
                 ->withErrors(['error' => 'Course already in wishlist.']);
-
         }
 
         $request
@@ -25,9 +25,9 @@ class WishlistController extends Controller
             ->back();
     }
 
-    public function destroy(Request $request, $id): RedirectResponse
+    public function destroy(Request $request, Course $course): RedirectResponse
     {
-        $request->user()->wishlists()->findOrFail($id)->delete();
+        $request->user()->wishlists()->where('course_id', $course->id)->delete();
 
         return redirect()
             ->back()

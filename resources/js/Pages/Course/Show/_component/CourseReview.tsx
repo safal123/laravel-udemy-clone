@@ -151,8 +151,8 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
                   )}
                 </div>
               </div>
-              </div>
-            </Card>
+            </div>
+          </Card>
         </motion.div>
       )}
 
@@ -178,22 +178,20 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
         onClose={() => setIsDeleteReviewModalOpen(false)}
       />
 
-      <Card className="border border-gray-100 rounded-xl overflow-hidden mb-10">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 py-6">
+      <Card className="border border-gray-200 rounded-xl overflow-hidden mb-10">
+        <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-800 border-b border-slate-200 py-6">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-            <div>
-              <CardTitle className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-                Student Reviews
-              </CardTitle>
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {renderStars(course?.rating || 0)}
-                </div>
-                <span className="text-gray-800 font-medium">
-                  {course?.rating?.toFixed(1) || '0.0'}
-                </span>
-                <span className="text-gray-500 text-sm">({course?.reviews?.length || 0} reviews)</span>
+            <CardTitle className="text-xl sm:text-2xl font-bold text-white mb-2">
+              Student Reviews
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <div className="flex">
+                {renderStars(course?.rating || 0)}
               </div>
+              <span className="text-white font-medium">
+                {course?.rating?.toFixed(1) || '0.0'}
+              </span>
+              <span className="text-slate-300 text-sm">({course?.reviews?.length || 0} reviews)</span>
             </div>
 
             {reviewStats && course?.reviews && course.reviews?.length > 0 && (
@@ -226,21 +224,30 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
         <CardContent className="p-6">
           <div className="space-y-6">
             {(!course?.reviews || course.reviews.length === 0) ? (
-              <div className="text-center py-12">
-                <div className="bg-indigo-50 inline-flex rounded-full p-4 mb-4">
-                  <MessageSquare className="w-7 h-7 text-indigo-400" />
+              <div className="text-center py-16 px-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full blur-xl opacity-50"></div>
+                  <div className="relative bg-white inline-flex rounded-full p-5 mb-6 shadow-lg border border-indigo-50">
+                    <MessageSquare className="w-8 h-8 text-indigo-500" />
+                  </div>
                 </div>
-                <h3 className="text-lg font-medium text-gray-800 mb-2">No Reviews Yet</h3>
-                <p className="text-gray-500 max-w-md mx-auto">
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">No Reviews Yet</h3>
+                <p className="text-gray-600 max-w-md mx-auto text-base leading-relaxed">
                   This course doesn't have any reviews yet.
-                  {isEnrolled && !course?.has_reviewed && " Be the first to share your experience!"}
+                  {isEnrolled && !course?.has_reviewed && (
+                    <span className="block mt-2 text-indigo-600 font-medium">
+                      Be the first to share your experience!
+                    </span>
+                  )}
                 </p>
 
                 {isEnrolled && !course?.has_reviewed && (
                   <Button
-                    className="mt-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                    className="mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-2.5 rounded-full shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transition-all duration-300 flex items-center gap-2 mx-auto"
                     onClick={() => document.getElementById('review-form')?.scrollIntoView({ behavior: 'smooth' })}
                   >
+                    <MessageSquare className="w-4 h-4" />
                     Write a Review
                   </Button>
                 )}
@@ -345,9 +352,9 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
                 )}
               </div>
             )}
-        </div>
-      </CardContent>
-    </Card>
+          </div>
+        </CardContent>
+      </Card>
     </>
   )
 }

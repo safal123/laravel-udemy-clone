@@ -68,7 +68,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('wishlists', WishlistController::class)
         ->only(['index', 'store', 'destroy'])
-        ->names('wishlists');
+        ->names('wishlists')
+        ->parameters([
+            'wishlists' => 'course',
+        ]);
 
     /*
      * Teacher Courses Routes

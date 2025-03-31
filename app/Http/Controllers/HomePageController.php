@@ -15,9 +15,10 @@ class HomePageController extends Controller
         return Inertia::render('Welcome', [
             'courses' => CourseResource::collection(
                 Course::query()
+                    ->whereNotNull('tags')
                     ->allPublishedCourses()
                     ->withAvg('reviews', 'rating')
-                    ->withCount('reviews')
+                    ->withCount('reviews', 'students')
                     ->withUserSpecificAttributes(Auth::id())
                     ->paginate(4)
             ),

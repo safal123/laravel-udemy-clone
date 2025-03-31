@@ -58,6 +58,7 @@ const CourseForm = ({ course, mode }: CourseFormProps) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (mode === 'create') {
+      console.log(data)
       post(route('teachers.courses.store'), {
         preserveScroll: true
       })
@@ -123,13 +124,15 @@ const CourseForm = ({ course, mode }: CourseFormProps) => {
                 <PenIcon className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">Basic Info</span>
               </TabsTrigger>
-              <TabsTrigger
-                value="details"
-                className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 snap-start text-sm md:text-base"
-              >
-                <BookOpenIcon className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">Details</span>
-              </TabsTrigger>
+              {mode !== 'create' && (
+                <TabsTrigger
+                  value="details"
+                  className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 snap-start text-sm md:text-base"
+                >
+                  <BookOpenIcon className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">Details</span>
+                </TabsTrigger>
+              )}
             </TabsList>
             <div className="absolute left-0 right-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-muted to-transparent md:hidden"></div>
 

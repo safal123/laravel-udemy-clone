@@ -21,7 +21,7 @@ class CourseController extends Controller
      */
     public function index(): Response
     {
-        $this->authorize('viewAny', Course::class);
+        $this->authorize('viewTeacherCourses', Course::class);
 
         return Inertia::render('Teacher/Courses/Index', [
             'courses' => new CourseCollection(

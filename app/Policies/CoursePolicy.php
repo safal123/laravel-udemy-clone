@@ -10,7 +10,7 @@ class CoursePolicy
 {
     public function viewAny(User $user): Response
     {
-        return $user->isTeacher()
+        return $user->is_verified
             ? Response::allow()
             : Response::deny('You are not authorized to view courses.');
     }
@@ -65,7 +65,7 @@ class CoursePolicy
             || $course->isFree()
             || $user->isTeacherOfCourse($course)
         ) {
-            return Response::deny('You are not authorized to enroll in this course.');
+            Response::denyWithStatus(404);
         }
 
         return Response::allow();
@@ -80,6 +80,14 @@ class CoursePolicy
 
         return $user->hasCoursePurchased($course)
             ? Response::allow()
-            : Response::deny('You must purchase this course before leaving a review.');
+            : Response::denyWithStatus(404);
+    }
+
+    public function viewTeacherCourses(User $user): Response
+    {
+        return $user->isTeacher() ||
+            $user->hasRole('super-admin')
+            ? Response::allow()
+            : Response::denyWithStatus(404);
     }
 }

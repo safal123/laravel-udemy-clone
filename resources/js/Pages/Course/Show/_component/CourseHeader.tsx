@@ -16,30 +16,9 @@ import { Link } from "@inertiajs/react";
 import { Course } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { cn } from "@/lib/utils";
-
-// Extended types to support new properties
-// @ts-ignore
-interface ExtendedCourse extends Omit<Course, 'price'> {
-  categories?: string[];
-  level?: string;
-  reviews_count?: number;
-  last_updated?: string;
-  progress?: number;
-  price?: string | number;
-  thumbnail?: string;
-}
-
-interface ExtendedUser {
-  id: string;
-  name: string;
-  avatar?: string;
-  role?: string;
-}
-
 interface CourseHeaderProps {
-  course: ExtendedCourse & { author: ExtendedUser };
+  course: Course
   toggleWishlist: (course: Course) => void;
-  isOnWishlist: boolean;
 }
 
 // Reusable component for course stats
@@ -73,7 +52,7 @@ const CourseStatItem = ({ icon: Icon, value, label, bgColor, isMobile = false }:
   </div>
 );
 
-export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: CourseHeaderProps) {
+export default function CourseHeader({ course, toggleWishlist }: CourseHeaderProps) {
   // Helper function to get initials for avatar fallback
   const getInitials = (name: string) => {
     return name
@@ -108,14 +87,31 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
             </Link>
 
             <div className="flex items-center gap-2">
-              {course.categories?.map((category: string, index: number) => (
-                <Badge key={index} className="bg-white/20 text-white hover:bg-white/30">
-                  {category}
-                </Badge>
-              ))}
+              {course.tags && (() => {
+                const tags = course.tags.split(',');
+                const colors = [
+                  'bg-blue-100 text-blue-800',
+                  'bg-green-100 text-green-800',
+                  'bg-purple-100 text-purple-800',
+                  'bg-yellow-100 text-yellow-800',
+                  'bg-red-100 text-red-800',
+                  'bg-pink-100 text-pink-800',
+                  'bg-indigo-100 text-indigo-800'
+                ];
+
+                return (
+                  <div className="hidden lg:flex flex-wrap gap-2">
+                    {tags.map((tag, index) => (
+                      <Badge key={index} variant="outline" className={`${colors[index % colors.length]}`}>
+                        {tag.trim()}
+                      </Badge>
+                    ))}
+                  </div>
+                );
+              })()}
               {course.level && (
                 <Badge variant="outline" className="border-white/30 text-white">
-                  {course.level}
+                  {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
                 </Badge>
               )}
             </div>
@@ -209,12 +205,13 @@ export default function CourseHeader({ course, toggleWishlist, isOnWishlist }: C
                         variant="outline"
                         onClick={() => toggleWishlist(course as unknown as Course)}
                         className={cn(
-                          "w-full sm:w-auto border-white/30 bg-white/10 text-white hover:bg-white/20",
-                          isOnWishlist && "bg-white/20"
+                          "w-full sm:w-auto border-white/20 bg-white/10 text-white hover:bg-white/20 transition-all duration-200",
+                          "backdrop-blur-sm shadow-sm hover:shadow-md",
+                          course.is_wishlisted && "bg-white/20 border-white/30"
                         )}
                       >
-                        <SaveIcon size={18} className={cn("mr-2", isOnWishlist && "fill-white")} />
-                        {isOnWishlist ? 'Saved to Wishlist' : 'Add to Wishlist'}
+                        <SaveIcon size={18} className={cn("mr-2", course.is_wishlisted && "fill-white")} />
+                        {course.is_wishlisted ? 'Saved to My List' : 'Save for Later'}
                       </Button>
                     </div>
                   )}
