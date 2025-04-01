@@ -80,8 +80,12 @@ export default function CourseHeader({ course, toggleWishlist }: CourseHeaderPro
           {/* Top navigation */}
           <div className="flex items-center justify-between mb-8">
             <Link href="/courses">
-              <Button size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
-                <ChevronLeft size={16} className="mr-2" />
+              <Button
+                size="sm"
+                variant="outline"
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-primary-400 transition-all duration-300 hover:border-white/40 hover:shadow-lg hover:shadow-white/5 hover:translate-x-[-2px]"
+              >
+                <ChevronLeft size={16} className="mr-2 group-hover:animate-pulse" />
                 Browse All Series
               </Button>
             </Link>
@@ -127,7 +131,7 @@ export default function CourseHeader({ course, toggleWishlist }: CourseHeaderPro
               {/* Author info */}
               <div className="flex items-center mb-8">
                 <Avatar className="h-12 w-12 border-2 border-white/20 mr-4">
-                  <AvatarImage src={course.author.avatar} alt={course.author.name} />
+                  <AvatarImage src={course.author.image_url} alt={course.author.name} />
                   <AvatarFallback className="bg-white/20 text-white">{getInitials(course.author.name)}</AvatarFallback>
                 </Avatar>
                 <div>
@@ -206,12 +210,14 @@ export default function CourseHeader({ course, toggleWishlist }: CourseHeaderPro
                         onClick={() => toggleWishlist(course as unknown as Course)}
                         className={cn(
                           "w-full sm:w-auto border-white/20 bg-white/10 text-white hover:bg-white/20 transition-all duration-200",
-                          "backdrop-blur-sm shadow-sm hover:shadow-md",
-                          course.is_wishlisted && "bg-white/20 border-white/30"
+                          "backdrop-blur-sm shadow-sm hover:shadow-md hover:scale-105",
+                          course.is_wishlisted
+                            ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-emerald-500/30 hover:from-emerald-500/30 hover:to-teal-500/30"
+                            : "hover:bg-gradient-to-r hover:from-indigo-500/20 hover:to-purple-500/20"
                         )}
                       >
-                        <SaveIcon size={18} className={cn("mr-2", course.is_wishlisted && "fill-white")} />
-                        {course.is_wishlisted ? 'Saved to My List' : 'Save for Later'}
+                        <SaveIcon size={18} className={cn("mr-2", course.is_wishlisted && "fill-emerald-400")} />
+                        {course.is_wishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
                       </Button>
                     </div>
                   )}

@@ -10,7 +10,8 @@ import {
   HeartIcon,
   PlayCircleIcon,
   StarIcon,
-  UsersIcon
+  UsersIcon,
+  Calendar
 } from 'lucide-react'
 
 type CourseCardProps = {
@@ -20,6 +21,24 @@ type CourseCardProps = {
 
 const CourseCard = ({ course }: CourseCardProps) => {
   const { addToWishlist, removeFromWishlist } = useWishlist()
+
+  // Generate unique random purchase date within last 1-2 days
+  const getRandomPurchaseDate = () => {
+    const now = new Date('2025-01-15') // Set base date to 2025
+    const twoDaysAgo = new Date(now)
+    twoDaysAgo.setDate(now.getDate() - 2)
+
+    // Use course ID to generate a unique seed
+    const seed = parseInt(course.id.toString().slice(-4)) || 0
+    const daysOffset = (seed % 3) // Will give 0, 1, or 2 days
+
+    const purchaseDate = new Date(twoDaysAgo)
+    purchaseDate.setDate(twoDaysAgo.getDate() + daysOffset)
+
+    return purchaseDate
+  }
+
+  const randomPurchaseDate = getRandomPurchaseDate()
 
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60)
@@ -123,10 +142,11 @@ const CourseCard = ({ course }: CourseCardProps) => {
         {/* Wishlist Button */}
         <button
           onClick={toggleWishlist}
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 hover:scale-110 z-10 shadow-md"
+          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-300 hover:scale-110 z-10 shadow-md ${course.is_wishlisted ? 'bg-red-500 hover:bg-red-600' : 'bg-white/20 backdrop-blur-sm hover:bg-white/40'
+            }`}
           aria-label="Add to wishlist"
         >
-          <HeartIcon size={18} className={`drop-shadow-md ${course.is_wishlisted ? 'text-red-500' : 'text-white'}`} />
+          <HeartIcon size={18} className={`drop-shadow-md ${course.is_wishlisted ? 'text-white' : 'text-white'}`} />
         </button>
       </div>
       <CardContent className="p-5 flex flex-col flex-grow bg-gradient-to-b from-white to-slate-50">
@@ -201,9 +221,17 @@ const CourseCard = ({ course }: CourseCardProps) => {
             alt={course.author.name}
             className="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-sm"
           />
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-medium text-slate-900 leading-tight">{course.author.name}</p>
             <p className="text-xs text-slate-500">{course.author.role || 'Instructor'}</p>
+            <div className="mt-1 flex items-center text-xs text-slate-500">
+              <Calendar className="w-3 h-3 mr-1" />
+              <span>Last purchased {randomPurchaseDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              })}</span>
+            </div>
           </div>
         </div>
 
