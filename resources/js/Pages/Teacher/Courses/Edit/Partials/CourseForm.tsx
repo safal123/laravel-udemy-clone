@@ -116,15 +116,15 @@ const CourseForm = ({ course, mode }: CourseFormProps) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <Tabs defaultValue="basic" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative mb-6">
-            <TabsList className="bg-green-50/90 p-0 border h-full flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-2 md:overflow-visible">
-              <TabsTrigger
-                value="basic"
-                className="flex-1 min-w-[120px] border-r flex items-center justify-center gap-1.5 snap-start text-sm md:text-base"
-              >
-                <PenIcon className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">Basic Info</span>
-              </TabsTrigger>
-              {mode !== 'create' && (
+            {mode !== 'create' && (
+              <TabsList className="bg-green-50/90 p-0 border h-full flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-2 md:overflow-visible">
+                <TabsTrigger
+                  value="basic"
+                  className="flex-1 min-w-[120px] w-full border-r flex items-center justify-center gap-1.5 snap-start text-sm md:text-base"
+                >
+                  <PenIcon className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">Basic Info</span>
+                </TabsTrigger>
                 <TabsTrigger
                   value="details"
                   className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 snap-start text-sm md:text-base"
@@ -132,8 +132,9 @@ const CourseForm = ({ course, mode }: CourseFormProps) => {
                   <BookOpenIcon className="h-4 w-4 flex-shrink-0" />
                   <span className="truncate">Details</span>
                 </TabsTrigger>
-              )}
-            </TabsList>
+
+              </TabsList>
+            )}
             <div className="absolute left-0 right-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-muted to-transparent md:hidden"></div>
 
             {/* Scroll indicator for mobile */}
