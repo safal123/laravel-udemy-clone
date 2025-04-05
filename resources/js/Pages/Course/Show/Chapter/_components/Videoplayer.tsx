@@ -1,509 +1,753 @@
-import { AppTooltip } from '@/Components/shared/AppTooltip'
 import { Button } from '@/Components/ui/button'
-import useActivityLogger from '@/hooks/useActivityLog'
-import useVideo from '@/hooks/useVideo'
-import VideoQualitySwitcher from '@/Pages/Course/Show/Chapter/_components/VideoQualitySwitcher'
 import { Chapter } from '@/types'
 import { router } from '@inertiajs/react'
 import Hls from 'hls.js'
 import {
+  CheckIcon,
+  ChevronDownIcon,
   Maximize2Icon,
   Minimize2Icon,
+  MoreVerticalIcon,
   PauseIcon,
-  PictureInPicture2Icon,
   PlayIcon,
-  Volume1Icon,
+  SettingsIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
   Volume2Icon,
-  VolumeXIcon
+  VolumeXIcon,
+  XIcon
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 interface VideoPlayerProps {
-  src: string; // URL of the master playlist (e.g., master.m3u8)
+  src: string
   chapter: Chapter & { course: { slug: string } }
   nextChapterId: string
   previousChapterId: string
   isCompleted: boolean
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, chapter, nextChapterId, previousChapterId, isCompleted }) => {
-  const videoRef = useRef<HTMLVideoElement | null>(null)
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const [hlsInstance, setHlsInstance] = useState<Hls | null>(null)
-  const [qualities, setQualities] = useState<{ label: string; index: number; width: number; height: number }[]>([])
-  const [selectedQuality, setSelectedQuality] = useState<number | 'auto'>('auto')
+interface Quality {
+  index: number;
+  label: string;
+  width: number;
+  height: number;
+}
+
+const VideoPlayer = ({
+  src,
+  chapter,
+  nextChapterId,
+  previousChapterId,
+  isCompleted
+}: VideoPlayerProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
+
+  const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
-  const [bufferedTime, setBufferedTime] = useState(0)
-  const { logActivity } = useActivityLogger()
-  const [isHovering, setIsHovering] = useState(false)
-  const [hoverTime, setHoverTime] = useState(0)
-  const [thumbnailPos, setThumbnailPos] = useState<{
-    left: string | number
-    right: string | number
-    transform: string
-  }>({
-    left: 0,
-    right: 'auto',
-    transform: 'none'
-  })
-  const progressBarRef = useRef<HTMLDivElement>(null)
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
-  const thumbnailCanvasRef = useRef<HTMLCanvasElement>(null)
-  const [hoverPosition, setHoverPosition] = useState<number | null>(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
+  const [volume, setVolume] = useState(1)
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [buffered, setBuffered] = useState(0)
+  const [showControls, setShowControls] = useState(false)
+  const [hideControlsTimeout, setHideControlsTimeout] = useState<NodeJS.Timeout | null>(null)
+  const [isMobileDevice, setIsMobileDevice] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
 
-  // Sprite image configuration
-  // In a real implementation, these would be loaded dynamically based on the video
-  const [spriteConfig, setSpriteConfig] = useState({
-    url: `https://laravel-udemy-clone-converted.s3.amazonaws.com/courses/chapters/videos/${chapter.id}/${chapter.id}_spritesheet.jpg`,
-    width: 160, // Width of each thumbnail in the sprite
-    height: 90, // Height of each thumbnail in the sprite
-    cols: 10, // Number of columns in the sprite grid
-    rows: 10, // Number of rows in the sprite grid
-    count: 100, // Total number of thumbnails in the sprite
-    interval: 5 // Time interval between each thumbnail in seconds
-  });
+  // Quality settings
+  const [qualities, setQualities] = useState<Quality[]>([])
+  const [currentQuality, setCurrentQuality] = useState<number | 'auto'>('auto')
+  const [showQualityMenu, setShowQualityMenu] = useState(false)
+  const [hlsInstance, setHlsInstance] = useState<Hls | null>(null)
+  const [playbackSpeed, setPlaybackSpeed] = useState(1)
+  const [showSpeedOptions, setShowSpeedOptions] = useState(false)
 
-  const {
-    toggleMute,
-    handleVolumeChange,
-    togglePlayPause,
-    togglePictureInPicture,
-    isMuted,
-    volume
-  } = useVideo(videoRef)
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileDevice(window.innerWidth < 768)
+    }
 
-  // Add this constant at the top of the component
-  const THUMBNAIL_WIDTH = 160
-  const THUMBNAIL_HEIGHT = 90
-  const THUMBNAIL_MARGIN = 16 // Space between thumbnail and progress bar
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
 
-  // Helper functions
+    return () => {
+      window.removeEventListener('resize', checkMobile)
+    }
+  }, [])
+
+  // Initialize HLS
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    let hls: Hls | null = null
+
+    const initPlayer = () => {
+      if (Hls.isSupported()) {
+        hls = new Hls({
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60
+        })
+
+        hls.loadSource(src)
+        hls.attachMedia(video)
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          // Get available quality levels
+          if (hls) {
+            const availableQualities = hls.levels.map((level, index) => ({
+              index,
+              label: level.height > 0 ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}kbps`,
+              width: level.width,
+              height: level.height
+            }))
+
+            setQualities(availableQualities)
+
+            // Set default to HD if available
+            const hdLevel = availableQualities.find(
+              level => level.height === 720 || level.height === 1080
+            )
+
+            if (hdLevel && hls) {
+              hls.currentLevel = hdLevel.index
+              setCurrentQuality(hdLevel.index)
+            }
+          }
+
+          video.play().catch(() => {
+            // Handle autoplay restriction
+            console.log('Autoplay prevented by browser')
+          })
+        })
+
+        hls.on(Hls.Events.ERROR, (_, data) => {
+          if (data.fatal) {
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                toast.error('Network error occurred. Retrying...')
+                hls?.startLoad()
+                break
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                toast.error('Media error occurred. Recovering...')
+                hls?.recoverMediaError()
+                break
+              default:
+                toast.error('A playback error occurred')
+                break
+            }
+          }
+        })
+
+        setHlsInstance(hls)
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native HLS support (Safari)
+        video.src = src
+        video.addEventListener('loadedmetadata', () => {
+          video.play().catch(() => {
+            console.log('Autoplay prevented by browser')
+          })
+        })
+      } else {
+        toast.error('HLS is not supported in this browser')
+      }
+    }
+
+    initPlayer()
+
+    return () => {
+      if (hls) {
+        hls.destroy()
+      }
+    }
+  }, [src])
+
+  // Update time and duration
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const updateTime = () => setCurrentTime(video.currentTime)
+    const updateDuration = () => setDuration(video.duration)
+    const updatePlayState = () => setIsPlaying(!video.paused)
+
+    const updateBuffer = () => {
+      if (video.buffered.length > 0) {
+        setBuffered(video.buffered.end(video.buffered.length - 1))
+      }
+    }
+
+    const handleEnded = () => {
+      setIsPlaying(false)
+
+      // If this chapter is not marked as completed, mark it
+      if (!isCompleted) {
+        router.put(route('progress.update', chapter.progress[0].id), {
+          is_completed: true,
+          completed_at: new Date().toISOString()
+        }, {
+          onSuccess: () => {
+            toast.success('Chapter completed')
+          }
+        })
+      }
+
+      // Navigate to next chapter if available
+      if (nextChapterId) {
+        setTimeout(() => {
+          toast('Moving to next chapter...', {
+            action: {
+              label: 'Cancel',
+              onClick: () => clearTimeout(navigateTimeout)
+            }
+          })
+
+          const navigateTimeout = setTimeout(() => {
+            router.visit(`/courses/${chapter.course.slug}/chapters/${nextChapterId}`)
+          }, 5000)
+        }, 1000)
+      }
+    }
+
+    // Set initial playback speed
+    video.playbackRate = playbackSpeed;
+
+    video.addEventListener('timeupdate', updateTime)
+    video.addEventListener('durationchange', updateDuration)
+    video.addEventListener('play', updatePlayState)
+    video.addEventListener('pause', updatePlayState)
+    video.addEventListener('progress', updateBuffer)
+    video.addEventListener('ended', handleEnded)
+
+    return () => {
+      video.removeEventListener('timeupdate', updateTime)
+      video.removeEventListener('durationchange', updateDuration)
+      video.removeEventListener('play', updatePlayState)
+      video.removeEventListener('pause', updatePlayState)
+      video.removeEventListener('progress', updateBuffer)
+      video.removeEventListener('ended', handleEnded)
+    }
+  }, [chapter.course.slug, chapter.progress, isCompleted, nextChapterId, playbackSpeed])
+
+  // Handle fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement)
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }
+  }, [])
+
+  // Close quality menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (showQualityMenu || showMobileMenu) {
+        setShowQualityMenu(false)
+        setShowMobileMenu(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [showQualityMenu, showMobileMenu])
+
+  // Controls visibility
+  useEffect(() => {
+    const handleMouseMove = () => {
+      setShowControls(true)
+
+      if (hideControlsTimeout) {
+        clearTimeout(hideControlsTimeout)
+      }
+
+      const timeout = setTimeout(() => {
+        if (isPlaying && !showQualityMenu && !showMobileMenu) {
+          setShowControls(false)
+        }
+      }, 3000)
+
+      setHideControlsTimeout(timeout)
+    }
+
+    const container = containerRef.current
+    if (container) {
+      container.addEventListener('mousemove', handleMouseMove)
+      container.addEventListener('touchstart', handleMouseMove)
+      container.addEventListener('mouseenter', () => setShowControls(true))
+      container.addEventListener('mouseleave', () => {
+        if (isPlaying && !showQualityMenu && !showMobileMenu) {
+          setShowControls(false)
+        }
+      })
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('mousemove', handleMouseMove)
+        container.removeEventListener('touchstart', handleMouseMove)
+      }
+
+      if (hideControlsTimeout) {
+        clearTimeout(hideControlsTimeout)
+      }
+    }
+  }, [hideControlsTimeout, isPlaying, showQualityMenu, showMobileMenu])
+
+  // Format time to MM:SS
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60)
     const seconds = Math.floor(time % 60)
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
-  // https://laravel-udemy-clone-converted.s3.ap-southeast-2.amazonaws.com/courses/chapters/videos/9e6b3f84-7072-42e9-a18a-a79b61e742da/9e6b3f84-7072-42e9-a18a-a79b61e742da_spritesheet.jpg
-  console.log(`https://laravel-udemy-clone-converted.s3.amazonaws.com/courses/chapters/videos/${chapter.id}/${chapter.id}_spritesheet.jpg`)
 
-  const handleHlsError = (hls: Hls, data: any) => {
-    if (!data.fatal) return
+  // Control handlers
+  const togglePlay = () => {
+    const video = videoRef.current
+    if (!video) return
 
-    console.error(`HLS Fatal Error: ${data.type}`, data)
-    switch (data.type) {
-      case Hls.ErrorTypes.NETWORK_ERROR:
-        hls?.startLoad()
-        toast.error('Network error occurred. Retrying...')
-        break
-      case Hls.ErrorTypes.MEDIA_ERROR:
-        hls?.recoverMediaError()
-        toast.error('Media error occurred. Recovering...')
-        break
-      default:
-        hls?.destroy()
-        toast.error('An error occurred. Please try again later.')
-        break
-    }
-  }
-
-  const setupHlsInstance = (videoElement: HTMLVideoElement) => {
-    const hls = new Hls({
-      autoStartLoad: true,
-      maxBufferLength: 30,
-      maxMaxBufferLength: 60,
-      maxBufferSize: 60 * 1000 * 1000
-    })
-
-    hls.loadSource(src)
-    hls.attachMedia(videoElement)
-
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      const availableQualities = hls?.levels.map((level, index) => ({
-        index,
-        label: level.height > 0 ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}kbps`,
-        width: level.width,
-        height: level.height
-      }))
-
-      setQualities(availableQualities || [])
-
-      // Set HD as default quality
-      const hdLevel = availableQualities?.find(
-        (level) => level.height === 720 || level.height === 1080
-      )
-      if (hdLevel) {
-        hls!.currentLevel = hdLevel.index
-        setSelectedQuality(hdLevel.index)
-      }
-
-      setHlsInstance(hls)
-      videoElement.play().catch((err) => console.error('Auto-play error:', err))
-    })
-
-    hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
-      const level = hls?.levels[data.level]
-      console.log(`Switched to quality: ${level?.height}p`)
-    })
-
-    hls.on(Hls.Events.ERROR, (_, data) => handleHlsError(hls, data))
-
-    return hls
-  }
-
-  // Video initialization
-  useEffect(() => {
-    const videoElement = videoRef.current
-    if (!videoElement) return
-
-    let hls: Hls | null = null
-    videoElement.autoplay = false
-
-    if (Hls.isSupported()) {
-      hls = setupHlsInstance(videoElement)
-    } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-      // Native HLS for Safari
-      videoElement.src = src
-      videoElement.addEventListener('loadedmetadata', () => {
-        videoElement.play().catch((err) => console.error('Native HLS play error:', err))
-        toast.info('Using native HLS playback')
-      })
-    }
-
-    return () => hls?.destroy()
-  }, [src])
-
-  // Time tracking
-  useEffect(() => {
-    const videoElement = videoRef.current
-    if (!videoElement) return
-
-    const updateTime = () => setCurrentTime(videoElement.currentTime)
-    const updateDuration = () => setDuration(videoElement.duration)
-    const updateBuffer = () => {
-      const buffered = videoElement.buffered
-      if (buffered.length > 0) {
-        setBufferedTime(buffered.end(buffered.length - 1))
-      }
-    }
-
-    videoElement.addEventListener('timeupdate', updateTime)
-    videoElement.addEventListener('loadedmetadata', updateDuration)
-    videoElement.addEventListener('progress', updateBuffer)
-
-    return () => {
-      videoElement.removeEventListener('timeupdate', updateTime)
-      videoElement.removeEventListener('loadedmetadata', updateDuration)
-      videoElement.removeEventListener('progress', updateBuffer)
-    }
-  }, [])
-
-  // Set up sprite config after video metadata is loaded
-  useEffect(() => {
-    if (duration > 0) {
-      setSpriteConfig(prev => ({
-        ...prev,
-        // In a real implementation, you would calculate these values based on the video duration
-        // and the available sprite sheets
-        count: Math.ceil(duration / prev.interval),
-        interval: prev.interval
-      }));
-    }
-  }, [duration]);
-
-  // Event handlers
-  const handleQualityChange = (qualityIndex: number | 'auto') => {
-    setSelectedQuality(qualityIndex)
-    if (hlsInstance) {
-      hlsInstance.currentLevel = qualityIndex === 'auto' ? -1 : qualityIndex
-    }
-  }
-
-  // Get sprite thumbnail style for a specific time
-  const getSpriteStyle = (time: number) => {
-    if (!spriteConfig.url || duration <= 0) return {};
-
-    // Calculate which thumbnail in the sprite corresponds to this time
-    const thumbnailIndex = Math.min(
-      Math.floor(time / spriteConfig.interval),
-      spriteConfig.count - 1
-    );
-
-    // Calculate row and column in the sprite grid
-    const row = Math.floor(thumbnailIndex / spriteConfig.cols);
-    const col = thumbnailIndex % spriteConfig.cols;
-
-    // Calculate background position
-    const backgroundPositionX = -(col * spriteConfig.width);
-    const backgroundPositionY = -(row * spriteConfig.height);
-
-    return {
-      backgroundImage: `url(${spriteConfig.url})`,
-      backgroundPosition: `${backgroundPositionX}px ${backgroundPositionY}px`,
-      backgroundSize: `${spriteConfig.cols * spriteConfig.width}px ${spriteConfig.rows * spriteConfig.height}px`,
-      backgroundRepeat: 'no-repeat',
-      width: `${THUMBNAIL_WIDTH}px`,
-      height: `${THUMBNAIL_HEIGHT}px`
-    };
-  };
-
-  const handleSliderHover = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!progressBarRef.current) return
-
-    const rect = progressBarRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const percentage = (x / rect.width)
-    const time = percentage * duration
-
-    setHoverTime(time)
-    setHoverPosition(percentage * 100)
-
-    // Calculate thumbnail position
-    const halfWidth = THUMBNAIL_WIDTH / 2
-    let position
-
-    if (x <= halfWidth) {
-      // Near left edge
-      position = {
-        left: 0,
-        right: 'auto',
-        transform: 'none'
-      }
-    } else if (x >= rect.width - halfWidth) {
-      // Near right edge
-      position = {
-        left: 'auto',
-        right: 0,
-        transform: 'none'
-      }
+    if (video.paused) {
+      video.play()
     } else {
-      // In the middle
-      position = {
-        left: `${x}px`,
-        right: 'auto',
-        transform: 'translateX(-50%)'
-      }
+      video.pause()
     }
-
-    setThumbnailPos(position)
   }
 
-  const handleMouseLeave = () => {
-    setIsHovering(false)
-    setHoverPosition(null)
+  const toggleMute = () => {
+    const video = videoRef.current
+    if (!video) return
+
+    video.muted = !video.muted
+    setIsMuted(video.muted)
   }
 
-  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!progressBarRef.current || !videoRef.current) return
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const video = videoRef.current
+    if (!video) return
 
-    const rect = progressBarRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const percentage = (x / rect.width)
-    const newTime = percentage * duration
-
-    videoRef.current.currentTime = newTime
-    setCurrentTime(newTime)
+    const newVolume = parseFloat(e.target.value)
+    video.volume = newVolume
+    setVolume(newVolume)
+    setIsMuted(newVolume === 0)
   }
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen()
-      setIsFullscreen(true)
     } else {
       document.exitFullscreen()
-      setIsFullscreen(false)
     }
   }
 
-  const renderLabel = (label: string, width: number, height: number) => {
-    if (label === 'Auto') return 'Auto'
-    return `${height}p (${width}x${height})`
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current
+    const progress = progressRef.current
+    if (!video || !progress) return
+
+    const rect = progress.getBoundingClientRect()
+    const percentage = (e.clientX - rect.left) / rect.width
+    const newTime = percentage * duration
+
+    video.currentTime = newTime
+    setCurrentTime(newTime)
   }
 
-  const markAsCompleted = (chapterId: string, courseId: string) => {
-    if (isCompleted || !chapter.progress) return
-    router.post(route('progress.update'), {
-      chapter_id: chapterId,
-      course_id: courseId,
-      is_completed: true
-    },
-      {
-        onSuccess: () => {
-          return toast.success('Chapter marked as completed')
-        },
-        onError: (error) => {
-          console.error('Mark as completed error:', error)
-          return toast.error('Failed to mark chapter as completed')
-        }
-      }
-    )
+  const navigateToPreviousChapter = () => {
+    if (previousChapterId) {
+      router.visit(`/courses/${chapter.course.slug}/chapters/${previousChapterId}`)
+    }
+  }
+
+  const navigateToNextChapter = () => {
+    if (nextChapterId) {
+      router.visit(`/courses/${chapter.course.slug}/chapters/${nextChapterId}`)
+    }
+  }
+
+  const toggleQualityMenu = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setShowQualityMenu(!showQualityMenu)
+    setShowMobileMenu(false)
+  }
+
+  const toggleMobileMenu = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setShowMobileMenu(!showMobileMenu)
+    setShowQualityMenu(false)
+  }
+
+  const changeQuality = (qualityIndex: number | 'auto', e: React.MouseEvent) => {
+    e.stopPropagation()
+    setCurrentQuality(qualityIndex)
+
+    if (hlsInstance) {
+      hlsInstance.currentLevel = qualityIndex === 'auto' ? -1 : qualityIndex
+      toast.success(`Quality changed to ${qualityIndex === 'auto' ? 'Auto' : qualities.find(q => q.index === qualityIndex)?.label}`)
+    }
+
+    setShowQualityMenu(false)
+    setShowMobileMenu(false)
+  }
+
+  const getQualityLabel = () => {
+    if (currentQuality === 'auto') return 'Auto'
+    const quality = qualities.find(q => q.index === currentQuality)
+    return quality ? quality.label : 'Auto'
+  }
+
+  const changePlaybackSpeed = (speed: number, e: React.MouseEvent) => {
+    e.stopPropagation()
+    const video = videoRef.current
+    if (!video) return
+
+    video.playbackRate = speed
+    setPlaybackSpeed(speed)
+    toast.success(`Playback speed set to ${speed}x`)
+    setShowSpeedOptions(false)
   }
 
   return (
     <div
       ref={containerRef}
-      className="group relative w-full max-w-full h-auto md:h-full bg-black overflow-visible"
-      onDoubleClick={toggleFullScreen}
+      className="relative bg-black w-full h-full aspect-video group cursor-pointer"
+      onClick={togglePlay}
     >
-      {/* Hidden canvas for old thumbnail method (kept for fallback) */}
-      <canvas
-        ref={thumbnailCanvasRef}
-        className="hidden"
+      <video
+        ref={videoRef}
+        className="w-full h-full object-contain"
+        playsInline
+        preload="auto"
       />
 
-      <div className="h-full relative group">
-        <video
-          preload={'metadata'}
-          poster={`https://laravel-udemy-clone-converted.s3.ap-southeast-2.amazonaws.com/courses/images/9e40da81-4a6c-4684-885a-2f63ad06ceef_thumbnail.jpg`}
-          onCanPlay={() => console.log('Video can play')}
-          onPlay={() =>
-            logActivity({
-              activityType: 'video_play',
-              metadata: JSON.stringify({
-                currentTime: videoRef.current?.currentTime,
-                videoDuration: videoRef.current?.duration,
-                videoSrc: videoRef.current?.src,
-                chapterId: 1
-              })
-            })
-          }
-          onPause={() =>
-            logActivity({
-              activityType: 'video_pause',
-              metadata: JSON.stringify({
-                currentTime: videoRef.current?.currentTime,
-                videoDuration: videoRef.current?.duration,
-                videoSrc: videoRef.current?.src,
-                chapterId: 1
-              })
-            })
-          }
-          onEnded={() => markAsCompleted(chapter.id, chapter.course_id)}
-          onSeeking={() => console.log('Video seeking')}
-          onSeeked={() => console.log('Video seeked')}
-          onLoadedMetadata={() =>
-            logActivity({
-              activityType: 'video_loaded_metadata',
-              metadata: JSON.stringify({
-                currentTime: videoRef.current?.currentTime,
-                videoDuration: videoRef.current?.duration,
-                videoSrc: videoRef.current?.src,
-                chapterId: 1
-              })
-            })
-          }
-          onError={(e) => console.error('Video error:', e)}
-          ref={videoRef}
-          onClick={togglePlayPause}
-          className="w-full h-auto aspect-video object-cover cursor-pointer"
-        />
+      {/* Video overlay - enables clicking anywhere to play/pause */}
+      <div className="absolute inset-0 bg-transparent" />
 
-        {/* Controls overlay */}
-        <div
-          className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 pt-20">
-          {/* Progress bar container */}
-          <div
-            ref={progressBarRef}
-            className="relative w-full h-1 group/progress cursor-pointer mb-2 hover:h-1.5 transition-all"
-            onMouseMove={handleSliderHover}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={handleMouseLeave}
-            onClick={handleProgressBarClick}
-          >
-            {/* Thumbnail preview using sprite image */}
-            {isHovering && (
+      {/* Play/Pause icon overlay */}
+      {!showControls && !isPlaying && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="bg-black/50 rounded-full p-4 backdrop-blur-sm">
+            <PlayIcon className="h-12 w-12 text-white" />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Settings Menu (Vimeo style) */}
+      {showMobileMenu && (
+        <div className="absolute inset-0 bg-gray-900/95 z-50 flex flex-col"
+          onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-between py-4 px-5 border-b border-gray-800">
+            <h3 className="text-white text-xl font-medium">Settings</h3>
+            <button
+              className="text-white p-1.5 rounded-full hover:bg-gray-800"
+              onClick={() => setShowMobileMenu(false)}>
+              <XIcon className="h-6 w-6" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            {/* Quality Options */}
+            <div className="border-b border-gray-800">
+              <div className="py-3 px-5 flex items-center justify-between">
+                <span className="text-white text-base">Quality</span>
+                <span className="text-white font-medium">{getQualityLabel()}</span>
+              </div>
+
+              <div className="pb-2">
+                {qualities.length > 0 && (
+                  <div className="py-2 px-5">
+                    {currentQuality === 'auto' ? (
+                      <div className="flex items-center text-red-500 font-medium">
+                        <CheckIcon className="h-5 w-5 mr-3" />
+                        <span>Auto</span>
+                      </div>
+                    ) : (
+                      <button
+                        className="w-full py-2 text-left text-white flex items-center"
+                        onClick={(e) => changeQuality('auto', e)}
+                      >
+                        <span className="ml-8">Auto</span>
+                      </button>
+                    )}
+
+                    {qualities.map((quality) => (
+                      <button
+                        key={quality.index}
+                        className={`w-full py-2 text-left flex items-center ${currentQuality === quality.index ? 'text-red-500 font-medium' : 'text-white'
+                          }`}
+                        onClick={(e) => changeQuality(quality.index, e)}
+                      >
+                        {currentQuality === quality.index ? (
+                          <CheckIcon className="h-5 w-5 mr-3" />
+                        ) : (
+                          <span className="ml-8"></span>
+                        )}
+                        <span>{quality.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Playback Speed Section */}
+            <div className="border-b border-gray-800">
               <div
-                className="absolute bottom-full mb-3 bg-black/90 rounded-md overflow-hidden shadow-xl border border-white/10"
-                style={{
-                  left: thumbnailPos.left,
-                  right: thumbnailPos.right,
-                  transform: thumbnailPos.transform,
-                  width: THUMBNAIL_WIDTH,
-                  height: THUMBNAIL_HEIGHT + 24, // Add space for the time display
-                  marginBottom: THUMBNAIL_MARGIN
+                className="py-3 px-5 flex items-center justify-between"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowSpeedOptions(!showSpeedOptions);
                 }}
               >
-                <div
-                  style={getSpriteStyle(hoverTime)}
-                  className="w-full h-[90px]"
-                />
-                <div className="py-1.5 px-2 text-xs text-white text-center bg-black/90 font-medium">
-                  {formatTime(hoverTime)}
-                </div>
+                <span className="text-white text-base">Speed</span>
+                <span className="text-white font-medium flex items-center">
+                  {playbackSpeed === 1 ? 'Normal' : `${playbackSpeed}x`}
+                  <ChevronDownIcon className="h-5 w-5 ml-1" />
+                </span>
               </div>
-            )}
 
-            {/* Progress bar */}
-            <div className="absolute bottom-0 left-0 right-0 h-full bg-white/20 rounded-full overflow-hidden">
-              {/* Buffered progress */}
-              <div
-                className="absolute h-full bg-white/30 transition-all duration-300"
-                style={{ width: `${(bufferedTime / duration) * 100}%` }}
-              />
-              {/* Played progress */}
-              <div
-                className="absolute h-full bg-red-600 transition-all duration-300"
-                style={{ width: `${(currentTime / duration) * 100}%` }}
-              />
-              {/* Hover progress indicator */}
-              {hoverPosition !== null && (
-                <div
-                  className="absolute h-full bg-white/50 transition-all duration-300"
-                  style={{
-                    left: 0,
-                    width: `${hoverPosition}%`,
-                    background: 'linear-gradient(to right, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.5) 100%)'
-                  }}
-                />
+              {showSpeedOptions && (
+                <div className="pb-2">
+                  <div className="py-2 px-5">
+                    {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
+                      <button
+                        key={speed}
+                        className={`w-full py-2 text-left flex items-center ${playbackSpeed === speed ? 'text-red-500 font-medium' : 'text-white'
+                          }`}
+                        onClick={(e) => changePlaybackSpeed(speed, e)}
+                      >
+                        {playbackSpeed === speed ? (
+                          <CheckIcon className="h-5 w-5 mr-3" />
+                        ) : (
+                          <span className="ml-8"></span>
+                        )}
+                        <span>{speed === 1 ? 'Normal' : `${speed}x`}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-              {/* Thumb */}
-              <div className="absolute h-full pointer-events-none"
-                style={{ width: `${(currentTime / duration) * 100}%` }}>
-                <div
-                  className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full scale-0 group-hover/progress:scale-100 transition-transform" />
+            </div>
+
+            {/* Audio Control Section */}
+            <div className="border-b border-gray-800">
+              <div className="py-3 px-5 flex items-center justify-between">
+                <span className="text-white text-base">Audio</span>
+                <span className="text-white font-medium">Original Audio</span>
+              </div>
+
+              <div className="px-5 py-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white text-sm">Volume</span>
+                  <button
+                    className="text-white rounded-full p-1 hover:bg-gray-800"
+                    onClick={toggleMute}
+                  >
+                    {isMuted || volume === 0 ? (
+                      <VolumeXIcon className="h-5 w-5" />
+                    ) : (
+                      <Volume2Icon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="w-full accent-red-600 cursor-pointer"
+                />
+              </div>
+            </div>
+
+            {/* Chapters section */}
+            <div className="border-b border-gray-800">
+              <div className="py-3 px-5">
+                <span className="text-white text-base">Chapters</span>
+              </div>
+
+              <div className="pb-2">
+                <button
+                  disabled={!previousChapterId}
+                  className={`w-full py-2 px-5 text-left flex items-center ${previousChapterId ? 'text-white' : 'text-gray-600'
+                    }`}
+                  onClick={navigateToPreviousChapter}
+                >
+                  <span className="flex items-center gap-2">
+                    <SkipBackIcon className="h-5 w-5" />
+                    Previous Chapter
+                  </span>
+                </button>
+
+                <button
+                  disabled={!nextChapterId}
+                  className={`w-full py-2 px-5 text-left flex items-center ${nextChapterId ? 'text-white' : 'text-gray-600'
+                    }`}
+                  onClick={navigateToNextChapter}
+                >
+                  <span className="flex items-center gap-2">
+                    <SkipForwardIcon className="h-5 w-5" />
+                    Next Chapter
+                  </span>
+                </button>
               </div>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Bottom controls */}
-          <div className="flex items-center gap-4 px-2 py-2 opacity-90 relative">
-            <AppTooltip message={videoRef.current?.paused ? 'Play' : 'Pause'}>
+      {/* Controls overlay */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent 
+          transition-opacity duration-300 p-4 pt-10 select-none ${showControls ? 'opacity-100' : 'opacity-0'}`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Progress bar */}
+        <div
+          ref={progressRef}
+          className="relative h-1.5 w-full bg-white/20 rounded-full mb-3 cursor-pointer group/progress"
+          onClick={handleProgressClick}
+        >
+          {/* Buffered progress */}
+          <div
+            className="absolute h-full bg-white/30 rounded-full"
+            style={{ width: `${(buffered / duration) * 100}%` }}
+          />
+
+          {/* Playback progress */}
+          <div
+            className="absolute h-full bg-red-600 rounded-full"
+            style={{ width: `${(currentTime / duration) * 100}%` }}
+          >
+            {/* Seek handle */}
+            <div className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-red-600 h-3 w-3 rounded-full 
+              scale-0 group-hover/progress:scale-100 transition-transform" />
+          </div>
+        </div>
+
+        {/* Control buttons */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* Play/Pause button */}
+            <button
+              className="text-white hover:text-red-500 transition-colors"
+              onClick={togglePlay}
+            >
+              {isPlaying ? (
+                <PauseIcon className="h-6 w-6" />
+              ) : (
+                <PlayIcon className="h-6 w-6" />
+              )}
+            </button>
+
+            {/* Previous/Next chapter buttons - desktop only */}
+            <div className="hidden md:flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={togglePlayPause}
-                className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center -ml-2 transition-all duration-200 hover:scale-110"
+                disabled={!previousChapterId}
+                onClick={navigateToPreviousChapter}
+                className="text-white hover:text-red-500 transition-colors rounded-full p-1 opacity-80 hover:opacity-100 disabled:opacity-50"
               >
-                {videoRef.current?.paused ? (
-                  <PlayIcon className="h-6 w-6 ml-0.5" />
-                ) : (
-                  <PauseIcon className="h-6 w-6" />
-                )}
+                <SkipBackIcon className="h-5 w-5" />
               </Button>
-            </AppTooltip>
 
-            <div className="flex items-center gap-2 text-white text-sm font-medium">
-              <span>{formatTime(currentTime)}</span>
-              <span className="opacity-60">/</span>
-              <span className="opacity-60">{formatTime(duration)}</span>
-            </div>
-            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
+                disabled={!nextChapterId}
+                onClick={navigateToNextChapter}
+                className="text-white hover:text-red-500 transition-colors rounded-full p-1 opacity-80 hover:opacity-100 disabled:opacity-50"
+              >
+                <SkipForwardIcon className="h-5 w-5" />
+              </Button>
+            </div>
+
+            {/* Time display */}
+            <div className="text-white text-sm">
+              <span>{formatTime(currentTime)}</span>
+              <span className="text-white/60 mx-1">/</span>
+              <span className="text-white/60">{formatTime(duration)}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Mobile menu button */}
+            <div className="block md:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleMobileMenu}
+                className="text-white hover:text-red-500 transition-colors rounded-full p-1"
+              >
+                <MoreVerticalIcon className="h-5 w-5" />
+              </Button>
+            </div>
+
+            {/* Quality selector - desktop only */}
+            <div className="relative hidden md:block">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleQualityMenu}
+                className="text-white hover:text-red-500 transition-colors rounded px-2 py-1 h-8 text-xs flex items-center gap-1"
+              >
+                <SettingsIcon className="h-4 w-4 mr-1" />
+                <span>{getQualityLabel()}</span>
+                <ChevronDownIcon className="h-3 w-3 ml-1" />
+              </Button>
+
+              {showQualityMenu && (
+                <div className="absolute bottom-full mb-1 right-0 bg-gray-900/95 backdrop-blur-sm rounded-md shadow-lg border border-gray-700 overflow-hidden py-1 w-32 z-50"
+                  onClick={e => e.stopPropagation()}>
+                  <div className="px-3 py-1 text-xs text-gray-400 font-medium">Quality</div>
+
+                  <button
+                    className={`w-full px-3 py-1.5 text-left text-sm hover:bg-gray-800 flex items-center justify-between ${currentQuality === 'auto' ? 'text-red-500' : 'text-white'}`}
+                    onClick={(e) => changeQuality('auto', e)}
+                  >
+                    Auto
+                    {currentQuality === 'auto' && <CheckIcon className="h-3 w-3" />}
+                  </button>
+
+                  {qualities.map((quality) => (
+                    <button
+                      key={quality.index}
+                      className={`w-full px-3 py-1.5 text-left text-sm hover:bg-gray-800 flex items-center justify-between ${currentQuality === quality.index ? 'text-red-500' : 'text-white'}`}
+                      onClick={(e) => changeQuality(quality.index, e)}
+                    >
+                      {quality.label}
+                      {currentQuality === quality.index && <CheckIcon className="h-3 w-3" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Volume control - desktop only */}
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                className="text-white hover:text-red-500 transition-colors"
                 onClick={toggleMute}
-                className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110"
               >
                 {isMuted || volume === 0 ? (
                   <VolumeXIcon className="h-5 w-5" />
-                ) : volume < 0.5 ? (
-                  <Volume1Icon className="h-5 w-5" />
                 ) : (
                   <Volume2Icon className="h-5 w-5" />
                 )}
-              </Button>
+              </button>
 
               <input
                 type="range"
@@ -512,42 +756,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, chapter, nextChapterId, 
                 step="0.01"
                 value={volume}
                 onChange={handleVolumeChange}
-                className="text-red-500 w-24 h-1.5 bg-white/20 rounded-full cursor-pointer appearance-none hover:bg-white/30 transition-all"
+                className="w-20 accent-red-600 cursor-pointer"
               />
             </div>
 
-            <div className="ml-auto flex items-center gap-2">
-              <VideoQualitySwitcher
-                qualities={qualities}
-                selectedQuality={selectedQuality}
-                handleQualityChange={handleQualityChange}
-                renderLabel={renderLabel}
-              />
-
-              <AppTooltip message={'Toggle Picture in Picture'}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={togglePictureInPicture}
-                  className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110"
-                >
-                  <PictureInPicture2Icon className="h-5 w-5" />
-                </Button>
-              </AppTooltip>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleFullScreen}
-                className="text-white hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110"
-              >
-                {isFullscreen ? (
-                  <Minimize2Icon className="h-5 w-5" />
-                ) : (
-                  <Maximize2Icon className="h-5 w-5" />
-                )}
-              </Button>
-            </div>
+            {/* Fullscreen button */}
+            <button
+              className="text-white hover:text-red-500 transition-colors"
+              onClick={toggleFullScreen}
+            >
+              {isFullScreen ? (
+                <Minimize2Icon className="h-5 w-5" />
+              ) : (
+                <Maximize2Icon className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
       </div>

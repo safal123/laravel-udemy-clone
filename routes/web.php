@@ -23,15 +23,17 @@ use Inertia\Inertia;
 require __DIR__ . '/auth.php';
 
 Route::get('/test', function () {
-    $user = \App\Models\User::first();
-    $course = \App\Models\Course::with('author')->first();
+    // $user = \App\Models\User::first();
+    // $course = \App\Models\Course::with('author')->first();
 
-    // Mail::to($user->email)->send(new CoursePurchaseSuccess($user, $course));
+    // // Mail::to($user->email)->send(new CoursePurchaseSuccess($user, $course));
 
-    return view('emails.review-thanks', [
-        'user' => $user,
-        'course' => $course,
-    ]);
+    // return view('emails.review-thanks', [
+    //     'user' => $user,
+    //     'course' => $course,
+    // ]);
+    $coursMedia = Course::with('media')->first();
+    dd($coursMedia);
 });
 
 Route::get('/', [HomePageController::class, 'index'])

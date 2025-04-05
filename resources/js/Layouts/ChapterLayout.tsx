@@ -6,7 +6,7 @@ import { Chapter } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { useEffect } from 'react'
 import { Toaster } from 'sonner'
-import { BookOpen, ChevronLeft, ChevronRight } from 'lucide-react'
+import { BookOpen, ChevronLeft, ChevronRight, Menu } from 'lucide-react'
 import { Button } from '@/Components/ui/button'
 import Logo from '@/Components/shared/Logo'
 
@@ -113,47 +113,10 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white backdrop-blur-sm sticky top-0 z-10">
           <div className="flex items-center gap-3">
             <SidebarTrigger className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-              <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 1H17M1 6H17M1 11H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
+              <Menu className="w-5 h-5 text-blue-600" />
             </SidebarTrigger>
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-blue-600" />
-              <h1 className="text-xl font-semibold text-gray-800 truncate max-w-[500px]">
-                {chapter.title}
-              </h1>
-            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {prevChapter && (
-              <Button
-                variant="outline"
-                size="sm"
-                asChild
-                className="hover:bg-gray-50 transition-colors duration-200"
-              >
-                <Link href={`/courses/${course.slug}/chapters/${prevChapter.id}`} className="flex items-center gap-1.5">
-                  <ChevronLeft className="w-4 h-4" />
-                  <span className="hidden sm:inline">Previous Chapter</span>
-                </Link>
-              </Button>
-            )}
-
-            {nextChapter && (
-              <Button
-                variant="default"
-                size="sm"
-                asChild
-                className="bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
-              >
-                <Link href={`/courses/${course.slug}/chapters/${nextChapter.id}`} className="flex items-center gap-1.5">
-                  <span className="hidden sm:inline">Next Chapter</span>
-                  <ChevronRight className="w-4 h-4" />
-                </Link>
-              </Button>
-            )}
-          </div>
         </div>
 
         {/* Chapter progress indicator */}

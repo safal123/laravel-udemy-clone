@@ -23,7 +23,7 @@ class ChapterController extends Controller
             ->where('id', $chapterId)
             ->where('is_published', true)
             ->where('course_id', $course->id)
-            ->with(['course'])
+            ->with(['course', 'media'])
             ->addSelect([
                 'is_completed' => function ($query) {
                     $query->selectRaw('count(*)')

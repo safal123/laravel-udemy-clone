@@ -33,6 +33,7 @@ class ChapterResource extends JsonResource
             'is_completed' => $this->whenHas('is_completed'),
             'next_chapter_id' => $this->whenHas('next_chapter_id'),
             'previous_chapter_id' => $this->whenHas('previous_chapter_id'),
+            'media' => $this->whenLoaded('media'),
         ];
     }
 }

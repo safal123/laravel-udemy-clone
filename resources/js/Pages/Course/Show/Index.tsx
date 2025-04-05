@@ -18,6 +18,7 @@ import ChaptersPreview from './_component/ChaptersPreview'
 import CourseDescription from './_component/CourseDescription'
 import CourseHeader from './_component/CourseHeader'
 import CourseReview from './_component/CourseReview'
+import CourseInfoTabs from './_component/CourseInfoTabs'
 
 const CoursePreviewPage = ({ auth }: PageProps) => {
   const course = usePage().props.course as Course
@@ -45,12 +46,13 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
         <CourseHeader
           course={course}
           toggleWishlist={toggleWishlist}
-          isOnWishlist={isOnWishlist}
         />
       </div>
 
       <div className="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
+          {/* Course Information Tabs Component */}
+          <CourseInfoTabs course={course} />
 
           <CourseDescription course={course} />
           <ChaptersPreview course={course} />

@@ -78,4 +78,24 @@ class Chapter extends Model
             ->orderBy('id', 'desc') // Order by descending UUID
             ->first();
     }
+
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'model');
+    }
+
+    public function thumbnail()
+    {
+        return $this->morphOne(Media::class, 'model')->where('type', 'thumbnail');
+    }
+
+    public function videos()
+    {
+        return $this->morphMany(Media::class, 'model')->where('type', 'video');
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Media::class, 'model')->where('type', 'image');
+    }
 }
