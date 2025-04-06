@@ -48,11 +48,37 @@ class ChapterController extends Controller
     {
         $chapter->update(['video_storage_id' => $chapter->id]);
         $chapter->refresh();
+        /*
+        * This is hacky, but it works for now.
+        */
+        $path = 'https://laravel-udemy-clone-converted.s3.ap-southeast-2.amazonaws.com/courses/chapters/videos/' . $chapter->id;
+
+        // TODO: Move this code to a service and handle multiple files
+        // TODO: Handle the case where the video is already uploaded
+        // TODO: Handle the case where the video is not uploaded
+        $media = $chapter->media()->create([
+            'file_name' => $chapter->id . '.m3u8',
+            'path' =>  $path . '/master.m3u8',
+            'type' => 'video',
+            'mime_type' => 'video/m3u8',
+            'size' => 0,
+            'metadata' => [
+                'sprite_sheet_path' => $path . '/' . $chapter->id . '_spritesheet.jpg',
+                'storage_id' => $chapter->id,
+                'thumbnail_path' => $path . '/' . $chapter->id . '_thumbnail.jpg',
+                'uploaded_at' => now(),
+                'uploaded_by' => auth()->user()->id,
+                'uploaded_by_name' => auth()->user()->name,
+                'model_type' => 'chapter',
+                'model_id' => $chapter->id,
+            ],
+        ]);
 
         event(new ChapterVideoUploaded($chapter));
 
         return response()->json([
             'message' => 'Chapter video added successfully.',
+            'media' => $media,
         ]);
     }
 

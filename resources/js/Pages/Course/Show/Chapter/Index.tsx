@@ -84,7 +84,8 @@ const CourseChapter = () => {
               </div>
             )}
 
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/0 pointer-events-none z-10"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/0 pointer-events-none z-10">
+            </div>
 
             <div className={cn(
               "relative w-full h-full transition-opacity duration-300",
@@ -92,7 +93,7 @@ const CourseChapter = () => {
             )}>
               <VideoPlayer
                 // Do not change this
-                src={'https://laravel-udemy-clone-converted.s3.ap-southeast-2.amazonaws.com/courses/chapters/videos/9e657cf8-efce-420c-89e3-30f3ef257deb/master.m3u8'}
+                src={chapter?.media[0].path}
                 chapter={chapter}
                 nextChapterId={chapter.next_chapter_id}
                 previousChapterId={chapter.previous_chapter_id}

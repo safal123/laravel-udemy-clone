@@ -23,7 +23,18 @@ class ChapterController extends Controller
             ->where('id', $chapterId)
             ->where('is_published', true)
             ->where('course_id', $course->id)
-            ->with(['course', 'media'])
+            ->with([
+                'course',
+                // Only select the latest media 
+                'media' => function ($query) use ($chapterId) {
+                    $query
+                        ->whereNotNull('path')
+                        ->where('type', 'video')
+                        // ->where('mime_type', 'video/m3u8')
+                        // ->where('file_name', 'like', '%' . $chapterId . '.m3u8')
+                        ->orderBy('created_at', 'desc')->limit(1);
+                }
+            ])
             ->addSelect([
                 'is_completed' => function ($query) {
                     $query->selectRaw('count(*)')

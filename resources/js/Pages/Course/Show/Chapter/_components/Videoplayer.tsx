@@ -20,12 +20,22 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
+// Constants for thumbnail preview
+const THUMBNAIL_WIDTH = 160
+const THUMBNAIL_HEIGHT = 90
+const THUMBNAIL_MARGIN = 16
+
 interface VideoPlayerProps {
   src: string
-  chapter: Chapter & { course: { slug: string } }
+  chapter: Chapter & {
+    course: { slug: string }
+    media: Media[]
+  }
   nextChapterId: string
   previousChapterId: string
   isCompleted: boolean
+  thumbnailUrl?: string
+  storageId?: string
 }
 
 interface Quality {
@@ -35,16 +45,35 @@ interface Quality {
   height: number;
 }
 
+interface ThumbnailPosition {
+  left: string | number;
+  right: string | number;
+  transform: string;
+}
+
+interface SpriteConfig {
+  url: string;
+  width: number;
+  height: number;
+  cols: number;
+  rows: number;
+  count: number;
+  interval: number;
+}
+
 const VideoPlayer = ({
   src,
   chapter,
   nextChapterId,
   previousChapterId,
-  isCompleted
+  isCompleted,
+  thumbnailUrl,
+  storageId
 }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
+  const thumbnailCanvasRef = useRef<HTMLCanvasElement>(null)
 
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -58,6 +87,16 @@ const VideoPlayer = ({
   const [isMobileDevice, setIsMobileDevice] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
+  // Thumbnail preview states
+  const [isHovering, setIsHovering] = useState(false)
+  const [hoverTime, setHoverTime] = useState(0)
+  const [hoverPosition, setHoverPosition] = useState<number | null>(null)
+  const [thumbnailPos, setThumbnailPos] = useState<ThumbnailPosition>({
+    left: 0,
+    right: 'auto',
+    transform: 'none'
+  })
+
   // Quality settings
   const [qualities, setQualities] = useState<Quality[]>([])
   const [currentQuality, setCurrentQuality] = useState<number | 'auto'>('auto')
@@ -65,6 +104,19 @@ const VideoPlayer = ({
   const [hlsInstance, setHlsInstance] = useState<Hls | null>(null)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [showSpeedOptions, setShowSpeedOptions] = useState(false)
+
+  console.log(chapter.media[0].metadata.sprite_sheet_path)
+
+  // Sprite sheet config
+  const [spriteConfig, setSpriteConfig] = useState<SpriteConfig>({
+    url: chapter.media[0].metadata.sprite_sheet_path,
+    width: 160,
+    height: 90,
+    cols: 10,
+    rows: 10,
+    count: 100,
+    interval: 5
+  })
 
   // Detect mobile device
   useEffect(() => {
@@ -312,6 +364,55 @@ const VideoPlayer = ({
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
 
+  // Get sprite style for a specific time position
+  const getSpriteStyle = (time: number): React.CSSProperties => {
+    if (!spriteConfig.url || duration <= 0) return {}
+
+    const thumbnailIndex = Math.min(
+      Math.floor(time / spriteConfig.interval),
+      spriteConfig.count - 1
+    )
+
+    const row = Math.floor(thumbnailIndex / spriteConfig.cols)
+    const col = thumbnailIndex % spriteConfig.cols
+
+    return {
+      backgroundImage: `url(${spriteConfig.url})`,
+      backgroundPosition: `${-col * spriteConfig.width}px ${-row * spriteConfig.height}px`,
+      backgroundSize: `${spriteConfig.cols * spriteConfig.width}px ${spriteConfig.rows * spriteConfig.height}px`,
+      backgroundRepeat: 'no-repeat',
+      width: `${THUMBNAIL_WIDTH}px`,
+      height: `${THUMBNAIL_HEIGHT}px`
+    }
+  }
+
+  // Handle progress bar hover to show thumbnails
+  const handleProgressHover = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!progressRef.current) return
+
+    const rect = progressRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const percentage = x / rect.width
+    const time = percentage * duration
+
+    setHoverTime(time)
+    setHoverPosition(percentage * 100)
+
+    // Calculate position for the thumbnail
+    const halfWidth = THUMBNAIL_WIDTH / 2
+    let position: ThumbnailPosition
+
+    if (x <= halfWidth) {
+      position = { left: 0, right: 'auto', transform: 'none' }
+    } else if (x >= rect.width - halfWidth) {
+      position = { left: 'auto', right: 0, transform: 'none' }
+    } else {
+      position = { left: `${x}px`, right: 'auto', transform: 'translateX(-50%)' }
+    }
+
+    setThumbnailPos(position)
+  }
+
   // Control handlers
   const togglePlay = () => {
     const video = videoRef.current
@@ -417,6 +518,31 @@ const VideoPlayer = ({
     setShowSpeedOptions(false)
   }
 
+  // Update sprite URL when storageId or thumbnailUrl changes
+  useEffect(() => {
+    if (thumbnailUrl) {
+      setSpriteConfig(prev => ({
+        ...prev,
+        url: thumbnailUrl
+      }))
+    } else if (storageId) {
+      setSpriteConfig(prev => ({
+        ...prev,
+        url: chapter.media[0].metadata.sprite_sheet_path
+      }))
+    }
+  }, [thumbnailUrl, storageId])
+
+  // Update sprite config when duration changes
+  useEffect(() => {
+    if (duration > 0) {
+      setSpriteConfig(prev => ({
+        ...prev,
+        count: Math.ceil(duration / prev.interval)
+      }))
+    }
+  }, [duration])
+
   return (
     <div
       ref={containerRef}
@@ -427,6 +553,7 @@ const VideoPlayer = ({
         ref={videoRef}
         className="w-full h-full object-contain"
         playsInline
+        poster={chapter.media[0].metadata.thumbnail_path}
         preload="auto"
       />
 
@@ -619,7 +746,28 @@ const VideoPlayer = ({
           ref={progressRef}
           className="relative h-1.5 w-full bg-white/20 rounded-full mb-3 cursor-pointer group/progress"
           onClick={handleProgressClick}
+          onMouseMove={handleProgressHover}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
         >
+          {/* Thumbnail preview */}
+          {isHovering && !isMobileDevice && (
+            <div
+              className="absolute bottom-full mb-3 bg-black/90 rounded-md overflow-hidden shadow-xl border border-white/10"
+              style={{
+                ...thumbnailPos,
+                width: THUMBNAIL_WIDTH,
+                height: THUMBNAIL_HEIGHT + 24,
+                marginBottom: THUMBNAIL_MARGIN
+              }}
+            >
+              <div style={getSpriteStyle(hoverTime)} className="w-full h-[90px]" />
+              <div className="py-1.5 px-2 text-xs text-white text-center bg-black/90 font-medium">
+                {formatTime(hoverTime)}
+              </div>
+            </div>
+          )}
+
           {/* Buffered progress */}
           <div
             className="absolute h-full bg-white/30 rounded-full"
@@ -635,6 +783,17 @@ const VideoPlayer = ({
             <div className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-red-600 h-3 w-3 rounded-full 
               scale-0 group-hover/progress:scale-100 transition-transform" />
           </div>
+
+          {/* Hover indicator */}
+          {hoverPosition !== null && isHovering && (
+            <div
+              className="absolute h-full bg-white/50"
+              style={{
+                width: `${hoverPosition}%`,
+                background: 'linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 100%)'
+              }}
+            />
+          )}
         </div>
 
         {/* Control buttons */}

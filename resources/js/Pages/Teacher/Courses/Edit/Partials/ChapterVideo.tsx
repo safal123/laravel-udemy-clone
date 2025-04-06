@@ -12,7 +12,7 @@ type ChapterVideoProps = {
   chapter: Chapter
 }
 
-const ChapterVideo = ({chapter}: ChapterVideoProps) => {
+const ChapterVideo = ({ chapter }: ChapterVideoProps) => {
   const [show, setShow] = React.useState(false)
   const [video, setVideo] = React.useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = React.useState<string>('')
@@ -33,6 +33,7 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
         method: 'PUT',
         body: video
       })
+      console.log(response.url)
       if (!response.ok) {
         throw new Error('Failed to upload video to S3')
       }
@@ -68,7 +69,7 @@ const ChapterVideo = ({chapter}: ChapterVideoProps) => {
     <AppTooltip message={'Upload video'}>
       <Dialog>
         <DialogTrigger>
-          <Video className={'w-7 h-7 cursor-pointer text-green-600 mt-2'}/>
+          <Video className={'w-7 h-7 cursor-pointer text-green-600 mt-2'} />
         </DialogTrigger>
         <DialogContent className={'max-w-4xl'}>
           <DialogHeader>
