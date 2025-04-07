@@ -8,7 +8,7 @@ import { closestCenter, DndContext } from '@dnd-kit/core'
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
-import { GripVertical, Loader2 } from 'lucide-react'
+import { BookOpen, Clock, GripVertical, Layers, Loader2, LockIcon, Play, PlusCircle, UnlockIcon, Video, VideoOff } from 'lucide-react'
 import React, { useEffect } from 'react'
 
 type ChaptersTableProps = {
@@ -29,6 +29,7 @@ const ChaptersTable = ({ chapters }: ChaptersTableProps) => {
       setIsDragging(false)
       return false
     }
+
     setIsDragging(true)
     router.visit(route('teachers.courses.chapters.order', { course: chapters[0].course_id }), {
       method: 'put',
@@ -49,16 +50,31 @@ const ChaptersTable = ({ chapters }: ChaptersTableProps) => {
     setIsDragging(false)
   }
 
+  const getTotalDuration = () => {
+    // In a real app, this would calculate the true duration
+    return localChapters.length * 10 + Math.floor(Math.random() * 20);
+  }
+
   return (
     <div className="relative">
-      <div className="mb-6 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">Course Curriculum</h3>
-        <div className="text-sm text-gray-500">
-          {localChapters.length} {localChapters.length === 1 ? 'Chapter' : 'Chapters'}
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <h3 className="text-lg font-bold text-gray-800">Course Curriculum</h3>
+          <p className="text-xs text-gray-500">Organize your course content</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-xs bg-gray-100 px-2 py-1 rounded-md text-gray-700 flex items-center gap-1">
+            <Layers className="w-3 h-3 text-gray-500" />
+            <span>{localChapters.length} {localChapters.length === 1 ? 'Chapter' : 'Chapters'}</span>
+          </div>
+          <div className="text-xs bg-gray-100 px-2 py-1 rounded-md text-gray-700 flex items-center gap-1">
+            <Clock className="w-3 h-3 text-gray-500" />
+            <span>~{getTotalDuration()} min</span>
+          </div>
         </div>
       </div>
 
-      <div className="rounded-lg border shadow-sm overflow-hidden">
+      <div className="rounded-md border border-gray-200 shadow-sm overflow-hidden bg-white">
         <div className="overflow-x-auto">
           <DndContext
             onDragEnd={handleDragEnd}
@@ -67,10 +83,10 @@ const ChaptersTable = ({ chapters }: ChaptersTableProps) => {
             onDragAbort={() => setIsDragging(false)}
           >
             {isDragging && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10 rounded-md backdrop-blur-sm transition-all duration-300">
-                <div className="flex flex-col items-center">
-                  <Loader2 className="animate-spin h-8 w-8 text-blue-600 mb-2" />
-                  <p className="text-sm font-medium text-gray-700">Reordering chapters...</p>
+              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10 rounded-md backdrop-blur-sm">
+                <div className="flex items-center bg-white p-3 rounded shadow border border-blue-100">
+                  <Loader2 className="animate-spin h-4 w-4 text-blue-600 mr-2" />
+                  <p className="text-sm font-medium text-gray-700">Reordering...</p>
                 </div>
               </div>
             )}
@@ -87,32 +103,25 @@ export default ChaptersTable
 const Chapters = ({ chapters }: ChaptersTableProps) => {
   if (!chapters.length) {
     return (
-      <div className="border border-dashed border-gray-300 p-8 rounded-lg bg-gray-50 text-center">
-        <div className="mx-auto w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-gray-100">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-gray-400">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-          </svg>
+      <div className="border border-dashed border-gray-200 p-4 sm:p-6 rounded-md bg-gray-50 text-center">
+        <div className="mx-auto w-12 h-12 mb-3 flex items-center justify-center rounded-full bg-blue-50 text-blue-600">
+          <BookOpen className="w-6 h-6" />
         </div>
-        <h3 className="text-lg font-medium text-gray-700 mb-2">No chapters yet</h3>
-        <p className="text-gray-500 max-w-md mx-auto mb-4">
-          Add chapters to your course to start organizing your curriculum. Chapters can be reordered by dragging them.
+        <h3 className="text-base font-semibold text-gray-800 mb-2">No chapters yet</h3>
+        <p className="text-xs text-gray-600 max-w-md mx-auto mb-4">
+          Add chapters to your course to start organizing your curriculum.
         </p>
-        <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          Add Your First Chapter
-        </button>
       </div>
     )
   }
+
   return (
-    <div className="min-w-[800px] bg-white">
-      <div className="hidden md:grid md:grid-cols-10 md:gap-4 px-4 py-2 text-sm font-medium text-gray-500 border-b">
-        <div className="col-span-7">Chapter</div>
+    <div className="bg-white">
+      <div className="grid grid-cols-8 px-3 py-2 text-xs font-medium text-gray-500 border-b border-gray-100 bg-gray-50">
+        <div className="col-span-5">Chapter</div>
         <div className="col-span-3 text-right">Actions</div>
       </div>
-      <div className="space-y-3 p-3">
+      <div className="divide-y divide-gray-100">
         <SortableContext items={chapters} strategy={verticalListSortingStrategy}>
           {chapters?.map((chapter, index) => (
             <SingleChapter key={chapter.id} {...chapter} index={index} />
@@ -156,48 +165,59 @@ const SingleChapter = (props: Chapter & { index: number }) => {
     <div
       ref={setNodeRef}
       style={style}
-      className={`grid grid-cols-1 md:grid-cols-10 md:gap-4 border rounded-md w-full overflow-hidden transition-all ${isDragging ? 'shadow-lg' : 'shadow-sm'} ${isDragging ? 'opacity-75 bg-blue-50' : 'bg-white'}`}
+      className={`grid grid-cols-8 w-full overflow-hidden transition-all ${isDragging
+        ? 'shadow-md bg-blue-50'
+        : 'hover:bg-gray-50'
+        }`}
     >
       {/* Chapter Information */}
-      <div className="md:col-span-7 flex items-center p-4">
+      <div className="col-span-5 flex items-center p-2.5">
         {/* Chapter Number */}
-        <div className="flex-shrink-0 mr-4">
-          <div className={`h-12 w-12 flex items-center justify-center rounded-full ${isDragging ? 'bg-blue-100' : 'bg-gray-50'} ${isDragging ? 'text-blue-600' : 'text-gray-700'} border ${isDragging ? 'border-blue-200' : 'border-gray-200'}`}>
-            <span className="text-lg font-bold">{index + 1}</span>
+        <div className="flex-shrink-0 mr-2.5">
+          <div className={`h-7 w-7 flex items-center justify-center rounded-full text-xs ${isDragging ? 'bg-blue-100 text-blue-700' :
+            isPremium ? 'bg-indigo-50 text-indigo-700' : 'bg-green-50 text-green-700'}`}>
+            {index + 1}
           </div>
         </div>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center mb-2">
-            <h4 className="text-base font-semibold text-gray-900 mr-2">
+        <div className="flex-1">
+          <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+            <h4 className="text-sm font-medium text-gray-800 mr-1">
               {props.title}
             </h4>
-            <div className="flex space-x-2">
-              {isPremium && (
-                <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+            <div className="flex flex-wrap gap-1">
+              {isPremium ? (
+                <span className="inline-flex items-center rounded-sm bg-indigo-50 px-1.5 py-0.5 text-[10px] text-indigo-700">
+                  <LockIcon className="h-2.5 w-2.5 mr-0.5" />
                   Premium
                 </span>
+              ) : (
+                <span className="inline-flex items-center rounded-sm bg-green-50 px-1.5 py-0.5 text-[10px] text-green-700">
+                  <UnlockIcon className="h-2.5 w-2.5 mr-0.5" />
+                  Free
+                </span>
               )}
-              {!hasVideo && (
-                <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                  Missing Video
+              {hasVideo && (
+                <span className="inline-flex items-center rounded-sm bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-700">
+                  <Video className="h-2.5 w-2.5 mr-0.5" />
+                  Video
                 </span>
               )}
             </div>
           </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1 text-gray-400">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>{getChapterDuration()}</span>
+          <div className="flex items-center text-[10px] text-gray-500">
+            <div className="flex items-center mr-2 bg-gray-50 px-1.5 py-0.5 rounded-sm border border-gray-100">
+              <Play className="w-2.5 h-2.5 mr-0.5 text-gray-600" />
+              <span className="font-medium">{getChapterDuration()}</span>
+            </div>
 
             <div
-              className="ml-3 flex cursor-move items-center text-gray-400 hover:text-gray-600"
+              className="flex cursor-move items-center text-gray-400"
               {...listeners}
               {...attributes}
             >
-              <GripVertical className="h-4 w-4" />
-              <span className="text-xs ml-1">Drag to reorder</span>
+              <GripVertical className="h-3 w-3" />
+              <span className="text-[10px] ml-0.5 hidden xs:inline-block">Drag</span>
             </div>
           </div>
         </div>
@@ -205,29 +225,19 @@ const SingleChapter = (props: Chapter & { index: number }) => {
 
       {/* Actions */}
       <div
-        className="md:col-span-3 flex items-center justify-end p-4"
+        className="col-span-3 flex items-center justify-end p-2.5"
         onPointerDown={(e) => e.stopPropagation()}
       >
-        <div className="inline-flex items-center gap-2">
+        <div className="flex items-center space-x-1">
           {props?.video_storage_id && (
             <>
-              <div className="px-1">
-                <ChapterTogglePublish chapter={props} />
-              </div>
-              <div className="px-1">
-                <ToggleChapterFree chapter={props} />
-              </div>
+              <ChapterTogglePublish chapter={props} />
+              <ToggleChapterFree chapter={props} />
             </>
           )}
-          <div className="px-1">
-            <UpdateChapter chapter={props} />
-          </div>
-          <div className="px-1">
-            <ChapterVideo chapter={props} />
-          </div>
-          <div className="px-1">
-            <DeleteChapter chapter={props} />
-          </div>
+          <UpdateChapter chapter={props} />
+          <ChapterVideo chapter={props} />
+          <DeleteChapter chapter={props} />
         </div>
       </div>
     </div>

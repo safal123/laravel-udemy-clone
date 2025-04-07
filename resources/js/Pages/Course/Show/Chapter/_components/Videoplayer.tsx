@@ -36,6 +36,7 @@ interface VideoPlayerProps {
   isCompleted: boolean
   thumbnailUrl?: string
   storageId?: string
+  onQualityChange?: (quality: string) => void
 }
 
 interface Quality {
@@ -68,7 +69,8 @@ const VideoPlayer = ({
   previousChapterId,
   isCompleted,
   thumbnailUrl,
-  storageId
+  storageId,
+  onQualityChange
 }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -104,6 +106,7 @@ const VideoPlayer = ({
   const [hlsInstance, setHlsInstance] = useState<Hls | null>(null)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [showSpeedOptions, setShowSpeedOptions] = useState(false)
+  const [actualPlayingQuality, setActualPlayingQuality] = useState<string>('Auto')
 
   console.log(chapter.media[0].metadata.sprite_sheet_path)
 
@@ -177,6 +180,18 @@ const VideoPlayer = ({
             console.log('Autoplay prevented by browser')
           })
         })
+
+        // Track the actual playing quality
+        hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+          const levelIndex = data.level;
+          if (levelIndex >= 0 && levelIndex < hls.levels.length) {
+            const level = hls.levels[levelIndex];
+            const quality = level.height > 0 ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}kbps`;
+            setActualPlayingQuality(quality);
+          } else {
+            setActualPlayingQuality('Auto');
+          }
+        });
 
         hls.on(Hls.Events.ERROR, (_, data) => {
           if (data.fatal) {
@@ -502,9 +517,9 @@ const VideoPlayer = ({
   }
 
   const getQualityLabel = () => {
-    if (currentQuality === 'auto') return 'Auto'
-    const quality = qualities.find(q => q.index === currentQuality)
-    return quality ? quality.label : 'Auto'
+    if (currentQuality === 'auto') return `Auto (${actualPlayingQuality})`;
+    const quality = qualities.find(q => q.index === currentQuality);
+    return quality ? quality.label : 'Auto';
   }
 
   const changePlaybackSpeed = (speed: number, e: React.MouseEvent) => {
@@ -543,6 +558,38 @@ const VideoPlayer = ({
     }
   }, [duration])
 
+  // Update actual playing quality and notify parent component
+  useEffect(() => {
+    if (onQualityChange && actualPlayingQuality) {
+      const displayQuality = currentQuality === 'auto'
+        ? `Auto (${actualPlayingQuality})`
+        : getQualityLabel();
+      onQualityChange(displayQuality);
+    }
+  }, [actualPlayingQuality, currentQuality, onQualityChange]);
+
+  // Track the actual playing quality
+  useEffect(() => {
+    if (hlsInstance) {
+      const levelSwitchedHandler = (_: any, data: any) => {
+        const levelIndex = data.level;
+        if (levelIndex >= 0 && levelIndex < hlsInstance.levels.length) {
+          const level = hlsInstance.levels[levelIndex];
+          const quality = level.height > 0 ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}kbps`;
+          setActualPlayingQuality(quality);
+        } else {
+          setActualPlayingQuality('Auto');
+        }
+      };
+
+      hlsInstance.on(Hls.Events.LEVEL_SWITCHED, levelSwitchedHandler);
+
+      return () => {
+        hlsInstance.off(Hls.Events.LEVEL_SWITCHED, levelSwitchedHandler);
+      };
+    }
+  }, [hlsInstance, onQualityChange]);
+
   return (
     <div
       ref={containerRef}
@@ -573,21 +620,25 @@ const VideoPlayer = ({
       {showMobileMenu && (
         <div className="absolute inset-0 bg-gray-900/95 z-50 flex flex-col"
           onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center justify-between py-4 px-5 border-b border-gray-800">
-            <h3 className="text-white text-xl font-medium">Settings</h3>
+          <div className="flex items-center justify-between py-3 px-5 border-b border-gray-800">
+            <h3 className="text-white text-base font-medium">Settings</h3>
             <button
               className="text-white p-1.5 rounded-full hover:bg-gray-800"
               onClick={() => setShowMobileMenu(false)}>
-              <XIcon className="h-6 w-6" />
+              <XIcon className="h-4 w-4" />
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto">
             {/* Quality Options */}
-            <div className="border-b border-gray-800">
+            <div className="border-b border-gray-900">
               <div className="py-3 px-5 flex items-center justify-between">
                 <span className="text-white text-base">Quality</span>
-                <span className="text-white font-medium">{getQualityLabel()}</span>
+                <span className="text-white font-medium">
+                  {currentQuality === 'auto'
+                    ? `Auto (${actualPlayingQuality})`
+                    : getQualityLabel()}
+                </span>
               </div>
 
               <div className="pb-2">
@@ -696,39 +747,6 @@ const VideoPlayer = ({
                   onChange={handleVolumeChange}
                   className="w-full accent-red-600 cursor-pointer"
                 />
-              </div>
-            </div>
-
-            {/* Chapters section */}
-            <div className="border-b border-gray-800">
-              <div className="py-3 px-5">
-                <span className="text-white text-base">Chapters</span>
-              </div>
-
-              <div className="pb-2">
-                <button
-                  disabled={!previousChapterId}
-                  className={`w-full py-2 px-5 text-left flex items-center ${previousChapterId ? 'text-white' : 'text-gray-600'
-                    }`}
-                  onClick={navigateToPreviousChapter}
-                >
-                  <span className="flex items-center gap-2">
-                    <SkipBackIcon className="h-5 w-5" />
-                    Previous Chapter
-                  </span>
-                </button>
-
-                <button
-                  disabled={!nextChapterId}
-                  className={`w-full py-2 px-5 text-left flex items-center ${nextChapterId ? 'text-white' : 'text-gray-600'
-                    }`}
-                  onClick={navigateToNextChapter}
-                >
-                  <span className="flex items-center gap-2">
-                    <SkipForwardIcon className="h-5 w-5" />
-                    Next Chapter
-                  </span>
-                </button>
               </div>
             </div>
           </div>
@@ -849,7 +867,7 @@ const VideoPlayer = ({
                 variant="ghost"
                 size="sm"
                 onClick={toggleMobileMenu}
-                className="text-white hover:text-red-500 transition-colors rounded-full p-1"
+                className="text-white hover:text-white hover:bg-red-600 transition-colors rounded-full p-2 w-9 h-9 flex items-center justify-center"
               >
                 <MoreVerticalIcon className="h-5 w-5" />
               </Button>

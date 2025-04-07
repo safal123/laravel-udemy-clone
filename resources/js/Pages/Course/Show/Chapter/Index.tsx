@@ -4,16 +4,17 @@ import ChapterLayout from '@/Layouts/ChapterLayout'
 import { cn } from '@/lib/utils'
 import ChapterTabs from '@/Pages/Course/Show/Chapter/_components/ChapterTabs'
 import VideoPlayer from '@/Pages/Course/Show/Chapter/_components/Videoplayer'
-import { Chapter } from '@/types'
+import { Chapter, Course } from '@/types'
 import { Head, router, usePage } from '@inertiajs/react'
 import { CheckCircle2Icon, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 const CourseChapter = () => {
-  const { chapter } = usePage<{ chapter: Chapter; }>().props
+  const { chapter, course } = usePage<{ chapter: Chapter; course: Course }>().props
   const [isMobile, setIsMobile] = useState(false)
   const [isVideoLoading, setIsVideoLoading] = useState(true)
+  const [currentVideoQuality, setCurrentVideoQuality] = useState('Auto')
 
   useEffect(() => {
     const checkScreen = () => {
@@ -54,29 +55,24 @@ const CourseChapter = () => {
       <Head title={`Course Chapter: ${chapter.title}`} />
 
       <div className="w-full relative bg-gray-50 py-4">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4 max-w-[1280px] mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-center max-w-full">
-            <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-              <span className="text-gray-500 whitespace-nowrap font-medium">Chapter {chapter.order}:</span>
-              <span className="line-clamp-2 md:line-clamp-1 text-gray-800">{chapter.title}</span>
-            </h1>
-          </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2 mx-auto px-4">
+          <h1 className="text-lg sm:text-xl font-bold">
+            <span className="text-gray-500">Chapter {chapter.order}:</span> {chapter.title}
+          </h1>
 
           <Button
             onClick={toggleCompletion}
             className={cn(
-              'transition-all px-4 py-1 h-10 rounded-md text-sm font-medium flex items-center shrink-0 shadow-sm',
-              chapter.is_completed ?
-                'bg-emerald-600 hover:bg-emerald-700 text-white' :
-                'bg-primary hover:bg-primary/90 text-white'
+              'transition-colors px-3 py-1 rounded-md text-sm font-medium flex items-center',
+              chapter.is_completed ? 'bg-emerald-600 text-white' : 'bg-primary text-white'
             )}
           >
-            <CheckCircle2Icon className="h-4 w-4 mr-2" />
-            <span className="whitespace-nowrap">{chapter.is_completed ? 'Completed' : 'Mark as Complete'}</span>
+            <CheckCircle2Icon className="h-4 w-4 mr-1.5" />
+            {chapter.is_completed ? 'Completed' : 'Mark Complete'}
           </Button>
         </div>
 
-        <div className="relative w-full mb-6 max-w-[1280px] mx-auto px-4">
+        <div className="relative w-full mb-6 mx-auto px-4">
           <div className="bg-gray-900 rounded-lg shadow-lg overflow-hidden w-full aspect-video relative">
             {isVideoLoading && (
               <div className="absolute inset-0 bg-gray-800 animate-pulse flex items-center justify-center z-20">
@@ -92,27 +88,18 @@ const CourseChapter = () => {
               isVideoLoading ? "opacity-0" : "opacity-100"
             )}>
               <VideoPlayer
-                // Do not change this
                 src={chapter?.media[0].path}
                 chapter={chapter}
                 nextChapterId={chapter.next_chapter_id}
                 previousChapterId={chapter.previous_chapter_id}
                 isCompleted={chapter.is_completed}
+                onQualityChange={(quality) => setCurrentVideoQuality(quality)}
               />
-            </div>
-
-            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
-
-            <div className="absolute top-2 right-2 hidden md:block">
-              <div className="bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md">
-                {chapter.order > 1 ? 'HD' : 'PREVIEW'}
-              </div>
             </div>
           </div>
 
-          <div className="hidden md:flex items-center justify-between text-xs text-gray-500 mt-2 px-1">
-            <span>Video quality: Auto (HD available)</span>
-            <span>{chapter.order > 1 ? 'Premium content' : 'Preview content'}</span>
+          <div className="absolute top-2 right-6 z-20 hidden md:flex items-center justify-between text-xs text-white bg-black/60 px-2 py-1 rounded">
+            <span>Video quality: {currentVideoQuality}</span>
           </div>
         </div>
       </div>
@@ -146,7 +133,7 @@ const CourseChapter = () => {
 
             <div className="hidden md:block text-center">
               <span className="text-sm text-gray-300 font-medium px-3 py-1.5 bg-gray-700/70 rounded-full border border-gray-600">
-                Chapter {chapter.order} of {chapter.course.chapters_count}
+                Chapter {chapter.order} of {course.chapters.length}
               </span>
             </div>
 
@@ -177,7 +164,7 @@ const CourseChapter = () => {
         </div>
       </div>
 
-      <div className="w-full max-w-[1280px] mx-auto px-4 py-5">
+      <div className="w-full mx-auto px-4 py-5">
         <div className="w-full bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
           <ChapterTabs chapter={chapter} />
         </div>

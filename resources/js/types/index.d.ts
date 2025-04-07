@@ -98,6 +98,7 @@ export interface Chapter {
   next_chapter_id: string;
   previous_chapter_id: string;
   progress: UserProgress[]
+  media: Media[]
 }
 
 export interface Review {
