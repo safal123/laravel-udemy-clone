@@ -3,15 +3,16 @@ import { SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/Components/u
 import { cn } from '@/lib/utils'
 import { AppSidebar } from '@/Pages/Course/Show/Chapter/_components/AppSidebar'
 import { Chapter } from '@/types'
-import { Link, usePage } from '@inertiajs/react'
+import { Link, usePage, router } from '@inertiajs/react'
 import { useEffect } from 'react'
 import { Toaster } from 'sonner'
-import { BookOpen, ChevronLeft, ChevronRight, Menu } from 'lucide-react'
+import { BookOpen, ChevronLeft, ChevronRight, Menu, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/Components/ui/button'
 import Logo from '@/Components/shared/Logo'
+import { Checkbox } from '@/Components/ui/checkbox'
 
 export default function ChapterLayout({ children }: { children: React.ReactNode }) {
-  const { course } = usePage<{ course: { slug: string; title: string; chapters: Chapter[] } }>().props
+  const { course } = usePage<{ course: { slug: string; title: string; chapters: Chapter[]; user_progress: any[] } }>().props
   const { chapter } = usePage<{ chapter: Chapter }>().props
   const url = usePage().url
   const chapterId = url.split('/').pop()
@@ -44,6 +45,17 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
     ? course.chapters[currentChapterIndex - 1]
     : null
 
+  const toggleChapterCompletion = (chapterId: string, isCompleted: boolean) => {
+    router.put(route('progress.update', Number(chapterId)), {
+      is_completed: !isCompleted,
+      completed_at: isCompleted ? null : new Date().toISOString()
+    }, {
+      onSuccess: () => {
+        router.reload()
+      }
+    })
+  }
+
   return (
     <SidebarProvider className="flex h-screen">
       <Toaster
@@ -73,36 +85,89 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
           <h1 className="text-lg font-bold text-gray-900 truncate">
             {course.title}
           </h1>
+
+          {/* Course Progress */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700">Course Progress</span>
+              <span className="text-sm font-semibold text-blue-600">
+                {Math.round((currentChapterIndex + 1) / course.chapters.length * 100)}%
+              </span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-600 transition-all duration-300"
+                style={{ width: `${((currentChapterIndex + 1) / course.chapters.length) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Chapter Completion */}
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox
+              id="chapter-completion"
+              checked={chapter.is_completed}
+              onCheckedChange={() => toggleChapterCompletion(chapter.progress[0].id, chapter.is_completed)}
+              className="border-gray-300"
+            />
+            <label
+              htmlFor="chapter-completion"
+              className="text-sm font-medium text-gray-700 cursor-pointer"
+            >
+              Mark as completed
+            </label>
+          </div>
         </div>
 
         {/* Chapters list */}
         {course.chapters.map((chapterItem, index) => (
           <AppTooltip message={chapterItem.title} key={chapterItem.id}>
             <SidebarMenuItem className="p-1">
-              <Link href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
-                <div
-                  className={cn(
-                    'flex items-center gap-2 hover:bg-gray-100 p-3 rounded-md',
-                    chapterId === String(chapterItem.id) ? 'bg-blue-50 border border-blue-200' : ''
-                  )}
-                >
-                  <div className={cn(
-                    'h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0',
-                    chapterId === String(chapterItem.id) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-                  )}>
-                    {index + 1}
-                  </div>
-                  <div className="min-w-0">
-                    <p className={cn(
-                      'text-sm font-medium truncate',
-                      chapterId === String(chapterItem.id) ? 'text-blue-800' : 'text-gray-700'
-                    )}>
-                      {chapterItem.title}
-                    </p>
-                  </div>
-
+              <div className="flex items-center">
+                <div className="flex-1">
+                  <Link href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 hover:bg-gray-100 p-3 rounded-md',
+                        chapterId === String(chapterItem.id) ? 'bg-blue-50 border border-blue-200' : ''
+                      )}
+                    >
+                      <div className={cn(
+                        'h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0',
+                        chapterId === String(chapterItem.id) ? 'bg-blue-600 text-white' :
+                          chapterItem.is_completed ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-700'
+                      )}>
+                        {chapterItem.is_completed ? <CheckCircle2 className="w-4 h-4" /> : index + 1}
+                      </div>
+                      <div className="min-w-0">
+                        <p className={cn(
+                          'text-sm font-medium truncate',
+                          chapterId === String(chapterItem.id) ? 'text-blue-800' :
+                            chapterItem.is_completed ? 'text-green-700' : 'text-gray-700'
+                        )}>
+                          {chapterItem.title}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
                 </div>
-              </Link>
+                <div
+                  className="px-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (chapterItem.progress && chapterItem.progress.length > 0) {
+                      toggleChapterCompletion(chapterItem?.progress[0].id, chapterItem.is_completed);
+                    }
+                  }}
+                >
+                  <Checkbox
+                    id={`chapter-${chapterItem.id}-completion`}
+                    checked={chapterItem.is_completed}
+                    className="border-gray-300"
+                  />
+                </div>
+              </div>
             </SidebarMenuItem>
           </AppTooltip>
         ))}
@@ -116,7 +181,6 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
               <Menu className="w-5 h-5 text-blue-600" />
             </SidebarTrigger>
           </div>
-
         </div>
 
         {/* Chapter progress indicator */}

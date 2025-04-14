@@ -14,8 +14,8 @@ import React from 'react'
 
 
 const Index = () => {
-  const {categories} = usePage<any>().props
-  const {data, setData, errors, post, processing} = useForm({
+  const { categories } = usePage<any>().props
+  const { data, setData, errors, post, processing } = useForm({
     title: '',
     price: 0,
     category_id: '',
@@ -31,7 +31,7 @@ const Index = () => {
 
   return (
     <div className={'w-full overflow-hidden'}>
-      <Head title="Create Course"/>
+      <Head title="Create Course" />
       <div className="bg-white rounded shadow p-4">
         <div className="flex items-center border px-8 py-4 border-gray-200 rounded-md mb-4">
           <Breadcrumb>
@@ -43,7 +43,7 @@ const Index = () => {
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator/>
+              <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbPage>
                   Create Course
@@ -57,7 +57,7 @@ const Index = () => {
             <h2 className="text-xl font-bold">Create Course</h2>
           </CardHeader>
           <CardContent>
-            <CourseForm mode="create"/>
+            <CourseForm mode="create" categories={categories} />
           </CardContent>
         </Card>
       </div>

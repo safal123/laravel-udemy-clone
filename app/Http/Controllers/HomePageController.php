@@ -24,4 +24,9 @@ class HomePageController extends Controller
             ),
         ]);
     }
+
+    public function ui(): Response
+    {
+        return Inertia::render('UI');
+    }
 }

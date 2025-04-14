@@ -9,12 +9,12 @@ import CourseForm from '@/Pages/Teacher/Courses/Edit/Partials/CourseForm'
 import { CoursePageHeader } from '@/Pages/Teacher/Courses/Edit/Partials/CoursePageHeader'
 import CourseSettings from '@/Pages/Teacher/Courses/Edit/Partials/CourseSettings'
 import UploadCourseImage from '@/Pages/Teacher/Courses/Edit/Partials/UploadCourseImage'
-import { Course } from '@/types'
+import { Course, Category } from '@/types'
 import { Head, usePage } from '@inertiajs/react'
 import React from 'react'
 
 const Index = () => {
-  const { course } = usePage<{ course: Course }>().props
+  const { course, categories } = usePage<{ course: Course, categories: Category[] }>().props
   const { errors } = usePage().props
   return (
     <>
@@ -37,7 +37,7 @@ const Index = () => {
             <h2 className="text-xl font-semibold text-gray-700">Course Details</h2>
           </CardHeader>
           <CardContent>
-            <CourseForm course={course} />
+            <CourseForm course={course} mode="edit" categories={categories} />
           </CardContent>
         </Card>
 

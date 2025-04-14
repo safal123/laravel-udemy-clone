@@ -168,15 +168,18 @@ const CourseCard = ({ course }: CourseCardProps) => {
         </div>
 
         <Link href={`/courses/${course.slug}`} className="group-hover:text-orange-600 transition-colors block">
-          <CardTitle className="text-base md:text-lg font-semibold leading-tight mb-3 group-hover:text-orange-600 transition-colors line-clamp-2 h-[50px] overflow-hidden">
+          <CardTitle className="text-base md:text-lg font-semibold leading-tight mb-3 group-hover:text-orange-600 transition-colors line-clamp-2 max-h-[50px] overflow-hidden">
             {course.title}
           </CardTitle>
         </Link>
 
-        {/* Course highlights */}
+        {/* Course tags */}
         <div className="my-2 flex flex-wrap gap-1.5">
           {course.tags && (() => {
             const tags = course.tags.split(',')
+              .map(tag => tag.trim())
+              .sort((a, b) => b.length - a.length) // Sort tags by length, longest first
+
             const visibleTags = tags.slice(0, 3)
             const remainingCount = tags.length - 3
 
@@ -199,7 +202,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
                       key={index}
                       className={`px-2 py-0.5 ${colorClass} rounded-full text-xs font-medium`}
                     >
-                      {tag.trim()}
+                      {tag}
                     </span>
                   )
                 })}

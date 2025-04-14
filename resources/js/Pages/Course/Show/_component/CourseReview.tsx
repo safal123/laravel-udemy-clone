@@ -223,7 +223,7 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
                   {renderStars(course?.rating || 0)}
                   <span className="text-slate-300 text-sm">({course?.reviews?.length || 0} reviews)</span>
                 </div>
-                {isEnrolled && !course?.reviews?.some(review => review.user_id === props.auth?.user?.id) && (
+                {isEnrolled && !course?.reviews?.some(review => review.user_id === props.auth?.user?.id?.toString()) && (
                   <Button
                     onClick={() => setShowReviewForm(true)}
                     className="bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30 transition-all duration-200"
@@ -322,14 +322,14 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
                 <div key={review.id} className="border-b border-slate-100 last:border-0 pb-6 last:pb-0">
                   <div className="flex items-start gap-4">
                     <img
-                      src={review.user.image_url || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'women' : 'men'}/${Math.floor(Math.random() * 100)}.jpg`}
-                      alt={review.user.name}
+                      src={`https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'women' : 'men'}/${Math.floor(Math.random() * 100)}.jpg`}
+                      alt={review?.user?.name}
                       className="w-10 h-10 rounded-full object-cover border border-slate-200"
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <div>
-                          <h4 className="font-medium text-slate-900">{review.user.name}</h4>
+                          <h4 className="font-medium text-slate-900">{review?.user?.name}</h4>
                           <p className="text-sm text-slate-500">
                             {new Date(review.created_at).toLocaleDateString('en-US', {
                               month: 'long',

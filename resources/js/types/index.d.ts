@@ -172,3 +172,9 @@ export interface CourseReview {
     profile_photo_url?: string;
   };
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}

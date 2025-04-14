@@ -28,7 +28,7 @@ class CourseController extends Controller
             })
             ->when($request->has('category') && !empty($request->category), function ($query) use ($request) {
                 $query->whereHas('category', function ($q) use ($request) {
-                    $q->where('name', $request->category);
+                    $q->whereIn('name', $request->category);
                 });
             })
             ->when($request->has('level') && !empty($request->level), function ($query) use ($request) {

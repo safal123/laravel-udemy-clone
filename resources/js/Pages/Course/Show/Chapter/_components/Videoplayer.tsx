@@ -39,6 +39,14 @@ interface VideoPlayerProps {
   onQualityChange?: (quality: string) => void
 }
 
+interface Media {
+  id: string;
+  storage_id: string;
+  metadata: {
+    sprite_sheet_path: string;
+  };
+}
+
 interface Quality {
   index: number;
   label: string;
@@ -184,7 +192,7 @@ const VideoPlayer = ({
         // Track the actual playing quality
         hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
           const levelIndex = data.level;
-          if (levelIndex >= 0 && levelIndex < hls.levels.length) {
+          if (hls && levelIndex >= 0 && levelIndex < hls.levels.length) {
             const level = hls.levels[levelIndex];
             const quality = level.height > 0 ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}kbps`;
             setActualPlayingQuality(quality);

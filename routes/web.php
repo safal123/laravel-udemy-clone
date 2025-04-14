@@ -38,6 +38,8 @@ Route::get('/test', function () {
 
 Route::get('/', [HomePageController::class, 'index'])
     ->name('home');
+Route::get('/ui', [HomePageController::class, 'ui'])
+    ->name('home.ui');
 Route::stripeWebhooks('stripe/webhook');
 
 //Route::get('/courses/search', function (Request $request) {

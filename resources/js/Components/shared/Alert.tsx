@@ -1,87 +1,133 @@
-import CloseButton from '@/Components/shared/button/CloseButton';
-import { Check, CircleX, TriangleAlert } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { Check, CircleX, Info, TriangleAlert, X } from 'lucide-react';
 
 interface Alert {
   message: string;
   icon?: React.ReactNode;
   action?: React.ReactNode;
   onClose?: () => void;
-  variant?: 'success' | 'error' | 'warning';
-  duration?: number; // Duration for the progress bar in milliseconds
+  variant?: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+  title?: string;
 }
 
 export default function Alert({
   icon,
   action,
   message,
-  variant,
+  variant = 'info',
+  title,
   onClose,
-  duration = 5000, // Default duration for the progress bar
+  duration = 5000,
 }: Alert) {
-  const [progress, setProgress] = useState(100); // Progress bar starts at 100%
+  const [progress, setProgress] = useState(100);
+  const [isVisible, setIsVisible] = useState(true);
 
-  // Define colors and icons based on the variant
-  const color = {
-    success: 'green',
-    error: 'red',
-    warning: 'yellow',
-  }[variant || 'success'];
+  // Simple variant styles
+  const variantStyles = {
+    success: {
+      background: 'bg-green-50 dark:bg-green-900/20',
+      border: 'border-l-4 border-green-500',
+      text: 'text-green-800 dark:text-green-200',
+      progressBar: 'bg-green-500',
+      iconColor: 'text-green-500',
+      iconBackground: 'bg-green-100 dark:bg-green-800/30',
+    },
+    error: {
+      background: 'bg-red-50 dark:bg-red-900/20',
+      border: 'border-l-4 border-red-500',
+      text: 'text-red-800 dark:text-red-200',
+      progressBar: 'bg-red-500',
+      iconColor: 'text-red-500',
+      iconBackground: 'bg-red-100 dark:bg-red-800/30',
+    },
+    warning: {
+      background: 'bg-amber-50 dark:bg-amber-900/20',
+      border: 'border-l-4 border-amber-500',
+      text: 'text-amber-800 dark:text-amber-200',
+      progressBar: 'bg-amber-500',
+      iconColor: 'text-amber-500',
+      iconBackground: 'bg-amber-100 dark:bg-amber-800/30',
+    },
+    info: {
+      background: 'bg-blue-50 dark:bg-blue-900/20',
+      border: 'border-l-4 border-blue-500',
+      text: 'text-blue-800 dark:text-blue-200',
+      progressBar: 'bg-blue-500',
+      iconColor: 'text-blue-500',
+      iconBackground: 'bg-blue-100 dark:bg-blue-800/30',
+    },
+  };
 
-  const backgroundColor = {
-    success: 'bg-green-100 text-green-800',
-    error: 'bg-red-100 text-red-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-  }[variant || 'success'];
+  const style = variantStyles[variant];
 
-  const iconComponent = {
-    success: <Check size={20} className="text-green-500" />,
-    error: <CircleX size={20} className="text-red-500" />,
-    warning: <TriangleAlert size={20} className="text-yellow-500" />,
-  }[variant || 'success'];
+  const defaultIcons = {
+    success: <Check size={18} className={style.iconColor} />,
+    error: <CircleX size={18} className={style.iconColor} />,
+    warning: <TriangleAlert size={18} className={style.iconColor} />,
+    info: <Info size={18} className={style.iconColor} />,
+  };
 
   // Handle the progress bar animation and auto-close
   useEffect(() => {
     if (duration) {
       const interval = setInterval(() => {
-        setProgress((prev) => Math.max(prev - 1, 0));
+        setProgress((prev) => {
+          const newProgress = Math.max(prev - 1, 0);
+          if (newProgress === 0 && onClose) {
+            setIsVisible(false);
+            setTimeout(onClose, 300);
+          }
+          return newProgress;
+        });
       }, duration / 100);
 
       return () => clearInterval(interval);
     }
-  }, [duration]);
+  }, [duration, onClose]);
 
-  // Close the alert when the progress bar reaches 0%
-  useEffect(() => {
-    if (progress === 0 && onClose) {
-      onClose();
-    }
-  }, [progress, onClose]);
+  if (!isVisible) return null;
 
   return (
     <div
-      className={`${backgroundColor} px-4 mb-8 flex flex-col sm:rounded-lg w-full relative overflow-hidden`}
+      className={`${style.background} ${style.border} shadow-sm mb-4 rounded-lg overflow-hidden relative animate-fadeIn`}
     >
       {/* Progress Bar */}
       {duration && (
         <div
-          className="absolute top-0 left-0 h-1 bg-opacity-50"
-          style={{
-            width: `${progress}%`,
-            backgroundColor: color === 'green' ? '#4ade80' : color === 'red' ? '#f87171' : '#facc15',
-          }}
+          className={`absolute bottom-0 left-0 h-1 ${style.progressBar}`}
+          style={{ width: `${progress}%` }}
         />
       )}
 
       {/* Alert Content */}
-      <div className="flex items-center justify-between py-3">
-        <div className="flex items-center space-x-2">
-          {icon || iconComponent}
-          <div className="text-sm font-medium">{message}</div>
+      <div className="flex items-center p-4">
+        {/* Icon */}
+        <div className={`${style.iconBackground} p-2 rounded-full mr-3 flex-shrink-0`}>
+          {icon || defaultIcons[variant]}
         </div>
-        <div className="flex items-center space-x-2">
-          {action}
-          {onClose && <CloseButton onClick={onClose} color={color} />}
+
+        {/* Message */}
+        <div className="flex-grow">
+          {title && <h4 className={`font-semibold ${style.text} text-sm`}>{title}</h4>}
+          <div className={`${style.text} text-sm`}>{message}</div>
+        </div>
+
+        {/* Action and Close */}
+        <div className="flex items-center ml-4 flex-shrink-0">
+          {action && <div className="mr-2">{action}</div>}
+          {onClose && (
+            <button
+              onClick={() => {
+                setIsVisible(false);
+                setTimeout(onClose, 300);
+              }}
+              className={`p-1.5 rounded-full ${style.iconBackground} ${style.iconColor} hover:opacity-80`}
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </div>
     </div>
