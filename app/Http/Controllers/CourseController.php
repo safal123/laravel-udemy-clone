@@ -14,49 +14,17 @@ class CourseController extends Controller
 {
     public function index(Request $request): Response
     {
-        $courses = Course::query()
-            ->whereHasPublishedChapters()
-            ->withCount('students')
-            ->withCount('reviews')
-            ->withAvg('reviews', 'rating')
-            ->with('category')
-            ->when($request->has('search') && !empty($request->search), function ($query) use ($request) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('title', 'like', '%' . $request->search . '%')
-                        ->orWhere('description', 'like', '%' . $request->search . '%');
-                });
-            })
-            ->when($request->has('category') && !empty($request->category), function ($query) use ($request) {
-                $query->whereHas('category', function ($q) use ($request) {
-                    $q->whereIn('name', $request->category);
-                });
-            })
-            ->when($request->has('level') && !empty($request->level), function ($query) use ($request) {
-                $query->where('level', $request->level);
-            })
-            ->when($request->has('price') && !empty($request->price), function ($query) use ($request) {
-                match ($request->price) {
-                    'free' => $query->where('price', 0),
-                    'under-50' => $query->where('price', '>', 0)->where('price', '<=', 50),
-                    '50-100' => $query->where('price', '>', 50)->where('price', '<=', 100),
-                    'over-100' => $query->where('price', '>', 100),
-                    default => $query,
-                };
-            })
-            ->when($request->has('sort') && !empty($request->sort), function ($query) use ($request) {
-                match ($request->sort) {
-                    'rating' => $query->orderBy('reviews_avg_rating', 'desc'),
-                    'newest' => $query->orderBy('created_at', 'desc'),
-                    'price-low' => $query->orderBy('price', 'asc'),
-                    'price-high' => $query->orderBy('price', 'desc'),
-                    default => $query->orderBy('students_count', 'desc'),
-                };
-            })
-            ->paginate($request->per_page ?? 12)
-            ->withQueryString();
-
         return Inertia::render('Course/Index', [
-            'courses' => CourseResource::collection($courses),
+            'courses' => CourseResource::collection(
+                Course::search($request->search)
+                    ->query(function ($query) use ($request) {
+                        return $query->whereHasPublishedChapters()
+                            ->category($request->category)
+                            ->level($request->level)
+                            ->price($request->price);
+                    })
+                    ->paginate($request->per_page ?? 12)
+            ),
         ]);
     }
 

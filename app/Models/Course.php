@@ -13,10 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
 class Course extends Model implements CourseConstants
 {
-    use HasFactory, HasS3Upload, HasUuids;
+    use HasFactory, HasS3Upload, HasUuids, Searchable;
 
     //    protected $with = ['author'];
 
@@ -155,5 +156,38 @@ class Course extends Model implements CourseConstants
     public function images()
     {
         return $this->morphMany(Media::class, 'model')->where('type', 'image');
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     * This is used by Laravel Scout when installed.
+     *
+     * @return array
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'title' => $this->title,
+            'description' => $this->description,
+            'price' => $this->price,
+            'level' => $this->level,
+            'language' => $this->language,
+            'requirements' => $this->requirements,
+            'target_audience' => $this->target_audience,
+            'what_you_will_learn' => $this->what_you_will_learn,
+            'tags' => $this->tags,
+        ];
+    }
+
+    /**
+     * Determine if the model should be searchable.
+     * This is used by Laravel Scout when installed.
+     *
+     * @return bool
+     */
+    public function shouldBeSearchable(): bool
+    {
+        // Only index courses that are published and have at least one published chapter
+        return $this->is_published && $this->hasPublishedChapter();
     }
 }

@@ -4,6 +4,8 @@ namespace App\Models\Builders;
 
 use App\Models\Constants\CourseUserConstants;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CourseBuilder extends Builder
 {
@@ -65,7 +67,7 @@ class CourseBuilder extends Builder
     public function loadPublishedChapters(): self
     {
         return $this->with([
-            'chapters' => fn ($query) => $query
+            'chapters' => fn($query) => $query
                 ->where('is_published', true)
                 ->whereNotNull('video_storage_id'),
         ]);
@@ -77,7 +79,7 @@ class CourseBuilder extends Builder
     public function countPublishedChapters(): self
     {
         return $this->withCount([
-            'chapters' => fn ($query) => $query
+            'chapters' => fn($query) => $query
                 ->where('is_published', true)
                 ->whereNotNull('video_storage_id'),
         ]);
@@ -130,5 +132,48 @@ class CourseBuilder extends Builder
                 },
             ]);
         });
+    }
+
+    public function category($categories): self
+    {
+        return $this->when($categories, function ($query, $categories) {
+            $categories = is_array($categories) ? $categories : [$categories];
+            $query->whereHas('category', fn($q) => $q->whereIn('name', $categories));
+        });
+    }
+
+    public function level(?string $level): self
+    {
+        return $this->when($level, fn($query, $level) => $query->where('level', $level));
+    }
+
+    public function price(?string $price): self
+    {
+        return $this->when($price, function ($query, $price) {
+            match ($price) {
+                'free' => $query->where('price', 0),
+                'under-50' => $query->whereBetween('price', [0.01, 50]),
+                '50-100' => $query->whereBetween('price', [50.01, 100]),
+                'over-100' => $query->where('price', '>', 100),
+                default => $query,
+            };
+        });
+    }
+
+    public function sort(?string $sort): self
+    {
+        return $this->orderBy(
+            match ($sort) {
+                'rating' => 'reviews_avg_rating',
+                'newest' => 'created_at',
+                'price-low', 'price-high' => 'price',
+                default => 'students_count',
+            },
+            match ($sort) {
+                'price-high' => 'desc',
+                'price-low' => 'asc',
+                default => 'desc',
+            }
+        );
     }
 }
