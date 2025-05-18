@@ -1,14 +1,26 @@
+import { useState, useRef, useEffect } from "react";
 import EditorPreview from "@/Components/shared/EditorPreview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Course } from "@/types";
-import { BookOpen, FileText, Info } from "lucide-react";
-import React from "react";
+import { ChevronDown, ChevronUp, FileText, Globe, Info, BarChart2 } from "lucide-react";
 
 interface CourseDescriptionProps {
   course: Course;
 }
 
 export default function CourseDescription({ course }: CourseDescriptionProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [shouldShowToggle, setShouldShowToggle] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Check if content height exceeds max height
+  useEffect(() => {
+    if (contentRef.current) {
+      const shouldShowButton = contentRef.current.scrollHeight > 300;
+      setShouldShowToggle(shouldShowButton);
+    }
+  }, [course.description]);
+
   return (
     <Card className="mb-8 shadow-sm overflow-hidden border border-slate-200">
       <CardHeader className="bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 py-5">
@@ -17,18 +29,43 @@ export default function CourseDescription({ course }: CourseDescriptionProps) {
             <FileText className="h-5 w-5" />
           </div>
           <div>
-            <CardTitle className="text-xl font-semibold text-gray-800">Course Description</CardTitle>
-            <p className="text-sm text-gray-500 mt-0.5">Detailed information about this course</p>
+            <CardTitle className="text-xl font-semibold text-gray-800">About This Course</CardTitle>
+            <p className="text-sm text-gray-500 mt-0.5">What you'll learn and course overview</p>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pt-6 pb-8">
-        <div className="prose prose-slate max-w-none">
+        <div
+          className={`prose prose-slate max-w-none relative ${!isExpanded && shouldShowToggle ? 'max-h-[300px] overflow-hidden' : ''}`}
+          ref={contentRef}
+        >
+          {!isExpanded && shouldShowToggle && (
+            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
+          )}
           <EditorPreview
             value={course.description}
             className="course-description-content text-gray-700 leading-relaxed"
           />
         </div>
+
+        {shouldShowToggle && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="mt-4 flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
+          >
+            {isExpanded ? (
+              <>
+                Show less
+                <ChevronUp className="h-4 w-4" />
+              </>
+            ) : (
+              <>
+                Show more
+                <ChevronDown className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        )}
 
         {/* Course highlights */}
         {course.language || course.level ? (
@@ -41,9 +78,7 @@ export default function CourseDescription({ course }: CourseDescriptionProps) {
               {course.language && (
                 <div className="flex items-center p-3 bg-slate-50 rounded-lg">
                   <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389 16.87 16.87 0 01-.554-.514 19.05 19.05 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.05 17.05 0 003.07-3.148 18.97 18.97 0 01-1.11-2.592 1 1 0 111.847-.754A16.95 16.95 0 008 3.5h1V2a1 1 0 011-1zm2 5a1 1 0 011 1v1h3a1 1 0 110 2h-3v1a1 1 0 11-2 0v-1H6a1 1 0 110-2h3V8a1 1 0 011-1z" clipRule="evenodd" />
-                    </svg>
+                    <Globe className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Language</p>
@@ -55,13 +90,17 @@ export default function CourseDescription({ course }: CourseDescriptionProps) {
               {course.level && (
                 <div className="flex items-center p-3 bg-slate-50 rounded-lg">
                   <div className="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
-                    </svg>
+                    <BarChart2 className="h-4 w-4 text-green-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Difficulty Level</p>
-                    <p className="font-medium text-gray-800">{course.level}</p>
+                    <p className="font-medium text-gray-800">
+                      {course.level
+                        .replace(/-/g, ' ')
+                        .split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                        .join(' ')}
+                    </p>
                   </div>
                 </div>
               )}

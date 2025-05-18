@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Course;
+
 return [
 
     /*
@@ -140,9 +142,21 @@ return [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
-            // 'users' => [
-            //     'filterableAttributes'=> ['id', 'name', 'email'],
-            // ],
+            Course::class => [
+                'filterableAttributes' => [
+                    'level',
+                    'price',
+                    'language',
+                    'requirements',
+                    'target_audience',
+                    'what_you_will_learn',
+                    'tags',
+                ],
+                'sortableAttributes' => [
+                    'created_at',
+                    'price',
+                ],
+            ],
         ],
     ],
 

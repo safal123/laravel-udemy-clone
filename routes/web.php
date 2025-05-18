@@ -23,17 +23,34 @@ use Inertia\Inertia;
 require __DIR__ . '/auth.php';
 
 Route::get('/test', function () {
-    // $user = \App\Models\User::first();
-    // $course = \App\Models\Course::with('author')->first();
+    $user = \App\Models\User::first();
+    $course = \App\Models\Course::with('author')->first();
 
-    // // Mail::to($user->email)->send(new CoursePurchaseSuccess($user, $course));
+    // Mail::to($user->email)->send(new CoursePurchaseSuccess($user, $course));
 
-    // return view('emails.review-thanks', [
+    // return view('emails.verify-email', [
     //     'user' => $user,
-    //     'course' => $course,
+    //     'url' => 'https://laravel.picblur.com',
+    //     'expiresIn' => 60,
     // ]);
-    $coursMedia = Course::with('media')->first();
-    dd($coursMedia);
+    // return view('emails.course-purchase-success', [
+    //     'course' => $course,
+    //     'user' => $user,
+    //     'url' => 'https://laravel.picblur.com',
+    //     'expiresIn' => 60,
+    // ]);
+    // $coursMedia = Course::with('media')->first();
+    // dd($coursMedia);
+    // try {
+    //     Mail::raw('This is a test email', function ($message) {
+    //         $message
+    //             ->to('pokharelsafal66@gmail.com')
+    //             ->subject('Laravel SMTP Test');
+    //     });
+    //     return "Email sent successfully!";
+    // } catch (\Exception $e) {
+    //     return "SMTP error: " . $e->getMessage();
+    // }
 });
 
 Route::get('/', [HomePageController::class, 'index'])
@@ -51,6 +68,18 @@ Route::stripeWebhooks('stripe/webhook');
 //});
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/payment-success', function () {
+        $course = Course::first();
+        return Inertia::render('Payment/Success/Index', [
+            'course' => $course,
+            'paymentDetails' => [
+                'amount' => 100,
+                'paymentId' => '1234567890',
+                'paymentMethod' => 'Credit Card',
+                'paymentDate' => now(),
+            ],
+        ]);
+    })->name('payment.success');
     Route::resource('activities', ActivityController::class)
         ->only(['store'])
         ->names('activities');

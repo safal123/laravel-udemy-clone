@@ -121,7 +121,7 @@ const ChapterTabs = ({ chapter }: ChapterTabsProps) => {
       <Tabs defaultValue="overview" className="w-full">
         <div className="border-b border-gray-200 sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-white shadow-sm">
           <ScrollArea className="w-full">
-            <TabsList className="flex w-full h-16 justify-start rounded-none px-4 space-x-8">
+            <TabsList className="flex h-16 justify-start rounded-none px-4 space-x-8">
               <TabsTrigger
                 value="overview"
                 className="flex items-center gap-2 py-5 relative font-medium bg-transparent text-gray-600 rounded-none hover:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 data-[state=active]:font-semibold data-[state=active]:shadow-none transition-all"

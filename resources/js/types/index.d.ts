@@ -61,6 +61,7 @@ export interface Course {
   target_audience?: string;
   what_you_will_learn?: string;
   tags?: string;
+  progress?: number;
 }
 
 export interface Wishlist {

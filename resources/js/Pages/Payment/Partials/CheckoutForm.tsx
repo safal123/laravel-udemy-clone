@@ -39,7 +39,7 @@ const CheckoutForm = ({ course }: CheckoutFormProps) => {
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/courses/${course.slug}`,
+          return_url: `${window.location.origin}/payment-success?course_id=${course.id}`,
         },
       })
 

@@ -57,7 +57,12 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <SidebarProvider className="flex h-screen">
+    <SidebarProvider
+      style={{
+        "--sidebar-width": "20rem",
+        "--sidebar-width-mobile": "20rem",
+      } as any}
+      className="flex h-scree">
       <Toaster
         position="top-right"
         toastOptions={{
@@ -71,8 +76,7 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
         }}
       />
 
-      <AppSidebar variant="dark">
-        {/* Course title header */}
+      <AppSidebar variant="light">
         <div className="p-4 bg-gray-50 border-b border-gray-200 flex flex-col space-y-3">
           <Logo />
           <Link
@@ -85,44 +89,12 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
           <h1 className="text-lg font-bold text-gray-900 truncate">
             {course.title}
           </h1>
-
-          {/* Course Progress */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">Course Progress</span>
-              <span className="text-sm font-semibold text-blue-600">
-                {Math.round((currentChapterIndex + 1) / course.chapters.length * 100)}%
-              </span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-600 transition-all duration-300"
-                style={{ width: `${((currentChapterIndex + 1) / course.chapters.length) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Chapter Completion */}
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox
-              id="chapter-completion"
-              checked={chapter.is_completed}
-              onCheckedChange={() => toggleChapterCompletion(chapter.progress[0].id, chapter.is_completed)}
-              className="border-gray-300"
-            />
-            <label
-              htmlFor="chapter-completion"
-              className="text-sm font-medium text-gray-700 cursor-pointer"
-            >
-              Mark as completed
-            </label>
-          </div>
         </div>
 
         {/* Chapters list */}
         {course.chapters.map((chapterItem, index) => (
           <AppTooltip message={chapterItem.title} key={chapterItem.id}>
-            <SidebarMenuItem className="p-1">
+            <SidebarMenuItem className="p-2">
               <div className="flex items-center">
                 <div className="flex-1">
                   <Link href={`/courses/${course.slug}/chapters/${chapterItem.id}`}>
@@ -151,22 +123,6 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
                     </div>
                   </Link>
                 </div>
-                <div
-                  className="px-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (chapterItem.progress && chapterItem.progress.length > 0) {
-                      toggleChapterCompletion(chapterItem?.progress[0].id, chapterItem.is_completed);
-                    }
-                  }}
-                >
-                  <Checkbox
-                    id={`chapter-${chapterItem.id}-completion`}
-                    checked={chapterItem.is_completed}
-                    className="border-gray-300"
-                  />
-                </div>
               </div>
             </SidebarMenuItem>
           </AppTooltip>
@@ -183,16 +139,8 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
           </div>
         </div>
 
-        {/* Chapter progress indicator */}
-        <div className="h-0.5 bg-gray-100">
-          <div
-            className="h-full bg-blue-600 transition-all duration-300"
-            style={{ width: `${((currentChapterIndex + 1) / course.chapters.length) * 100}%` }}
-          />
-        </div>
-
         {/* Main content */}
-        <div className="flex-1 p-2">
+        <div className="flex-1 py-1">
           {children}
         </div>
       </main>

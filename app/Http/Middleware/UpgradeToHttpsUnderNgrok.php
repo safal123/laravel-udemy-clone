@@ -19,7 +19,10 @@ class UpgradeToHttpsUnderNgrok
         if (
             str_ends_with($request->getHost(), '.ngrok-free.app') ||
             // production
-            config('app.env') === 'production'
+            config('app.env') === 'production' ||
+            // zrok
+            str_ends_with($request->getHost(), '.share.zrok.io')
+
         ) {
             URL::forceScheme('https');
         }

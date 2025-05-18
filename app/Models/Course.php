@@ -169,7 +169,8 @@ class Course extends Model implements CourseConstants
         return [
             'title' => $this->title,
             'description' => $this->description,
-            'price' => $this->price,
+            'price' => (float) $this->price,
+            'discount_price' => (float) $this->discount_price,
             'level' => $this->level,
             'language' => $this->language,
             'requirements' => $this->requirements,
@@ -185,9 +186,14 @@ class Course extends Model implements CourseConstants
      *
      * @return bool
      */
-    public function shouldBeSearchable(): bool
+    // public function shouldBeSearchable(): bool
+    // {
+    //     // Only index courses that are published and have at least one published chapter
+    //     return $this->is_published && $this->hasPublishedChapter();
+    // }
+
+    public function searchableAs(): string
     {
-        // Only index courses that are published and have at least one published chapter
-        return $this->is_published && $this->hasPublishedChapter();
+        return 'courses';
     }
 }

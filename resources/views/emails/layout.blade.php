@@ -3,6 +3,7 @@
 
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="x-apple-disable-message-reformatting">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -81,11 +82,34 @@
                 left: -60px;
             }
 
-            .logo {
+            .logo-container {
                 display: block;
                 margin: 0 auto 24px;
+            }
+
+            .logo-box {
                 width: 48px;
                 height: 48px;
+                background-color: white;
+                border-radius: 12px;
+                position: relative;
+            }
+
+            .logo-box div {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .logo-box span {
+                font-size: 22px;
+                font-weight: bold;
+                color: #047857;
             }
 
             .header-title {
@@ -235,43 +259,124 @@
                 border-top: 1px solid #e2e8f0;
             }
 
+            /* For Outlook */
+            table {
+                border-collapse: separate;
+            }
+
+            a,
+            a:link,
+            a:visited {
+                text-decoration: none;
+                color: #047857;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                margin: 0;
+                padding: 0;
+            }
+
+            @media only screen and (max-width: 600px) {
+                .main-table {
+                    width: 100% !important;
+                }
+
+                .content {
+                    padding: 30px 24px !important;
+                }
+
+                .header {
+                    padding: 24px 24px !important;
+                }
+
+                .footer {
+                    padding: 24px !important;
+                }
+
+                .banner {
+                    padding: 24px 20px !important;
+                }
+            }
+
             @yield('additional-styles')
 
         </style>
     </head>
 
-    <body>
-        <div class="main-wrapper">
-            <div class="email-container">
-                <div class="preheader">@yield('preheader')</div>
+    <body style="margin: 0; padding: 0; background-color: #f3f4f6;">
+        <!-- Preheader text for email clients -->
+        <div class="preheader">@yield('preheader')</div>
 
-                <div class="header">
-                    <div class="header-circle"></div>
-                    <div class="header-circle-2"></div>
-                    <!-- Logo SVG -->
-                    <svg class="logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="48" height="48" rx="12" fill="white" />
-                        <path d="M24 10L10 18L24 26L38 18L24 10Z" stroke="#047857" stroke-width="2.5"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M10 26L24 34L38 26" stroke="#047857" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <path d="M10 18L24 26L38 18" stroke="#047857" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                    <h1 class="header-title">@yield('header', 'LearnHub')</h1>
-                    @yield('header-subtitle')
-                </div>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%;">
+            <tr>
+                <td align="center" valign="top" style="padding: 40px 10px;">
+                    <!-- Main Email Container -->
+                    <table border="0" cellpadding="0" cellspacing="0" class="main-table" width="640"
+                        style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);">
+                        <!-- Header Section -->
+                        <tr>
+                            <td align="center" valign="top" class="header"
+                                background="linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%)"
+                                style="background: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%); padding: 32px 48px; text-align: center; position: relative;">
+                                <!-- Header Content -->
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td align="center" valign="top" style="padding-bottom: 24px;">
+                                            <!-- Logo -->
+                                            <table border="0" cellpadding="0" cellspacing="0" width="48">
+                                                <tr>
+                                                    <td align="center" valign="middle"
+                                                        style="background-color: white; border-radius: 12px; width: 48px; height: 48px;">
+                                                        <span
+                                                            style="font-size: 22px; font-weight: bold; color: #047857;">L</span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" valign="top">
+                                            <h1 class="header-title"
+                                                style="color: #ffffff; font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.01em;">
+                                                @yield('header', 'LearnHub')</h1>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" valign="top">
+                                            <p class="header-subtitle"
+                                                style="color: rgba(255, 255, 255, 0.9); font-size: 16px; font-weight: 500;">
+                                                @yield('header-subtitle')</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
 
-                <div class="content">
-                    @yield('content')
-                </div>
+                        <!-- Main Content Section -->
+                        <tr>
+                            <td align="left" valign="top" class="content" style="padding: 48px;">
+                                @yield('content')
+                            </td>
+                        </tr>
 
-                <div class="footer">
-                    <p>&copy; {{ date('Y') }} LearnHub. All rights reserved.</p>
-                    @yield('footer')
-                </div>
-            </div>
-        </div>
+                        <!-- Footer Section -->
+                        <tr>
+                            <td align="center" valign="top" class="footer"
+                                style="padding: 32px 48px; text-align: center; font-size: 14px; color: #64748b; border-top: 1px solid #e2e8f0;">
+                                <p style="margin-bottom: 10px;">&copy; {{ date('Y') }} LearnHub. All rights reserved.
+                                </p>
+                                @yield('footer')
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </body>
 
 </html>

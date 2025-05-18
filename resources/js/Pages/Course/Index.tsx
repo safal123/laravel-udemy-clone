@@ -45,7 +45,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(courses.meta.current_page)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSearching, setIsSearching] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const [hasFilters, setHasFilters] = useState(search !== '' || filters.category.length > 0 || filters.level !== '' || filters.price !== '')
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -65,16 +64,13 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     { id: 'all-levels', name: 'All Levels' }
   ]
 
-  // Function to set global fetching state
   const startFetching = () => setIsFetching(true);
   const endFetching = () => setIsFetching(false);
 
-  // Debounced search function that queries the database
   const debouncedSearch = useCallback(
     debounce((term: string) => {
-      setIsSearching(true);
-      setCurrentPage(1);
       startFetching();
+      setCurrentPage(1);
 
       router.get(
         window.location.pathname,
@@ -90,24 +86,19 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
           preserveState: true,
           preserveScroll: true,
           only: ['courses'],
-          onFinish: () => {
-            setIsSearching(false);
-            endFetching();
-          },
+          onFinish: endFetching
         }
       );
-    }, 500),
+    }, 600),
     [selectedCategories, selectedLevel, selectedPrice, sortBy]
   );
 
-  // Handle search input changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
     debouncedSearch(value);
   };
 
-  // Update category filter
   const handleCategoryChange = (category: string) => {
     const newCategories = selectedCategories.includes(category)
       ? selectedCategories.filter(c => c !== category)
@@ -131,12 +122,11 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
         preserveState: true,
         preserveScroll: true,
         only: ['courses'],
-        onFinish: () => endFetching()
+        onFinish: endFetching
       }
     );
   };
 
-  // Apply level filter
   const handleLevelChange = (level: string, checked: boolean) => {
     const newLevel = checked ? level : '';
     setSelectedLevel(newLevel);
@@ -162,7 +152,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     );
   };
 
-  // Apply price filter
   const handlePriceChange = (priceId: string, checked: boolean) => {
     const newPrice = checked ? priceId : '';
     setSelectedPrice(newPrice);
@@ -188,7 +177,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     );
   };
 
-  // Apply sorting
   const handleSortChange = (value: string) => {
     setSortBy(value);
     setCurrentPage(1);
@@ -213,7 +201,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     );
   };
 
-  // Update reset filters
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedCategories([]);
@@ -241,15 +228,12 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     );
   }
 
-  // Check for search=focus query param and focus the search input
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('search') === '' && searchInputRef.current) {
-      // Scroll to the top and focus the search input
       window.scrollTo(0, 0);
       searchInputRef.current.focus();
 
-      // Clean up the URL by removing the focus parameter
       const newParams = new URLSearchParams(window.location.search);
       newParams.delete('search');
       const newPath = window.location.pathname + (newParams.toString() ? `?${newParams.toString()}` : '');
@@ -257,7 +241,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     }
   }, [url]);
 
-  // Update initial state effect
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const categoryFromUrl = urlParams.getAll('category') || [];
@@ -282,24 +265,19 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     setDisplayedCourses(courses.data);
   }, []);
 
-  // Update hasFilters effect
   useEffect(() => {
     const hasActiveFilters = searchTerm !== '' || selectedCategories.length > 0 || selectedLevel !== '' || selectedPrice !== '';
     setHasFilters(hasActiveFilters);
   }, [searchTerm, selectedCategories, selectedLevel, selectedPrice]);
 
-  // Track when courses prop changes (e.g. when more courses are loaded)
   useEffect(() => {
-    // Only append new courses when loading more (when current page > 1)
     if (currentPage > 1) {
-      // Log current state before updating
       console.log(`Before update: Displayed courses: ${displayedCourses.length}, New batch: ${courses.data.length}`);
 
       const updatedDisplayedCourses = [...displayedCourses];
       const existingIds = new Set(updatedDisplayedCourses.map(course => course.id));
       let addedCount = 0;
 
-      // Add new courses without duplicates
       courses.data.forEach(course => {
         if (!existingIds.has(course.id)) {
           updatedDisplayedCourses.push(course);
@@ -313,7 +291,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
       setDisplayedCourses(updatedDisplayedCourses);
       setAllLoadedCourses(updatedDisplayedCourses);
     } else {
-      // On initial load, filter reset, or search/filter changes
       console.log(`Reset to initial ${courses.data.length} courses`);
       setAllLoadedCourses(courses.data);
       setDisplayedCourses(courses.data);
@@ -323,7 +300,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
     endFetching();
   }, [courses.data]);
 
-  // Function to load more courses
   const loadMoreCourses = () => {
     if (currentPage < courses.meta.last_page) {
       setIsLoading(true);
@@ -365,10 +341,8 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
       <HomePageNavbar auth={auth} />
       <Head title="Browse Courses" />
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8 flex-grow mt-16">
         <div className="flex flex-col md:flex-row gap-6">
-          {/* Mobile Filter Button */}
           <div className="md:hidden mb-4">
             <Button
               onClick={() => setMobileFiltersOpen(true)}
@@ -378,7 +352,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
             </Button>
           </div>
 
-          {/* Mobile Filter Overlay */}
           {mobileFiltersOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex md:hidden">
               <div className="w-80 h-full bg-white dark:bg-gray-800 overflow-y-auto border-r border-gray-200 dark:border-gray-700">
@@ -406,7 +379,7 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
                     setSelectedPrice={handlePriceChange}
                     prices={prices}
                     levels={levels}
-                    isSearching={isSearching}
+                    isSearching={isFetching}
                     onResetFilters={resetFilters}
                     searchInputRef={searchInputRef}
                   />
@@ -415,7 +388,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
             </div>
           )}
 
-          {/* Sidebar Filters - Desktop */}
           <div className="hidden md:block w-64 flex-shrink-0">
             <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 sticky top-24">
               <h2 className="text-base font-semibold mb-3 text-gray-800 dark:text-white">Filters</h2>
@@ -432,25 +404,22 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
                 setSelectedPrice={handlePriceChange}
                 prices={prices}
                 levels={levels}
-                isSearching={isSearching}
+                isSearching={isFetching}
                 onResetFilters={resetFilters}
                 searchInputRef={searchInputRef}
               />
             </div>
           </div>
 
-          {/* Main Course Content */}
           <div className="flex-1 relative">
-            {/* Loading Overlay */}
             {isFetching && (
               <Loader
                 size="lg"
                 text="Loading courses..."
-                className="absolute inset-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-lg"
+                className="absolute inset-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-lg z-50"
               />
             )}
 
-            {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
               <div className="w-full sm:w-auto">
                 <div className="flex items-center justify-between sm:justify-start gap-3 mb-1">
@@ -470,7 +439,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   <span className="font-medium text-orange-500">{courses.meta.total}</span> courses available for you
                 </p>
-                {/* Active Filters Display */}
                 {hasFilters && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {searchTerm && (
@@ -513,7 +481,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
                   </SelectTrigger>
                   <SelectContent align="end">
                     <SelectItem value="popular">Most Popular</SelectItem>
-                    {/* <SelectItem value="rating">Highest Rated</SelectItem> */}
                     <SelectItem value="newest">Newest</SelectItem>
                     <SelectItem value="price-low">Price: Low to High</SelectItem>
                     <SelectItem value="price-high">Price: High to Low</SelectItem>
@@ -522,7 +489,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
               </div>
             </div>
 
-            {/* Courses Grid */}
             {displayedCourses.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -531,7 +497,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
                   ))}
                 </div>
 
-                {/* Load More Button (only shown if no filters are applied) */}
                 {currentPage < courses.meta.last_page && (
                   <div className="mt-8 flex justify-center">
                     <Button
@@ -556,7 +521,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
                   </div>
                 )}
 
-                {/* "Showing X of Y results" indicator */}
                 <div className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
                   Showing {displayedCourses.length} of {courses.meta.total} courses
                 </div>
@@ -583,7 +547,6 @@ const Index = ({ auth, courses, categories, search = '', filters = { category: [
   )
 }
 
-// SidebarFilters Component
 interface SidebarFiltersProps {
   searchTerm: string
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -621,16 +584,13 @@ const SidebarFilters = ({
 }: SidebarFiltersProps) => {
   return (
     <div>
-      {/* Search */}
       <div className="mb-4">
         <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Search</h3>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             {isSearching ? (
-              <div className="relative h-4 w-4">
-                <div className="absolute inset-0 rounded-full border-t-1 border-orange-500 animate-[spin_1.2s_cubic-bezier(0.55,0.15,0.45,0.85)_infinite]"></div>
-                <div className="absolute inset-0 rounded-full border-r-1 border-transparent border-t-1 border-orange-500/30 animate-[spin_1.5s_cubic-bezier(0.55,0.15,0.45,0.85)_infinite]"></div>
-                <LoaderIcon className="absolute inset-0 m-auto h-3 w-3 text-orange-500" />
+              <div className="h-4 w-4 animate-pulse">
+                <SearchIcon className="h-4 w-4 text-orange-500" />
               </div>
             ) : (
               <SearchIcon className="h-4 w-4 text-gray-400" />
@@ -647,7 +607,6 @@ const SidebarFilters = ({
         </div>
       </div>
 
-      {/* Categories */}
       <div className="mb-4">
         <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Categories</h3>
         <div className="space-y-1 max-h-[30vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
@@ -673,7 +632,6 @@ const SidebarFilters = ({
 
       <Separator className="my-3" />
 
-      {/* Level */}
       <div className="mb-4">
         <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Level</h3>
         <div className="space-y-1.5">
@@ -700,7 +658,6 @@ const SidebarFilters = ({
 
       <Separator className="my-3" />
 
-      {/* Price */}
       <div className="mb-4">
         <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Price</h3>
         <div className="space-y-1.5">
@@ -727,7 +684,6 @@ const SidebarFilters = ({
 
       <Separator className="my-3" />
 
-      {/* Reset Filters */}
       <Button
         variant="outline"
         className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-xs h-8"
@@ -743,7 +699,6 @@ const SidebarFilters = ({
 const CourseCard = ({ course }: { course: Course }) => {
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl group h-full flex flex-col border-gray-200 dark:border-gray-700 relative">
-      {/* Hover Overlay with View Course Button */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
         <Button
           className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
@@ -755,7 +710,6 @@ const CourseCard = ({ course }: { course: Course }) => {
         </Button>
       </div>
 
-      {/* Course Image */}
       <div className="relative">
         <img
           src={course.image_url}
@@ -764,14 +718,11 @@ const CourseCard = ({ course }: { course: Course }) => {
         />
       </div>
 
-      {/* Title and Price */}
       <CardContent className="p-4 flex flex-col flex-grow bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-        {/* Title */}
         <h3 className="font-semibold text-base mb-2 line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors duration-200">
           {course.title}
         </h3>
 
-        {/* Price */}
         <div className="mt-auto">
           {course.discount_price ? (
             <div className="flex items-center">

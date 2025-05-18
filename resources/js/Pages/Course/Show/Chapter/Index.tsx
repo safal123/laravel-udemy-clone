@@ -47,7 +47,7 @@ const CourseChapter = () => {
   }
 
   if (!chapter) {
-    return null
+    return <div>Chapter not found</div>
   }
 
   return (
@@ -61,6 +61,7 @@ const CourseChapter = () => {
           </h1>
 
           <Button
+            size={'sm'}
             onClick={toggleCompletion}
             className={cn(
               'transition-colors px-3 py-1 rounded-md text-sm font-medium flex items-center',

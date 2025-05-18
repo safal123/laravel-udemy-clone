@@ -49,6 +49,14 @@ class CourseController extends Controller
                                 ])
                                 ->orderBy('order');
                         },
+                        'chapters.media' => function ($query) {
+                            $query
+                                ->where('type', 'video');
+                        },
+                        'chapters.progress' => function ($query) {
+                            $query
+                                ->where('user_id', Auth::id());
+                        },
                         'wishlists' => function ($query) {
                             $query->select(['id', 'user_id', 'course_id']);
                         },
@@ -63,7 +71,6 @@ class CourseController extends Controller
                                     'purchase_status'
                                 ])
                                 ->as('purchaseDetails')
-                                ->as('purchaseDetails')
                                 ->where('course_user.user_id', Auth::id())
                                 ->where('course_user.course_id', $course->id);
                         },
@@ -71,7 +78,9 @@ class CourseController extends Controller
                             $query
                                 ->where('user_id', Auth::id())
                                 ->where('course_id', $course->id)
-                                ->where('content_type', '=', 'course');
+                                ->where('content_type', '=', 'course')
+                                ->orderBy('created_at', 'desc')
+                                ->first();
                         },
                     ])
                     ->withUserSpecificAttributes(Auth::id())

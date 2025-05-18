@@ -4,8 +4,6 @@ namespace App\Models\Builders;
 
 use App\Models\Constants\CourseUserConstants;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class CourseBuilder extends Builder
 {
@@ -162,18 +160,27 @@ class CourseBuilder extends Builder
 
     public function sort(?string $sort): self
     {
-        return $this->orderBy(
-            match ($sort) {
-                'rating' => 'reviews_avg_rating',
-                'newest' => 'created_at',
-                'price-low', 'price-high' => 'price',
-                default => 'students_count',
-            },
-            match ($sort) {
-                'price-high' => 'desc',
-                'price-low' => 'asc',
-                default => 'desc',
-            }
-        );
+        $column = match ($sort) {
+            'rating' => 'reviews_avg_rating',
+            'newest' => 'created_at',
+            'price-low', 'price-high' => 'price',
+            default => 'students_count',
+        };
+
+        $direction = match ($sort) {
+            'price-high' => 'desc',
+            'price-low' => 'asc',
+            'newest' => 'desc',
+            'rating' => 'desc',
+            default => 'desc',
+        };
+
+
+        if ($column === 'reviews_avg_rating') {
+            return $this->withAvg('reviews', 'rating')
+                ->orderBy('reviews_avg_rating', $direction);
+        }
+
+        return $this->orderBy($column, $direction);
     }
 }

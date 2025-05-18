@@ -52,7 +52,8 @@ class CourseResource extends JsonResource
             'is_wishlisted' => $this->is_wishlisted ?? false,
             'is_author' => $this->is_author ?? false,
             'has_reviewed' => $this->has_reviewed,
-            'user_progress' => $this->whenLoaded('userProgress')
+            'user_progress' => $this->whenLoaded('userProgress'),
+            'media' => $this->whenLoaded('media'),
         ];
     }
 }

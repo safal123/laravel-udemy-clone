@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
@@ -27,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('view-teacher-dashboard', function (User $user) {
             return $user->hasAnyRole(['teacher', 'admin']);
+        });
+
+        Gate::define('view-course', function (User $user, Course $course) {
+            return true;
+            return $user->hasAnyRole(['teacher', 'admin']) || $user->hasCoursePurchased($course);
         });
     }
 
