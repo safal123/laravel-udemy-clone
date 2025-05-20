@@ -9,23 +9,20 @@ import {
 import { Link, usePage } from '@inertiajs/react'
 import { LogOut, User, Settings, LayoutDashboard, BookOpen, ShieldCheck } from 'lucide-react'
 import { PageProps, User as UserType } from '@/types'
+import { memo, useMemo } from 'react'
 
 
-export function UserMenu() {
+const UserMenu = memo(function UserMenu() {
   const { auth } = usePage<PageProps>().props
   const user = auth.user as UserType
 
-  const getUserInitials = () => {
+  const getUserInitials = useMemo(() => {
     if (!user?.name) return 'U'
     return user.name.split(' ')
       .map((part: string) => part.charAt(0).toUpperCase())
       .slice(0, 2)
       .join('')
-  }
-
-  const isTeacher = user?.role
-
-  console.log(user)
+  }, [user?.name])
 
   return (
     <DropdownMenu>
@@ -33,7 +30,7 @@ export function UserMenu() {
         <button className="relative overflow-hidden rounded-full transition-all hover:ring-2 hover:ring-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <UserAvatar
             src={user.image_url || ''}
-            fallback={getUserInitials()}
+            fallback={getUserInitials}
             className="h-9 w-9"
           />
           <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500"></span>
@@ -107,4 +104,6 @@ export function UserMenu() {
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}
+})
+
+export { UserMenu }
