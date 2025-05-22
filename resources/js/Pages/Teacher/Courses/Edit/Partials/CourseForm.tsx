@@ -91,7 +91,7 @@ const CourseForm = ({ course, mode, categories }: CourseFormProps) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
               <Label className="text-sm font-medium pt-2">Description</Label>
               <div className="md:col-span-2">
-                <div className={cn("border rounded-md", errors.description && "border-red-500")}>
+                <div className={cn("", errors.description && "border-red-500")}>
                   <Editor
                     value={data.description}
                     onChange={(value: string) => setData("description", value)}

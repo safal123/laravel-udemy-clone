@@ -37,7 +37,7 @@ export default function DashboardLayout({
   return (
     <>
       <Head title={title || (variant === 'teacher' ? 'Teacher Dashboard' : 'Dashboard')} />
-      <div className="h-screen flex overflow-hidden">
+      <div className="flex overflow-hidden">
         <SidebarProvider className="flex flex-1 h-full">
           <Toaster position="top-right" />
 
@@ -52,7 +52,7 @@ export default function DashboardLayout({
             </AppSidebar>
           </div>
 
-          <div className="flex flex-col flex-1 overflow-y-auto">
+          <div className="flex flex-col flex-1">
             {/* Simplified Top Navigation Bar */}
             <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-10">
               <div className="px-4 h-14 flex items-center justify-between">

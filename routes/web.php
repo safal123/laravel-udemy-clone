@@ -15,7 +15,9 @@ use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WishlistController;
 use App\Mail\CoursePurchaseSuccess;
 use App\Models\Course;
+use App\Services\DeepSeekService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,8 +25,9 @@ use Inertia\Inertia;
 require __DIR__ . '/auth.php';
 
 Route::get('/test', function () {
-    $user = \App\Models\User::first();
-    $course = \App\Models\Course::with('author')->first();
+    // $deepSeekService = new DeepSeekService();
+    // $response = $deepSeekService->generateText('Hello, how are you?');
+    // dd($response);
 
     // Mail::to($user->email)->send(new CoursePurchaseSuccess($user, $course));
 
@@ -68,6 +71,23 @@ Route::stripeWebhooks('stripe/webhook');
 //});
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/deepseek', function () {
+        // only for super admin
+        if (auth()->user()->email !== config('app.super_admin_email')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $prompt = request()->only('prompt');
+
+        if (!$prompt) {
+            return response()->json(['error' => 'Prompt is required'], 400);
+        }
+
+        $deepSeekService = new DeepSeekService();
+        $response = $deepSeekService->generateText($prompt);
+
+        dd($response);
+        return response()->json($response);
+    })->name('deepseek.generate');
     Route::get('/payment-success', function () {
         $course = Course::first();
         return Inertia::render('Payment/Success/Index', [

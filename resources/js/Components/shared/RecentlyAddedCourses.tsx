@@ -1,115 +1,106 @@
-import { Course } from "@/types";
-import { Button } from "@/Components/ui/button"
-import { Link } from '@inertiajs/react'
-import { motion } from 'framer-motion';
-import CourseCard from "@/Components/shared/CourseCard"
+import { Button } from '@/Components/ui/button';
+import { Course } from '@/types';
+import { router } from '@inertiajs/react';
+import { useState } from 'react';
+import CourseCard from '@/Components/shared/CourseCard';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface RecentlyAddedCoursesProps {
-  courses: Course[];
+  courses: {
+    newReleases: Course[];
+    mostPopular: Course[];
+    topRated: Course[];
+  };
   addToWishlist: (courseId: string) => void;
 }
 
 export default function RecentlyAddedCourses({ courses, addToWishlist }: RecentlyAddedCoursesProps) {
-  // Animation variants for Framer Motion
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-  }
+  const [activeCategory, setActiveCategory] = useState('newReleases');
 
-  const stagger = {
-    visible: { transition: { staggerChildren: 0.15 } }
-  }
-
-  const scaleIn = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.4, ease: "easeOut" }
-    }
-  }
+  const categories = {
+    newReleases: { label: 'New Releases', data: courses.newReleases },
+    mostPopular: { label: 'Most Popular', data: courses.mostPopular },
+    topRated: { label: 'Top Rated', data: courses.topRated }
+  };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-          <div className="mb-6 md:mb-0">
-            <div className="inline-block text-sm font-medium text-orange-600 mb-2 tracking-wide">EXPAND YOUR KNOWLEDGE</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
-              Recently Added <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">Courses</span>
-            </h2>
-            <p className="mt-3 text-slate-600 max-w-2xl">
-              Discover our latest additions to help you master new skills and advance your career with expert-led instruction.
-            </p>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full border-slate-300 text-slate-700 hover:border-orange-300 hover:text-orange-600 px-4"
-            >
-              View All
-            </Button>
-            <div className="hidden md:flex items-center space-x-1 border border-slate-200 rounded-full p-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="rounded-full text-slate-600 hover:text-orange-600 px-3 text-xs"
-              >
-                Most Popular
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                className="rounded-full bg-white text-slate-800 hover:bg-white shadow-sm px-3 text-xs"
-              >
-                New Releases
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="rounded-full text-slate-600 hover:text-orange-600 px-3 text-xs"
-              >
-                Top Rated
-              </Button>
+        <div className="flex flex-col space-y-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">Featured Courses</h2>
+              <p className="mt-1 text-slate-600">Explore our most in-demand courses</p>
             </div>
-          </div>
-        </div>
 
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={stagger}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
-        >
-          {courses?.map((course: Course) => (
-            <motion.div
-              key={course.id}
-              variants={fadeInUp}
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.2 }}
-            >
-              <CourseCard course={course} addToWishlist={addToWishlist} />
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* "View More" button when there are many courses */}
-        {courses.length > 0 && (
-          <div className="mt-12 text-center">
-            <Link href={"/courses"}>
+            <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
-                size="lg"
-                className="rounded-full border-slate-300 hover:border-orange-300 hover:text-orange-600 px-8"
+                size="sm"
+                onClick={() => router.get(route('courses.index'))}
+                className="rounded-full border-slate-200 text-slate-700 hover:border-orange-200 hover:text-orange-600 px-4"
               >
-                Browse All Courses
+                View All
               </Button>
-            </Link>
+              <div className="hidden md:flex items-center space-x-1 border border-slate-200 rounded-full p-1 bg-white">
+                {Object.entries(categories).map(([key, { label }]) => {
+                  const isActive = activeCategory === key;
+                  return (
+                    <Button
+                      key={key}
+                      variant={isActive ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setActiveCategory(key)}
+                      className={cn(
+                        "relative rounded-full px-3 text-xs transition-all duration-200",
+                        isActive
+                          ? "text-orange-100 hover:text-orange-400"
+                          : "text-slate-600 hover:text-orange-600"
+                      )}
+                    >
+                      {label}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute inset-0 bg-orange-50 rounded-full shadow-sm -z-10"
+                          transition={{ type: "spring", duration: 0.5 }}
+                        />
+                      )}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        )}
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {categories[activeCategory as keyof typeof categories].data.map((course: Course) => (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    addToWishlist={() => addToWishlist(course.id)}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </section>
-  )
+  );
 }

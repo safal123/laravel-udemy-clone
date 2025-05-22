@@ -27,14 +27,15 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user()
                     ? new UserResource(
-                        User::with('roles', 'wishlists.course')
+                        User::with(['roles', 'wishlists.course'])
                             ->find($request->user()->id)
-
                     )
                     : null,
             ],
             'categories' => fn() => cache()->remember('categories', 86400, function () {
-                return CategoryResource::collection(Category::orderBy('name')->get());
+                return CategoryResource::collection(
+                    Category::orderBy('name')->get()
+                );
             }),
             'ziggy' => fn() => [
                 ...(new Ziggy)->toArray(),
@@ -44,11 +45,19 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
-            'totalCourses' => cache()->remember('total_courses', 3600, fn() => Course::count()),
-            'totalStudents' => cache()->remember('total_students', 3600, fn() => User::count()),
-            'totalRatings' => cache()->remember('total_ratings', 3600, function () {
+            'totalCourses' => fn() => cache()->remember('total_courses', 3600, function () {
+                return Course::whereNotNull('tags')
+                    ->allPublishedCourses()
+                    ->count();
+            }),
+            'totalStudents' => fn() => cache()->remember('total_students', 3600, function () {
+                return User::count();
+            }),
+            'totalRatings' => fn() => cache()->remember('total_ratings', 3600, function () {
                 return Course::join('course_reviews', 'courses.id', '=', 'course_reviews.course_id')
-                    ->avg('course_reviews.rating');
+                    ->whereNotNull('tags')
+                    ->allPublishedCourses()
+                    ->avg('course_reviews.rating') ?? 0;
             }),
         ];
     }

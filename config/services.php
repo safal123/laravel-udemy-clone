@@ -27,7 +27,6 @@ return [
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],
-
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
@@ -36,5 +35,9 @@ return [
     ],
     'video_processor' => [
         'url' => env('VIDEO_PROCESSOR_URL'),
+    ],
+    'deepseek' => [
+        'endpoint' => env('DEEPSEEK_END_POINT'),
+        'key' => env('DEEPSEEK_API_KEY'),
     ],
 ];
