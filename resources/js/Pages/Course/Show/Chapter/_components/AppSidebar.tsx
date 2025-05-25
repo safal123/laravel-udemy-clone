@@ -43,7 +43,7 @@ export function AppSidebar({ children, variant = 'light' }: MainMenuItemProps) {
         )}
       >
         <div className="p-2 w-full flex flex-row items-start space-x-2">
-        <UserMenu />
+          <UserMenu />
           <div className="mt-2 px-2">
             <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
               {user?.name}

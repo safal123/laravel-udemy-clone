@@ -24,7 +24,8 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->whenHas('email_verified_at'),
             'wishlists' => WishlistResource::collection($this->whenLoaded('wishlists')),
             'roles' => $this->whenLoaded('roles'),
-            'is_teacher' => $this->whenLoaded('roles') ? ($this->hasRole('teacher') || $this->hasRole('super-admin')) : false,
+            // TODO: Figure out the appropriate way to check if the user is a teacher
+            'is_teacher' => $this->getRoleNames()->intersect(['super-admin', 'teacher'])->isNotEmpty(),
             'purchase_details' => $this->purchaseDetails,
         ];
     }

@@ -13,27 +13,27 @@ const CourseInfoTabs: React.FC<CourseInfoTabsProps> = ({ course }) => {
     <div className="bg-white shadow-sm rounded-lg border border-slate-200 mb-6 overflow-hidden">
       {/* Card Header with Tabs */}
       <div className="border-b border-slate-200 bg-slate-50">
-        <div className="flex overflow-x-auto scrollbar-hide -mx-0.5">
+        <div className="flex w-full min-w-full overflow-x-auto scrollbar-hide">
           <button
-            className={`whitespace-nowrap px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base font-medium flex items-center transition-colors ${activeTab === 'learn' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-white' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'}`}
+            className={`min-w-[33.33%] whitespace-nowrap px-3 sm:px-5 md:px-6 py-3 md:py-4 text-sm md:text-base font-medium flex items-center justify-center transition-colors ${activeTab === 'learn' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-white' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'}`}
             onClick={() => setActiveTab('learn')}
           >
-            <BookOpen className={`h-4 w-4 md:h-5 md:w-5 mr-1.5 md:mr-2 flex-shrink-0 ${activeTab === 'learn' ? 'text-indigo-600' : 'text-slate-500'}`} />
-            <span>What you'll learn</span>
+            <BookOpen className={`h-4 w-4 md:h-5 md:w-5 mr-1.5 flex-shrink-0 ${activeTab === 'learn' ? 'text-indigo-600' : 'text-slate-500'}`} />
+            <span className="truncate">What you'll learn</span>
           </button>
           <button
-            className={`whitespace-nowrap px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base font-medium flex items-center transition-colors ${activeTab === 'audience' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-white' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'}`}
+            className={`min-w-[33.33%] whitespace-nowrap px-3 sm:px-5 md:px-6 py-3 md:py-4 text-sm md:text-base font-medium flex items-center justify-center transition-colors ${activeTab === 'audience' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-white' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'}`}
             onClick={() => setActiveTab('audience')}
           >
-            <Users className={`h-4 w-4 md:h-5 md:w-5 mr-1.5 md:mr-2 flex-shrink-0 ${activeTab === 'audience' ? 'text-indigo-600' : 'text-slate-500'}`} />
-            <span>Who it's for</span>
+            <Users className={`h-4 w-4 md:h-5 md:w-5 mr-1.5 flex-shrink-0 ${activeTab === 'audience' ? 'text-indigo-600' : 'text-slate-500'}`} />
+            <span className="truncate">Who it's for</span>
           </button>
           <button
-            className={`whitespace-nowrap px-5 md:px-6 py-3.5 md:py-4 text-sm md:text-base font-medium flex items-center transition-colors ${activeTab === 'requirements' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-white' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'}`}
+            className={`min-w-[33.33%] whitespace-nowrap px-3 sm:px-5 md:px-6 py-3 md:py-4 text-sm md:text-base font-medium flex items-center justify-center transition-colors ${activeTab === 'requirements' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-white' : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-100'}`}
             onClick={() => setActiveTab('requirements')}
           >
-            <LightbulbIcon className={`h-4 w-4 md:h-5 md:w-5 mr-1.5 md:mr-2 flex-shrink-0 ${activeTab === 'requirements' ? 'text-indigo-600' : 'text-slate-500'}`} />
-            <span>Requirements</span>
+            <LightbulbIcon className={`h-4 w-4 md:h-5 md:w-5 mr-1.5 flex-shrink-0 ${activeTab === 'requirements' ? 'text-indigo-600' : 'text-slate-500'}`} />
+            <span className="truncate">Requirements</span>
           </button>
         </div>
       </div>

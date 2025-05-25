@@ -73,21 +73,23 @@ export function useSearch({
     startFetching()
     setCurrentPage(page)
 
-    // Clean up the params to ensure category is always sent as an array
-    const queryParams: SearchParams = {
-      page,
-      ...params,
-      // Always send category as an array, even if empty
-      'category[]': params.category || []
+    // Create query params object with only the parameters we need
+    const queryParams: Record<string, any> = { page }
+
+    // Add non-empty parameters
+    if (params.search) queryParams.search = params.search
+    if (params.level) queryParams.level = params.level
+    if (params.price) queryParams.price = params.price
+    if (params.sort) queryParams.sort = params.sort
+
+    // Handle categories explicitly - ensure we're sending as 'category[]' only
+    if (params.category && params.category.length > 0) {
+      queryParams['category[]'] = params.category
     }
 
-    // Remove undefined or empty array values
+    // Remove undefined or empty values
     Object.keys(queryParams).forEach(key => {
-      const value = queryParams[key]
-      if (Array.isArray(value) && value.length === 0) {
-        delete queryParams[key]
-      }
-      if (value === undefined || value === '') {
+      if (queryParams[key] === undefined || queryParams[key] === '') {
         delete queryParams[key]
       }
     })
@@ -111,21 +113,22 @@ export function useSearch({
     }, 1000)
   }, [courses.data])
 
-  const applyFilters = useCallback((page = 1) => {
+  const applyFilters = useCallback((page = 1, overrideParams: Partial<SearchParams> = {}) => {
     fetchCourses(page, {
       search: searchTerm,
       category: selectedCategories,
       level: selectedLevel,
       price: selectedPrice,
-      sort: sortBy
+      sort: sortBy,
+      ...overrideParams
     })
   }, [searchTerm, selectedCategories, selectedLevel, selectedPrice, sortBy, fetchCourses])
 
   const debouncedSearch = useCallback(
     debounce((term: string) => {
       setSearchTerm(term)
-      applyFilters(1)
-    }, 1000),
+      applyFilters(1, { search: term })
+    }, 700),
     [applyFilters]
   )
 
@@ -141,24 +144,24 @@ export function useSearch({
       : [...selectedCategories, category]
 
     setSelectedCategories(newCategories)
-    applyFilters(1)
+    applyFilters(1, { category: newCategories })
   }
 
   const handleLevelChange = (level: string, checked: boolean) => {
     const newLevel = checked ? level : ''
     setSelectedLevel(newLevel)
-    applyFilters(1)
+    applyFilters(1, { level: newLevel })
   }
 
   const handlePriceChange = (priceId: string, checked: boolean) => {
     const newPrice = checked ? priceId : ''
     setSelectedPrice(newPrice)
-    applyFilters(1)
+    applyFilters(1, { price: newPrice })
   }
 
   const handleSortChange = (value: string) => {
     setSortBy(value)
-    applyFilters(1)
+    applyFilters(1, { sort: value })
   }
 
   const resetFilters = () => {
@@ -169,7 +172,13 @@ export function useSearch({
     setSelectedPrice('')
     setSortBy('')
 
-    fetchCourses(1)
+    fetchCourses(1, {
+      search: '',
+      category: [],
+      level: '',
+      price: '',
+      sort: ''
+    })
   }
 
   useEffect(() => {

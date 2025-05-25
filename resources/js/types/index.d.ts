@@ -79,7 +79,8 @@ export interface UserProgress {
   completed_at: string;
   created_at: string;
   course_id: string;
-  progress_percentage: number
+  progress_percentage: number;
+  is_completed: boolean;
 }
 
 export interface Chapter {

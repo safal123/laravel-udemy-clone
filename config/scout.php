@@ -142,16 +142,7 @@ return [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
-            Course::class => [
-                'filterableAttributes' => [
-                    'level',
-                    'price',
-                    'language',
-                    'requirements',
-                    'target_audience',
-                    'what_you_will_learn',
-                    'tags',
-                ],
+            'courses' => [
                 'sortableAttributes' => [
                     'created_at',
                     'price',

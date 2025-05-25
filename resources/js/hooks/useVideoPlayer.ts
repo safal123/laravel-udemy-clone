@@ -527,6 +527,7 @@ export function useVideoPlayer({
   }
 
   const toggleMobileMenu = (e: React.MouseEvent) => {
+    console.log('toggleMobileMenu')
     e.stopPropagation()
     setShowMobileMenu(!showMobileMenu)
     setShowQualityMenu(false)

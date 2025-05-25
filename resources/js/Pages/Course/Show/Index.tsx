@@ -11,7 +11,7 @@ import { Course, PageProps } from '@/types'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { format } from 'date-fns'
 
-import { AudioLines, BookAIcon, Clock, Calendar } from 'lucide-react'
+import { AudioLines, BookAIcon, Clock, Calendar, BookOpen, PlayCircle } from 'lucide-react'
 import React from 'react'
 import 'react-quill/dist/quill.bubble.css'
 import ChaptersPreview from './_component/ChaptersPreview'
@@ -38,7 +38,7 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
   }
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative bg-slate-50/50">
       <Head title={course.title} />
       <Toaster />
       <HomePageNavbar auth={auth} />
@@ -52,12 +52,23 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
       <div className="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {/* Course Information Tabs Component */}
-          <CourseInfoTabs course={course} />
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-1">
+            <CourseInfoTabs course={course} />
+          </div>
 
-          <CourseDescription course={course} />
-          <ChaptersPreview course={course} />
-          <AuthorProfile author={course.author} />
-          <div className="mt-8">
+          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <CourseDescription course={course} />
+          </div>
+
+          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <ChaptersPreview course={course} />
+          </div>
+
+          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <AuthorProfile author={course.author} />
+          </div>
+
+          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
             <CourseReview
               course={course}
               isEnrolled={course.is_enrolled && !course.is_author}
@@ -67,64 +78,95 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
 
         {/* Sidebar */}
         <div className="hidden lg:block lg:col-span-1">
-          <Card className="bg-white shadow-lg sticky top-20 border border-slate-100 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50 opacity-80"></div>
-            <CardContent className="relative pt-6">
-              <div className="space-y-3 mb-6">
-                <div className="flex items-start space-x-4 p-3 rounded-lg hover:bg-slate-50/80 transition-colors duration-200">
-                  <div className="p-2.5 bg-slate-100 rounded-lg mt-0.5">
-                    <BookAIcon className="w-5 h-5 text-slate-700" />
-                  </div>
-                  <div className="flex-1">
-                    <span className="text-slate-500 text-sm font-medium">Total Lessons</span>
-                    <p className="text-slate-900 text-base font-semibold mt-0.5">{course.chapters.length} Lessons</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4 p-3 rounded-lg hover:bg-slate-50/80 transition-colors duration-200">
-                  <div className="p-2.5 bg-slate-100 rounded-lg mt-0.5">
-                    <Clock className="w-5 h-5 text-slate-700" />
-                  </div>
-                  <div className="flex-1">
-                    <span className="text-slate-500 text-sm font-medium">Duration</span>
-                    <p className="text-slate-900 text-base font-semibold mt-0.5">{course.duration} hrs</p>
+          <Card className="bg-white border-0 shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl sticky top-20">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-100 via-white to-slate-50/80 opacity-70"></div>
+
+            <CardContent className="relative p-6">
+              {/* Course Stats Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="col-span-2 bg-gradient-to-br from-slate-100/80 to-white rounded-xl p-4 hover:bg-slate-50 transition-all duration-200 border border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-white rounded-lg shadow-sm">
+                      <BookAIcon className="w-5 h-5 text-slate-700" />
+                    </div>
+                    <div>
+                      <p className="text-slate-900 text-lg font-semibold">{course.chapters.length}</p>
+                      <p className="text-slate-600 text-sm">Total Lessons</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start space-x-4 p-3 rounded-lg hover:bg-slate-50/80 transition-colors duration-200">
-                  <div className="p-2.5 bg-slate-100 rounded-lg mt-0.5">
-                    <AudioLines className="w-5 h-5 text-slate-700" />
+
+                <div className="bg-gradient-to-br from-slate-100/80 to-white rounded-xl p-4 hover:bg-slate-50 transition-all duration-200 border border-slate-100">
+                  <div className="flex flex-col gap-2">
+                    <div className="p-2 bg-white rounded-lg shadow-sm w-min">
+                      <Clock className="w-4 h-4 text-slate-700" />
+                    </div>
+                    <div>
+                      <p className="text-slate-900 font-semibold">{course.duration}</p>
+                      <p className="text-slate-600 text-sm">Hours</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <span className="text-slate-500 text-sm font-medium">Level</span>
-                    <p className="text-slate-900 text-base font-semibold mt-0.5">Intermediate</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-slate-100/80 to-white rounded-xl p-4 hover:bg-slate-50 transition-all duration-200 border border-slate-100">
+                  <div className="flex flex-col gap-2">
+                    <div className="p-2 bg-white rounded-lg shadow-sm w-min">
+                      <AudioLines className="w-4 h-4 text-slate-700" />
+                    </div>
+                    <div>
+                      <p className="text-slate-900 font-semibold">
+                        {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
+                      </p>
+                      <p className="text-slate-600 text-sm">Level</p>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="relative">
+
+              {/* Enrollment Section */}
+              <div className="space-y-5">
                 {!course.is_enrolled && !course.is_author ? (
                   <PaymentModal course={course} />
                 ) : (
-                  <div className="mt-4 flex flex-col space-y-4">
+                  <>
                     {course.students.length > 0 && (
-                      <div className="bg-slate-50/80 rounded-lg p-3.5 border border-slate-100">
-                        <div className="flex items-center gap-2.5 text-sm">
-                          <Calendar className="w-4 h-4 text-slate-700" />
-                          <span className="text-slate-500 font-medium">Enrolled on:</span>
-                          <span className="text-slate-900 font-semibold">
-                            {/* @ts-ignore */}
-                            {format(new Date(course.students[0].purchase_details.created_at), 'MMM d, yyyy')}
-                          </span>
+                      <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50/80 rounded-xl p-4 border border-blue-100/50">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-white/80 rounded-lg shadow-sm">
+                            <Calendar className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-blue-600 text-sm font-medium">Enrolled on</p>
+                            <p className="text-blue-900 font-semibold">
+                              {/* @ts-ignore */}
+                              {format(new Date(course.students[0].purchase_details.created_at), 'MMM d, yyyy')}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
-                    <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
+
+                    <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`} className="block">
                       <Button
                         variant="default"
-                        className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-sm hover:shadow-md transition-all duration-200 h-11 font-medium text-base"
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
+                        text-white shadow-sm hover:shadow-md transition-all duration-300 h-12 text-base rounded-xl
+                        flex items-center justify-center gap-2.5 font-medium"
                       >
-                        {course.is_author ? 'Course Preview' : 'Continue Learning'}
+                        {course.is_author ? (
+                          <>
+                            <BookOpen className="w-5 h-5" />
+                            Preview Course
+                          </>
+                        ) : (
+                          <>
+                            <PlayCircle className="w-5 h-5" />
+                            Start Learning
+                          </>
+                        )}
                       </Button>
                     </Link>
-                  </div>
+                  </>
                 )}
               </div>
             </CardContent>
@@ -133,7 +175,7 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
         <div className={'lg:hidden bottom-4 inset-x-0 sticky'}>
           {course.is_enrolled || course.is_author ?
             <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
-              <div className={'bg-gray-900 flex items-center justify-center py-2 rounded-md text-white'}>
+              <div className={'bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center py-3 rounded-xl text-white shadow-lg'}>
                 <BookAIcon size={16} className="mr-2" />
                 {course.is_author ? 'Course Preview' : 'Continue Series'}
               </div>

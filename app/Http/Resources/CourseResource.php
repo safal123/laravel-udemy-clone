@@ -54,6 +54,7 @@ class CourseResource extends JsonResource
             'has_reviewed' => $this->has_reviewed,
             'user_progress' => $this->whenLoaded('userProgress'),
             'media' => $this->whenLoaded('media'),
+            'progress_percentage' => $this->progress_percentage,
         ];
     }
 }

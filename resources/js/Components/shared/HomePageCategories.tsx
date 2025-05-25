@@ -23,7 +23,6 @@ type HomePageCategoriesProps = {
 };
 
 const HomePageCategories = ({ categories }: HomePageCategoriesProps) => {
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -56,7 +55,7 @@ const HomePageCategories = ({ categories }: HomePageCategoriesProps) => {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div>

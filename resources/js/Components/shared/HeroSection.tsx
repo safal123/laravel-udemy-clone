@@ -4,15 +4,19 @@ import { Link, usePage } from '@inertiajs/react'
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-// Extend PageProps interface to include the expected properties
 interface HeroSectionProps extends PageProps {
   totalCourses: number;
   totalStudents: number;
   totalRatings: number;
+  stats: {
+    totalCourses: number;
+    totalStudents: number;
+    totalRatings: number;
+  };
 }
 
 export default function HeroSection() {
-  const { totalCourses, totalStudents, totalRatings } = usePage<HeroSectionProps>().props;
+  const { totalCourses, totalStudents, totalRatings } = usePage<HeroSectionProps>().props.stats;
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },

@@ -74,7 +74,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isTeacher(): bool
     {
-        return $this->hasAnyRole(['super-admin', 'teacher']);
+        return $this
+            ->getRoleNames()->intersect(['super-admin', 'teacher'])->isNotEmpty();
     }
 
     public function isTeacherOfCourse(Course $course): bool

@@ -3,29 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ChapterResource;
+use App\Http\Resources\CourseResource;
 use App\Models\Chapter;
 use App\Models\Course;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ChapterController extends Controller
 {
-    public function show()
+    public function show(): Response
     {
+        $userId = Auth::id();
         $courseSlug = request()->route('course');
         $chapterId = request()->route('chapter');
+
+        // Get course with chapters and progress
         $course = Course::query()
             ->where('slug', $courseSlug)
-            ->with(['chapters' => function ($query) {
-                $query->where('is_published', true);
+            ->with([
+                'chapters' => function ($query) use ($userId) {
+                    $query
+                        ->where('is_published', true)
+                        ->with([
+                            'progress' => fn($q) =>
+                            $q->where('user_id', $userId)
+                                ->where('content_type', 'chapter')
+                                ->limit(1)
+                        ]);
+                }
+            ])
+            ->addSelect(['progress_percentage' => function ($query) use ($userId) {
+                $query->select('progress_percentage')
+                    ->from('user_progress')
+                    ->whereColumn('course_id', 'courses.id')
+                    ->where('user_id', $userId)
+                    ->where('content_type', 'course')
+                    ->limit(1);
             }])
             ->firstOrFail();
+
+        // Get chapter with related data
         $chapter = Chapter::query()
             ->where('id', $chapterId)
             ->where('is_published', true)
             ->where('course_id', $course->id)
             ->with([
                 'course',
-                // Only select the latest media 
+                // Only select the latest media
                 'media' => function ($query) use ($chapterId) {
                     $query
                         ->whereNotNull('path')
@@ -81,7 +106,7 @@ class ChapterController extends Controller
         ]);
 
         return Inertia::render('Course/Show/Chapter/Index', [
-            'course' => $course,
+            'course' => new CourseResource($course),
             'chapter' => new ChapterResource($chapter),
         ]);
     }

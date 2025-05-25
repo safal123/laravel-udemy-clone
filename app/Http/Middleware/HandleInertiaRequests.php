@@ -25,10 +25,9 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user()
+                'user' => ($authUser = $request->user())
                     ? new UserResource(
-                        User::with(['roles', 'wishlists.course'])
-                            ->find($request->user()->id)
+                        $authUser->loadMissing(['wishlists.course'])
                     )
                     : null,
             ],
@@ -45,19 +44,13 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
-            'totalCourses' => fn() => cache()->remember('total_courses', 3600, function () {
-                return Course::whereNotNull('tags')
-                    ->allPublishedCourses()
-                    ->count();
-            }),
-            'totalStudents' => fn() => cache()->remember('total_students', 3600, function () {
-                return User::count();
-            }),
-            'totalRatings' => fn() => cache()->remember('total_ratings', 3600, function () {
-                return Course::join('course_reviews', 'courses.id', '=', 'course_reviews.course_id')
-                    ->whereNotNull('tags')
-                    ->allPublishedCourses()
-                    ->avg('course_reviews.rating') ?? 0;
+            'stats' => fn() => cache()->remember('site_stats', 3600, function () {
+                return [
+                    'totalCourses' => Course::count(),
+                    'totalStudents' => User::count(),
+                    'totalRatings' => Course::join('course_reviews', 'courses.id', '=', 'course_reviews.course_id')
+                        ->avg('course_reviews.rating'),
+                ];
             }),
         ];
     }

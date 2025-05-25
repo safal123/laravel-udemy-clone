@@ -180,20 +180,16 @@ class Course extends Model implements CourseConstants
         ];
     }
 
-    /**
-     * Determine if the model should be searchable.
-     * This is used by Laravel Scout when installed.
-     *
-     * @return bool
-     */
-    // public function shouldBeSearchable(): bool
-    // {
-    //     // Only index courses that are published and have at least one published chapter
-    //     return $this->is_published && $this->hasPublishedChapter();
-    // }
-
     public function searchableAs(): string
     {
         return 'courses';
+    }
+
+    public function meilisearchSettings(): array
+    {
+        return [
+            'created_at' => $this->created_at,
+            'price' => $this->price,
+        ];
     }
 }

@@ -16,6 +16,8 @@ import { Link } from "@inertiajs/react";
 import { Course } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+
 interface CourseHeaderProps {
   course: Course
   toggleWishlist: (course: Course) => void;
@@ -92,7 +94,7 @@ export default function CourseHeader({ course, toggleWishlist }: CourseHeaderPro
 
             <div className="flex items-center gap-2">
               {course.tags && (() => {
-                const tags = course.tags.split(',');
+                const tags = course.tags.split(',').map(tag => tag.trim());
                 const colors = [
                   'bg-blue-100 text-blue-800',
                   'bg-green-100 text-green-800',
@@ -103,13 +105,39 @@ export default function CourseHeader({ course, toggleWishlist }: CourseHeaderPro
                   'bg-indigo-100 text-indigo-800'
                 ];
 
+                const [showAllTags, setShowAllTags] = useState(false);
+                const MAX_VISIBLE_TAGS = 3;
+                const hasMoreTags = tags.length > MAX_VISIBLE_TAGS;
+
+                const visibleTags = showAllTags ? tags : tags.slice(0, MAX_VISIBLE_TAGS);
+
                 return (
                   <div className="hidden lg:flex flex-wrap gap-2">
-                    {tags.map((tag, index) => (
+                    {visibleTags.map((tag, index) => (
                       <Badge key={index} variant="outline" className={`${colors[index % colors.length]}`}>
-                        {tag.trim()}
+                        {tag}
                       </Badge>
                     ))}
+
+                    {hasMoreTags && !showAllTags && (
+                      <Badge
+                        variant="outline"
+                        className="bg-gray-100 text-gray-800 cursor-pointer hover:bg-gray-200"
+                        onClick={() => setShowAllTags(true)}
+                      >
+                        +{tags.length - MAX_VISIBLE_TAGS} more
+                      </Badge>
+                    )}
+
+                    {showAllTags && (
+                      <Badge
+                        variant="outline"
+                        className="bg-gray-100 text-gray-800 cursor-pointer hover:bg-gray-200"
+                        onClick={() => setShowAllTags(false)}
+                      >
+                        Show less
+                      </Badge>
+                    )}
                   </div>
                 );
               })()}
