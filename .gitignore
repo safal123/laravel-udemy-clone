@@ -25,3 +25,5 @@ yarn-error.log
 .cursorrules
 .cursor
 .idea
+data.ms
+.history/*
