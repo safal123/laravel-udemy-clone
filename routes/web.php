@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController as StudentDashboardController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\PaymentIntentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\S3Controller;
 use App\Http\Controllers\StripeClientSecretController;
 use App\Http\Controllers\Teacher\ChapterController;
@@ -56,10 +57,8 @@ Route::get('/test', function () {
     // }
 });
 
-Route::get('/', [HomePageController::class, 'index'])
+Route::get('/', HomePageController::class)
     ->name('home');
-Route::get('/ui', [HomePageController::class, 'ui'])
-    ->name('home.ui');
 Route::stripeWebhooks('stripe/webhook');
 
 //Route::get('/courses/search', function (Request $request) {
@@ -71,23 +70,23 @@ Route::stripeWebhooks('stripe/webhook');
 //});
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/deepseek', function () {
-        // only for super admin
-        if (auth()->user()->email !== config('app.super_admin_email')) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-        $prompt = request()->only('prompt');
+    // Route::get('/deepseek', function () {
+    //     // only for super admin
+    //     if (auth()->user()->email !== config('app.super_admin_email')) {
+    //         return response()->json(['error' => 'Unauthorized'], 403);
+    //     }
+    //     $prompt = request()->only('prompt');
 
-        if (!$prompt) {
-            return response()->json(['error' => 'Prompt is required'], 400);
-        }
+    //     if (!$prompt) {
+    //         return response()->json(['error' => 'Prompt is required'], 400);
+    //     }
 
-        $deepSeekService = new DeepSeekService();
-        $response = $deepSeekService->generateText($prompt);
+    //     $deepSeekService = new DeepSeekService();
+    //     $response = $deepSeekService->generateText($prompt);
 
-        dd($response);
-        return response()->json($response);
-    })->name('deepseek.generate');
+    //     dd($response);
+    //     return response()->json($response);
+    // })->name('deepseek.generate');
     Route::get('/payment-success', function () {
         $course = Course::first();
         return Inertia::render('Payment/Success/Index', [
@@ -132,6 +131,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::group(['prefix' => 'teachers'], function () {
         Route::resource('courses', CourseController::class)
             ->names('teachers.courses');
+        Route::resource('/resources', ResourceController::class)
+            ->names('teachers.resources');
     });
 
     /*

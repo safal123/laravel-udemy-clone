@@ -11,18 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('slug')
-                ->unique();
-            $table->text('description')
-                ->nullable();
-            $table->foreignUuid('category_id')
-                ->nullable()
-                ->constrained('categories')
-                ->nullOnDelete();
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->uuid('category_id')->nullable(); // just define the column
             $table->timestamps();
+        });
+
+
+        Schema::table('categories', function (Blueprint $table) {
+            $table->foreign('category_id')
+                ->references('id')
+                ->on('categories')
+                ->nullOnDelete()
+                ->deferrable();
         });
     }
 

@@ -2,7 +2,6 @@ import AuthorProfile from '@/Components/shared/AuthorProfile'
 import Footer from '@/Components/shared/Footer'
 import HomePageNavbar from '@/Components/shared/HomePageNavbar'
 import PaymentModal from '@/Components/shared/PaymentModal'
-import { Badge } from '@/Components/ui/badge'
 import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Toaster } from '@/Components/ui/sonner'
@@ -12,7 +11,6 @@ import { Head, Link, usePage } from '@inertiajs/react'
 import { format } from 'date-fns'
 
 import { AudioLines, BookAIcon, Clock, Calendar, BookOpen, PlayCircle } from 'lucide-react'
-import React from 'react'
 import 'react-quill/dist/quill.bubble.css'
 import ChaptersPreview from './_component/ChaptersPreview'
 import CourseDescription from './_component/CourseDescription'
@@ -51,24 +49,23 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
 
       <div className="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {/* Course Information Tabs Component */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-1">
+          <div>
             <CourseInfoTabs course={course} />
           </div>
 
-          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div>
             <CourseDescription course={course} />
           </div>
 
-          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div className="">
             <ChaptersPreview course={course} />
           </div>
 
-          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div className="">
             <AuthorProfile author={course.author} />
           </div>
 
-          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div className="mt-8">
             <CourseReview
               course={course}
               isEnrolled={course.is_enrolled && !course.is_author}
@@ -173,7 +170,7 @@ const CoursePreviewPage = ({ auth }: PageProps) => {
           </Card>
         </div>
         <div className={'lg:hidden bottom-4 inset-x-0 sticky'}>
-          {course.is_enrolled || course.is_author ?
+          {course.is_enrolled || course.is_author || course.price > 0 ?
             <Link href={`/courses/${course.slug}/chapters/${course.chapters[0].id}`}>
               <div className={'bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center py-3 rounded-xl text-white shadow-lg'}>
                 <BookAIcon size={16} className="mr-2" />

@@ -18,10 +18,11 @@ class CourseController extends Controller
             'courses' => CourseResource::collection(
                 Course::search($request->search)
                     ->query(function ($query) use ($request) {
-                        return $query->whereHasPublishedChapters()
-                            ->category($request->category)
-                            ->level($request->level)
-                            ->price($request->price);
+                        return $query
+                            ->whereHasPublishedChapters();
+                        // ->category($request->category)
+                        // ->level($request->level)
+                        // ->price($request->price);
                     })
                     ->paginate($request->per_page ?? 12)
             ),

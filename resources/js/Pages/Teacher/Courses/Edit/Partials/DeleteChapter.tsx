@@ -27,10 +27,10 @@ const DeleteChapter = ({ chapter }: DeleteChapterProps) => {
     <>
       <button
         onClick={() => setShow(true)}
-        className="text-red-500 hover:text-red-700 transition-colors"
+        className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
         title="Delete chapter"
       >
-        <Trash2 className="w-5 h-5" />
+        <Trash2 className="w-5 h-5 text-red-500" />
       </button>
 
       <Modal show={show} onClose={() => setShow(false)} maxWidth="2xl">

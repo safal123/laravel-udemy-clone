@@ -4,6 +4,8 @@ import React from "react";
 import { Chapter } from "@/types";
 import ChapterForm from "@/Pages/Teacher/Courses/Edit/Partials/ChapterForm";
 import { Edit } from "lucide-react";
+import ChapterTogglePublish from "./ChapterTogglePublish";
+import ToggleChapterFree from '@/Pages/Teacher/Courses/Edit/Partials/ToggleChapterFree';
 
 type UpdateChapterProps = {
   chapter: Chapter
@@ -13,7 +15,12 @@ const UpdateChapter = ({ chapter }: UpdateChapterProps) => {
   const [show, setShow] = React.useState(false);
   return (
     <AppTooltip message={'Edit chapter'}>
-      <Edit className={'w-6 h-6 cursor-pointer text-blue-500'} onClick={() => setShow(true)} />
+      <button
+        onClick={() => setShow(true)}
+        className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+      >
+        <Edit className="w-5 h-5 text-blue-500" />
+      </button>
       <Modal
         maxWidth={'2xl'}
         show={show}

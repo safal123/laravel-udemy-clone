@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chapter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,7 @@ class S3Controller extends Controller
         $s3 = Storage::disk('s3')->getClient();
 
         $url = $s3->getCommand('PutObject', [
-            'Bucket' => \Config::get('filesystems.disks.s3.bucket'),
+            'Bucket' => config('filesystems.disks.s3.bucket'),
             'Key' => $validated['path'] . '/' . $validated['fileName'],
         ]);
 

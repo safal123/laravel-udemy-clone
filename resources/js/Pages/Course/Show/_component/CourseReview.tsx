@@ -49,14 +49,6 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
     )
   }
 
-  // Helper function to get initials from name
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-  }
 
   const userReview = course?.reviews?.find((review: Review) =>
     review.user_id === props.auth?.user?.id.toString()
@@ -86,6 +78,7 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
   };
 
   const reviewStats = getReviewStats();
+  const canReview = (course?.is_enrolled && !course?.has_reviewed) || course?.is_author;
 
   return (
     <>
@@ -189,9 +182,8 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
         </motion.div>
       )}
 
-      {isEnrolled && course && !course.has_reviewed && (
-        <CourseReviewForm
-          course={course} hasReviewed={false} />
+      {canReview && (
+        <CourseReviewForm course={course} hasReviewed={false} />
       )}
 
       {isEditReviewModalOpen && userReview && course && (

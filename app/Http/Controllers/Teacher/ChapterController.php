@@ -44,7 +44,7 @@ class ChapterController extends Controller
             ->with('success', 'Chapter updated successfully.');
     }
 
-    public function addChapterVideo(Course $course, Chapter $chapter): \Illuminate\Http\JsonResponse
+    public function addChapterVideo(Course $course, Chapter $chapter, Request $request): \Illuminate\Http\JsonResponse
     {
         $chapter->update(['video_storage_id' => $chapter->id]);
         $chapter->refresh();
@@ -56,12 +56,18 @@ class ChapterController extends Controller
         // TODO: Move this code to a service and handle multiple files
         // TODO: Handle the case where the video is already uploaded
         // TODO: Handle the case where the video is not uploaded
-        $media = $chapter->media()->create([
+        $media = $chapter->media()->updateOrCreate([
+            'type' => 'video',
+            'model_id' => $chapter->id,
+        ], [
             'file_name' => $chapter->id . '.m3u8',
             'path' =>  $path . '/master.m3u8',
-            'type' => 'video',
-            'mime_type' => 'video/m3u8',
-            'size' => 0,
+            'type' => $request->type ?? 'video',
+            'mime_type' => $request->mime_type ?? 'video/m3u8',
+            'size' => $request->size ?? 0,
+            'duration' => $request->duration ?? 0,
+            'created_by' => auth()->user()->id,
+            'status' => 'pending',
             'metadata' => [
                 'sprite_sheet_path' => $path . '/' . $chapter->id . '_spritesheet.jpg',
                 'storage_id' => $chapter->id,

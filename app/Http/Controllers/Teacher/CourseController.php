@@ -71,7 +71,7 @@ class CourseController extends Controller
         $this->authorize('view', $course);
 
         return Inertia::render('Teacher/Courses/Edit/Index', [
-            'course' => new CourseResource($course->load('chapters')),
+            'course' => new CourseResource($course->load('chapters.media')),
         ]);
     }
 

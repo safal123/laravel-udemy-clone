@@ -16,15 +16,21 @@ class Media extends Model
         'mime_type',
         'disk',
         'size',
+        'duration',
         'type',
         'url',
         'thumbnail_url',
         'caption',
-        'metadata'
+        'metadata',
+        'status',
+        'created_by',
+        'is_processed',
     ];
 
     protected $casts = [
-        'metadata' => 'array'
+        'metadata' => 'array',
+        'status' => 'string',
+        'is_processed' => 'boolean',
     ];
 
     public function model()

@@ -1,15 +1,14 @@
-import ChapterTogglePublish from '@/Pages/Teacher/Courses/Edit/Partials/ChapterTogglePublish'
 import ChapterVideo from '@/Pages/Teacher/Courses/Edit/Partials/ChapterVideo'
 import DeleteChapter from '@/Pages/Teacher/Courses/Edit/Partials/DeleteChapter'
-import ToggleChapterFree from '@/Pages/Teacher/Courses/Edit/Partials/ToggleChapterFree'
 import UpdateChapter from '@/Pages/Teacher/Courses/Edit/Partials/UpdateChapter'
 import { Chapter } from '@/types'
 import { closestCenter, DndContext } from '@dnd-kit/core'
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
-import { BookOpen, Clock, GripVertical, Layers, Loader2, LockIcon, Play, PlusCircle, UnlockIcon, Video, VideoOff } from 'lucide-react'
-import React, { useEffect } from 'react'
+import { BookOpen, Clock, GripVertical, Layers, Loader2, LockIcon, Play, PlusCircle, UnlockIcon, Video, VideoOff, EyeOffIcon } from 'lucide-react'
+import React, { useEffect, useMemo } from 'react'
+import { formatDuration } from '@/lib/utils'
 
 type ChaptersTableProps = {
   chapters: Chapter[];
@@ -18,6 +17,12 @@ type ChaptersTableProps = {
 const ChaptersTable = ({ chapters }: ChaptersTableProps) => {
   const [isDragging, setIsDragging] = React.useState<boolean>(false)
   const [localChapters, setLocalChapters] = React.useState(chapters)
+
+  const totalDuration = useMemo(() => {
+    const totalSeconds = localChapters.reduce((acc, chapter) => acc + (chapter.media[0]?.duration || 0), 0);
+    return formatDuration(totalSeconds);
+  }, [localChapters])
+
 
   useEffect(() => {
     setLocalChapters(chapters)
@@ -50,11 +55,6 @@ const ChaptersTable = ({ chapters }: ChaptersTableProps) => {
     setIsDragging(false)
   }
 
-  const getTotalDuration = () => {
-    // In a real app, this would calculate the true duration
-    return localChapters.length * 10 + Math.floor(Math.random() * 20);
-  }
-
   return (
     <div className="relative">
       <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -69,7 +69,7 @@ const ChaptersTable = ({ chapters }: ChaptersTableProps) => {
           </div>
           <div className="text-xs bg-gray-100 px-2 py-1 rounded-md text-gray-700 flex items-center gap-1">
             <Clock className="w-3 h-3 text-gray-500" />
-            <span>~{getTotalDuration()} min</span>
+            <span>~{totalDuration}</span>
           </div>
         </div>
       </div>
@@ -152,12 +152,6 @@ const SingleChapter = (props: Chapter & { index: number }) => {
     zIndex: isDragging ? 10 : 1,
   }
 
-  // Calculate estimated duration from chapters
-  const getChapterDuration = () => {
-    // This is a placeholder - in reality, you'd calculate from video length
-    return `${Math.floor(Math.random() * 20) + 5}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`;
-  }
-
   const isPremium = !props.is_free;
   const hasVideo = !!props.video_storage_id;
 
@@ -197,10 +191,21 @@ const SingleChapter = (props: Chapter & { index: number }) => {
                   Free
                 </span>
               )}
-              {hasVideo && (
+              {hasVideo ? (
                 <span className="inline-flex items-center rounded-sm bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-700">
                   <Video className="h-2.5 w-2.5 mr-0.5" />
                   Video
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-sm bg-red-50 px-1.5 py-0.5 text-[10px] text-red-700">
+                  <VideoOff className="h-2.5 w-2.5 mr-0.5" />
+                  No Video
+                </span>
+              )}
+              {!props.is_published && (
+                <span className="inline-flex items-center rounded-sm bg-gray-50 px-1.5 py-0.5 text-[10px] text-gray-700">
+                  <EyeOffIcon className="h-2.5 w-2.5 mr-0.5" />
+                  Private
                 </span>
               )}
             </div>
@@ -208,7 +213,9 @@ const SingleChapter = (props: Chapter & { index: number }) => {
           <div className="flex items-center text-[10px] text-gray-500">
             <div className="flex items-center mr-2 bg-gray-50 px-1.5 py-0.5 rounded-sm border border-gray-100">
               <Play className="w-2.5 h-2.5 mr-0.5 text-gray-600" />
-              <span className="font-medium">{getChapterDuration()}</span>
+              <span className="font-medium">
+                {formatDuration(props.media[0]?.duration || 0)}
+              </span>
             </div>
 
             <div
@@ -228,16 +235,12 @@ const SingleChapter = (props: Chapter & { index: number }) => {
         className="col-span-3 flex items-center justify-end p-2.5"
         onPointerDown={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center space-x-1">
-          {props?.video_storage_id && (
-            <>
-              <ChapterTogglePublish chapter={props} />
-              <ToggleChapterFree chapter={props} />
-            </>
-          )}
-          <UpdateChapter chapter={props} />
-          <ChapterVideo chapter={props} />
-          <DeleteChapter chapter={props} />
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 border-l border-gray-200 pl-2">
+            <UpdateChapter chapter={props} />
+            <ChapterVideo chapter={props} />
+            <DeleteChapter chapter={props} />
+          </div>
         </div>
       </div>
     </div>
