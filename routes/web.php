@@ -161,9 +161,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::group(['prefix' => 'courses'], function () {
         Route::get('/', [\App\Http\Controllers\CourseController::class, 'index'])
             ->name('courses.index');
-        Route::get('/{course:slug}', [\App\Http\Controllers\CourseController::class, 'show'])
+        Route::get('/{course}', [\App\Http\Controllers\CourseController::class, 'show'])
             ->name('courses.show');
-        Route::get('/{course:slug}/chapters/{chapter}', [\App\Http\Controllers\ChapterController::class, 'show'])
+        Route::get('/{course}/chapters/{chapter}', [\App\Http\Controllers\ChapterController::class, 'show'])
             ->name('courses.chapters.show');
 
         // Course Review Routes
@@ -171,14 +171,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->only(['store', 'edit', 'update', 'show',  'destroy'])
             ->names([
                 'index' => 'courses.reviews',
-                'store' => 'courses.submitReview',
+                'store' => 'courses.reviews.store',
                 'edit' => 'courses.editReview',
-                'update' => 'courses.updateReview',
+                'update' => 'courses.reviews.update',
                 'show' => 'courses.reviews.show',
                 'destroy' => 'courses.reviews.destroy',
+                'markHelpful' => 'courses.reviews.markHelpful',
             ]);
-        Route::post('reviews/{review}/helpful', [CourseReviewController::class, 'markHelpful'])
-            ->name('reviews.markHelpful');
     });
 
     /*

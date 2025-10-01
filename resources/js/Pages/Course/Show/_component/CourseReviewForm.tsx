@@ -82,7 +82,7 @@ export default function CourseReviewForm({ course, hasReviewed, review }: Course
 
     if (isEditing) {
       // Update existing review
-      router.put(route('courses.updateReview', { course: course.id, review: review.id }), reviewData, {
+      router.put(route('courses.reviews.update', { course: course.id, review: review.id }), reviewData, {
         onSuccess: () => {
           setIsSubmitting(false);
           toast.success("Review updated successfully");
@@ -95,9 +95,8 @@ export default function CourseReviewForm({ course, hasReviewed, review }: Course
       });
     } else {
       // Submit new review
-      router.post(route('courses.submitReview', course.id), reviewData, {
+      router.post(route('courses.reviews.store', { course: course.id }), reviewData, {
         onSuccess: () => {
-          // Reset form
           setSelectedRating(0);
           setTitle("");
           setComment("");
@@ -105,8 +104,10 @@ export default function CourseReviewForm({ course, hasReviewed, review }: Course
           toast.success("Review submitted successfully");
         },
         onError: (errors) => {
+          console.log(errors);
           setErrors(errors);
           setIsSubmitting(false);
+          toast.error(errors.error);
         },
         preserveScroll: true,
       });

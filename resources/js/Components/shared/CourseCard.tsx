@@ -100,7 +100,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
 
       {/* Image Container with Overlay */}
       <div className="relative overflow-hidden">
-        <Link href={`/courses/${course.slug}`}>
+        <Link href={`/courses/${course.id}`}>
           <div className="aspect-video relative">
             <img
               src={course.image_url}

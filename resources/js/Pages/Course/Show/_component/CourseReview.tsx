@@ -78,7 +78,8 @@ export default function CourseReview({ course, isEnrolled = false }: CourseRevie
   };
 
   const reviewStats = getReviewStats();
-  const canReview = (course?.is_enrolled && !course?.has_reviewed) || course?.is_author;
+  const canReview = course?.is_author || (course?.is_enrolled && !course?.has_reviewed);
+
 
   return (
     <>

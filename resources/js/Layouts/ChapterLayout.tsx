@@ -12,6 +12,7 @@ import { Progress } from '@/Components/ui/progress'
 
 interface PageProps {
   course: {
+    id: string
     slug: string
     title: string
     chapters: Chapter[]
@@ -63,7 +64,7 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
         <div className="p-6 rounded-lg bg-white border-b border-gray-100 flex flex-col space-y-4">
           <div className="flex items-center justify-between gap-2">
             <Link
-              href={`/courses/${course.slug}`}
+              href={`/courses/${course.id}`}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />

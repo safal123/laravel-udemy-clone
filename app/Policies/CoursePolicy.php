@@ -79,8 +79,9 @@ class CoursePolicy
         }
 
         return $user->hasCoursePurchased($course)
+            || $user->isTeacherOfCourse($course)
             ? Response::allow()
-            : Response::denyWithStatus(404);
+            : Response::denyWithStatus(403, 'You are not authorized to review this course.');
     }
 
     public function viewTeacherCourses(User $user): Response
